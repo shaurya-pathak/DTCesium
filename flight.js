@@ -120,17 +120,13 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
   // viewer.clock.shouldAnimate = false;
   // viewer.dataSources.add(dataSource);
 
-  function goToLocation(latitude, longitude, height) {
-
-    // Offset values for latitude and longitude
-    const latOffset = -(height / 100000); // Adjust as needed
-    const lonOffset = 0; // Adjust as needed
-
+function goToLocation(latitude, longitude, height, heading = 0, pitch = -45, lonOffset = 0, latOffset = -(height / 100000)) {
+    // Log the current camera position and orientation
     viewer.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(longitude + lonOffset, latitude + latOffset, height),
         orientation: {
-            heading: Cesium.Math.toRadians(0),
-            pitch: Cesium.Math.toRadians(-45), // Adjusted pitch to look at an angle
+            heading: Cesium.Math.toRadians(heading),
+            pitch: Cesium.Math.toRadians(pitch),
             roll: 0.0
         },
         duration: 2
