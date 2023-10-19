@@ -129,7 +129,7 @@ function goToLocation(latitude, longitude, height, heading = 0, pitch = -45, lon
             pitch: Cesium.Math.toRadians(pitch),
             roll: 0.0
         },
-        duration: 8
+        duration: 10
     });
 }
 
