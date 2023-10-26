@@ -3,104 +3,6 @@ console.log('CesiumJS version: ' + Cesium.VERSION);
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5NTA5OWFmYi0xYTNmLTRiOTAtODc3Yi0yOWM0MjgxMjc3YWUiLCJpZCI6MTY1Mzc3LCJpYXQiOjE2OTQxOTgxOTJ9.EEXcYZSBfyXI2t14GuQQPpIagDPqPshx5aD2zv4llL0';
 Cesium.GoogleMaps.defaultApiKey = "AIzaSyA0SIcbfBXj0RYV7t7L5PITeNlHPd9h4DA";
 
-// function WebGLGlobeDataSource(name) {
-//   this._name = name;
-//   this._changed = new Cesium.Event();
-//   this._error = new Cesium.Event();
-//   this._isLoading = false;
-//   this._loading = new Cesium.Event();
-//   this._entityCollection = new Cesium.EntityCollection();
-//   this._heightScale = 10000000;
-// }
-
-// Object.defineProperties(WebGLGlobeDataSource.prototype, {
-//   name: {
-//       get: function() {
-//           return this._name;
-//       }
-//   },
-//   clock: {
-//       value: undefined,
-//       writable: false
-//   },
-//   entities: {
-//       get: function() {
-//           return this._entityCollection;
-//       }
-//   },
-//   isLoading: {
-//       get: function() {
-//           return this._isLoading;
-//       }
-//   },
-//   changedEvent: {
-//       get: function() {
-//           return this._changed;
-//       }
-//   },
-//   errorEvent: {
-//       get: function() {
-//           return this._error;
-//       }
-//   },
-//   loadingEvent: {
-//       get: function() {
-//           return this._loading;
-//       }
-//   }
-// });
-
-// WebGLGlobeDataSource.prototype.load = function(data) {
-//   if (!Cesium.defined(data)) {
-//       throw new Cesium.DeveloperError("data is required.");
-//   }
-
-//   this._setLoading(true);
-//   const heightScale = this._heightScale;
-//   const entities = this._entityCollection;
-
-//   entities.suspendEvents();
-//   entities.removeAll();
-
-//   for (let i = 0; i < data.length; i += 3) {
-//       const latitude = data[i];
-//       const longitude = data[i + 1];
-//       const height = data[i + 2];
-
-//       if (height === 0) {
-//           continue;
-//       }
-
-//       const color = Cesium.Color.fromHsl(0.6 - height * 0.5, 1.0, 0.5);
-//       const surfacePosition = Cesium.Cartesian3.fromDegrees(longitude, latitude, 0);
-//       const heightPosition = Cesium.Cartesian3.fromDegrees(longitude, latitude, height * heightScale);
-
-//       const polyline = new Cesium.PolylineGraphics();
-//       polyline.material = new Cesium.ColorMaterialProperty(color);
-//       polyline.width = new Cesium.ConstantProperty(2);
-//       polyline.arcType = new Cesium.ConstantProperty(Cesium.ArcType.NONE);
-//       polyline.positions = new Cesium.ConstantProperty([surfacePosition, heightPosition]);
-
-//       const entity = new Cesium.Entity({
-//           id: `index ${i.toString()}`,
-//           polyline: polyline
-//       });
-
-//       entities.add(entity);
-//   }
-
-//   entities.resumeEvents();
-//   this._changed.raiseEvent(this);
-//   this._setLoading(false);
-// };
-
-// WebGLGlobeDataSource.prototype._setLoading = function(isLoading) {
-//   if (this._isLoading !== isLoading) {
-//       this._isLoading = isLoading;
-//       this._loading.raiseEvent(this, isLoading);
-//   }
-// };
-
 
 const viewer = new Cesium.Viewer("cesiumContainer", {
     timeline: false,
@@ -108,17 +10,6 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
     sceneModePicker: false,
     baseLayerPicker: false,
   });
-  // const dataSource = new WebGLGlobeDataSource();
-  // dataSource.load([
-  //   34.060162, -118.219284, 100,
-  //   34.051009, -118.245314, 150,
-  //   34.055329, -118.237946, 80,
-  //   34.043961, -118.240940, 110,
-  //   34.065053, -118.236427, 130
-  // ]);
-
-  // viewer.clock.shouldAnimate = false;
-  // viewer.dataSources.add(dataSource);
 
 function goToLocation(latitude, longitude, height, heading = 0, pitch = -45, lonOffset = 0, latOffset = -(height / 100000)) {
     // Log the current camera position and orientation
@@ -129,11 +20,10 @@ function goToLocation(latitude, longitude, height, heading = 0, pitch = -45, lon
             pitch: Cesium.Math.toRadians(pitch),
             roll: 0.0
         },
-        duration: 10
+        duration: 0.5
     });
 }
-
-    goToLocation(33.8407, -118.2468, 100000);
+    goToLocation(34.0837, -118.4134, 1000);
 
     viewer.homeButton.viewModel.command.beforeExecute.addEventListener(function (e) {
         e.cancel = true;  // Cancel the default home button behavior
@@ -174,6 +64,10 @@ function goToLocation(latitude, longitude, height, heading = 0, pitch = -45, lon
     };
     
     const flightData = interpolatePoints(startPoint, endPoint);
+    for (let i = 0; i < flightData.length; i++) {
+        
+        flightData[i].height += -1 * (i-0) * (i-100);
+    }
     
     console.log(flightData);
     
@@ -248,15 +142,21 @@ for (let i = 0; i < flightData.length; i++) {
 // STEP 4 CODE (green circle entity)
 // Create an entity to both visualize the entire radar sample series with a line and add a point that moves along the samples.
 
-async function getDroneData(){
+async function getDroneData()   {
   console.log("creating drone");
-  const resource = await Cesium.IonResource.fromAssetId(2314135);
+  const resource = await Cesium.IonResource.fromAssetId(2295748);
+  const scale_factor = 60;
   const airplaneEntity = viewer.entities.add({
     availability: new Cesium.TimeIntervalCollection([ new Cesium.TimeInterval({ start: start, stop: stop }) ]),
     position: positionProperty,
-    model: {uri: resource},
-    path: new Cesium.PathGraphics({ width: 3 }),
-  });
+    model: {
+        uri: resource,
+        scale: scale_factor // This makes the model 100x bigger
+    },
+    path: new Cesium.PathGraphics({ width: 300 / scale_factor }),  // Adjusting the path width to be consistent with the bigger model
+});
+
+  viewer.trackedEntity = airplaneEntity;
 }
 
 getDroneData();
@@ -280,40 +180,6 @@ async function fetchData() {
         console.error('Error fetching data:', error);
     }
 }
-
-// // Get today's date
-// const today = new Date();
-
-// // Subtract an hour from the current time
-// const oneHourAgo = new Date(today);
-// oneHourAgo.setHours(today.getHours() - 1);
-
-// // Function to format date to 'YYYY-MM-DDTHH:MM'
-// function formatDate(date) {
-//   const year = date.getFullYear();
-//   const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
-//   const day = String(date.getDate()).padStart(2, '0');
-//   const hour = String(date.getHours()).padStart(2, '0');
-//   const minute = String(date.getMinutes()).padStart(2, '0');
-  
-//   return `${year}-${month}-${day}T${hour}:${minute}`;
-// }
-
-
-// const URL = "https://www.airnowapi.org/aq/data";
-
-// const PARAMS = {
-//   startDate: formatDate(oneHourAgo),
-//   endDate: formatDate(today),
-//   parameters: 'CO',
-//   BBOX: '-118.75,33.5,-117.5,34.5',
-//   dataType: 'B',
-//   format: 'application/json',
-//   verbose: '0',
-//   monitorType: '2',
-//   includerawconcentrations: '1',
-//   API_KEY: '0D892FD5-78A4-4BE4-9FA5-0FC0A1193FFD'
-// };
   
 
 async function updateViewer(flightData) {
@@ -417,67 +283,108 @@ return `${year}-${month}-${day}T${hour}:${minute}`;
 const URL = "https://www.airnowapi.org/aq/data";
 
 
-const PARAMS = {
-startDate: formatDate(oneHourAgo),
-endDate: formatDate(today),
-parameters: 'PM25',
-BBOX: '-118.75,33.5,-117.5,34.5',
-dataType: 'B',
-format: 'application/json',
-verbose: '0',
-monitorType: '2',
-includerawconcentrations: '1',
-API_KEY: '0D892FD5-78A4-4BE4-9FA5-0FC0A1193FFD'
+const BASE_PARAMS = {
+    startDate: formatDate(oneHourAgo),
+    endDate: formatDate(today),
+    BBOX: '-118.75,33.5,-117.5,34.5',
+    dataType: 'B',
+    format: 'application/json',
+    verbose: '0',
+    monitorType: '2',
+    includerawconcentrations: '1',
+    API_KEY: '0D892FD5-78A4-4BE4-9FA5-0FC0A1193FFD'
 };
 
+const PARAMS_MAP = {
+    PM25: {...BASE_PARAMS, parameters: 'PM25'},
+    O3: {...BASE_PARAMS, parameters: 'O3'},
+    NO2: {...BASE_PARAMS, parameters: 'NO2'},
+};
 
-// Construct the full URL with parameters
-const fullUrl = `${URL}?${new URLSearchParams(PARAMS).toString()}`;
+let pm25Data, o3Data, no2Data;
 
+async function fetchData(params) {
+    const fullUrl = `${URL}?${new URLSearchParams(params).toString()}`;
+    const response = await fetch(fullUrl);
+    const data = await response.json();
 
-// Fetch the data
-fetch(fullUrl)
-.then(response => response.json())
-.then(data => {
-console.log(data);
-const transformedData = data.map(dataPoint => {
-return [dataPoint.Latitude, dataPoint.Longitude, dataPoint.Value];
-}).flat();
-console.log(transformedData);
-for (let i = 0; i < transformedData.length; i += 3) {
-const latitude = transformedData[i];
-const longitude = transformedData[i + 1];
-const height = transformedData[i + 2];
+    return data.map(dataPoint => [dataPoint.Latitude, dataPoint.Longitude, dataPoint.Value]).flat();
+}
 
+function displayData(transformedData, pollutantType) {
+    // Clear previous entities but not all entities
+    let entitiesToRemove = viewer.entities.values.filter(entity => entity.cylinder || entity.label);
+    for (let entity of entitiesToRemove) {
+        viewer.entities.remove(entity);
+    }
 
-if (height === 0) {
-continue;
+    for (let i = 0; i < transformedData.length; i += 3) {
+        const [latitude, longitude, height] = [transformedData[i], transformedData[i + 1], transformedData[i + 2]];
+        if (height === 0) continue;
+
+        let color;
+        switch(pollutantType) {
+            case 'PM25':
+                color = new Cesium.Color(0.6 - height / 100, 1.0, 0.8, 1);
+                break;
+            case 'NO2':
+                color = new Cesium.Color(1.0, 0.6 - height / 100, 1.0, 1);
+                break;
+            case 'O3':
+                color = new Cesium.Color(0.5, 1.0, 0.6 - height / 100, 1);
+                break;
+            default:
+                color = Cesium.Color.fromHsl(0.6 - height / 100, 1.0, 0.5);
+        }
+
+        viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height * 500 + 100),  // +100 to display label just above the cylinder
+            label: {
+                text: height.toFixed(2),  // display the height value rounded to 2 decimal places
+                font: '14pt sans-serif',
+                horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                pixelOffset: new Cesium.Cartesian2(0, -10)  // Offset to place it just above the cylinder
+            }
+        });
+
+        viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
+            cylinder: {
+                length: height * 1000,
+                topRadius: 500,
+                bottomRadius: 500,
+                material: color
+            }
+        });
+    }
 }
 
 
-const color = Cesium.Color.fromHsl(0.6 - height / 100 , 1.0, 0.5);
-const surfacePosition = Cesium.Cartesian3.fromDegrees(longitude, latitude, 0);
-const cylinderHeight = height * 1000; // Adjust the height scale as needed
-const cylinderRadius = 500; // Adjust the radius as needed
 
+(async function() {
+    pm25Data = await fetchData(PARAMS_MAP.PM25);
+    o3Data = await fetchData(PARAMS_MAP.O3);
+    no2Data = await fetchData(PARAMS_MAP.NO2);
+})().catch(error => console.error("Error fetching data:", error));
 
-// Cylinder (main body)
-viewer.entities.add({
-position: surfacePosition,
-cylinder: {
-length: cylinderHeight,
-topRadius: cylinderRadius,
-bottomRadius: cylinderRadius,
-material: color
-}
+// Event listener for radio buttons
+document.querySelectorAll("input[name='pollutant']").forEach(radio => {
+    radio.addEventListener('change', (event) => {
+        switch (event.target.value) {
+            case 'PM25':
+                displayData(pm25Data, 'PM25');;
+                break;
+            case 'O3':
+                displayData(o3Data, 'O3');
+                break;
+            case 'NO2':
+                displayData(no2Data, 'NO2');
+                break;
+        }
+    });
 });
-}
 
-
-})
-.catch(error => {
-console.error("Error fetching data:", error);
-});
 
 
 
@@ -485,8 +392,8 @@ async function mainLoop() {
     console.log('Main loop started.');
     while (true) {
         try {
-            const flightData = await fetchData();
-            await updateViewer(flightData);
+            // const flightData = await fetchData();
+            // await updateViewer(flightData);
             console.log('Waiting for 10 seconds before fetching again...');
 
             await new Promise(resolve => setTimeout(resolve, 10000));  // Wait for 10 seconds before fetching again

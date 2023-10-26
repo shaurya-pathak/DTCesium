@@ -68,3 +68,56 @@ button {
 .button-secondary:hover {
   background-color: #01675b;
 }
+#pollutantSelection {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}
+
+#pollutantSelection {
+  position: absolute;
+  top: 50%;  /* Center it vertically */
+  right: 10px;  /* Hug the right side */
+  transform: translateY(-50%);  /* Adjust for exact vertical centering */
+  z-index: 1;
+}
+
+.pollutant-label {
+    display: block;  /* Stack them vertically */
+    margin: 10px 0;  /* Vertical spacing, no horizontal spacing */
+    padding: 12px 24px;
+    position: relative;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    border: 2px solid #6200ea;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    background-color: #6200ea;
+    color: #ffffff;
+}
+
+.pollutant-label input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.pollutant-label .checkmark {
+    position: relative;
+}
+
+.pollutant-label:hover {
+    background-color: #3700b3;
+}
+
+.pollutant-label input[type="radio"]:checked + .checkmark {
+    background-color: #01675b;
+}
+
+
+
+

@@ -133,6 +133,22 @@
 </head>
 <body>
   <div id="cesiumContainer"></div>
+  <div id="pollutantSelection">
+    <label class="pollutant-label">
+        <input type="radio" name="pollutant" value="PM25">
+        <span class="checkmark">PM2.5</span>
+    </label>
+    <label class="pollutant-label">
+        <input type="radio" name="pollutant" value="O3">
+        <span class="checkmark">O3</span>
+    </label>
+    <label class="pollutant-label">
+        <input type="radio" name="pollutant" value="NO2">
+        <span class="checkmark">NO2</span>
+    </label>
+  </div>
+
+
   <div id="storyButtons">
       <button class="storyButton" onclick="goToLocation(33.84, -118.2468, 100000)">Los Angeles</button>
       <button class="storyButton" onclick="goToLocation(34.0522, -118.2437, 1000)">Downtown LA</button>
