@@ -41,7 +41,7 @@ button {
   left: 50%;
   width: 5px;
   height: 5px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 1);
   border-radius: 50%;
   transform: translate(-50%, -50%) scale(1);
   transition: transform 0.5s;
@@ -116,6 +116,41 @@ button {
 
 .pollutant-label input[type="radio"]:checked + .checkmark {
     background-color: #01675b;
+}
+
+#pollutantDropdown {
+  position: fixed; /* Fixed position */
+  right: 10px;    /* 10px from the right */
+  bottom: 10px;   /* 10px from the bottom */
+  z-index: 1000;  /* Ensures dropdown is on top */
+}
+
+#searchPollutant {
+  padding: 10px;
+  border: 1px solid #ddd;
+  width: 180px;
+  /* No margin-bottom needed */
+}
+
+#pollutantSelect {
+  display: none; /* Hide the select list by default */
+  position: absolute;
+  right: 0; /* Align to the right edge of the #pollutantDropdown */
+  bottom: 100%; /* Move it up 100% of its own height */
+  width: 200px;
+  overflow-y: auto; /* Enable scroll if needed */
+  border: 1px solid #ddd;
+  background-color: white;
+  max-height: 200px; /* You can set a max height */
+}
+
+#pollutantSelect option {
+  padding: 10px;
+  cursor: pointer;
+}
+
+#pollutantSelect option:hover {
+  background-color: #f2f2f2;
 }
 
 
