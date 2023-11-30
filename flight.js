@@ -11,6 +11,22 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
     baseLayerPicker: false,
   });
 
+var color1 = 'rgb(0, 0, 0)';
+var color2 = 'rgb(100, 0, 0)';
+
+function updateColorGradient(fromColor, toColor) {
+
+    color1 = fromColor;
+    color2 = toColor;
+    // Get the div and span elements
+    var colorMapLegend = document.getElementById('colorMapLegend');
+  
+    // Update the background gradient
+    colorMapLegend.style.background = `linear-gradient(to right, ${fromColor}, ${toColor})`;
+  
+    // Update the displayed color values
+  }
+
 function goToLocation(latitude, longitude, height, heading = 0, pitch = -45, lonOffset = 0, latOffset = -(height / 100000)) {
     // Log the current camera position and orientation
     viewer.camera.flyTo({
@@ -345,23 +361,33 @@ function normalizeData(data) {
 
 function interpolateColor(height) {
     // Ensure height is between 0 and 1
+    console.log('begin interpolate color')
     height = Math.max(0, Math.min(1, height));
 
-    // Interpolate between blue and red
-    let red = height * 255;   // Red increases linearly with height
-    let green = 0;            // Green remains constant
-    let blue = 255; // Blue decreases linearly with height
+    // Parse the RGB values from the strings
+    const fromColorComponents = color1.match(/\d+/g).map(Number);
+    const toColorComponents = color2.match(/\d+/g).map(Number);
 
-    return new Cesium.Color(red / 255, green / 255, blue / 255, 1);
+    // Interpolate between color1 and color2 for each RGB component
+    let red = fromColorComponents[0] + (toColorComponents[0] - fromColorComponents[0]) * height;
+    let green = fromColorComponents[1] + (toColorComponents[1] - fromColorComponents[1]) * height;
+    let blue = fromColorComponents[2] + (toColorComponents[2] - fromColorComponents[2]) * height;
+
+    // Return the interpolated color in 'rgb()' format
+    console.log('finish interpolate color')
+    console.log(`rgb(${Math.round(red)}, ${Math.round(green)}, ${Math.round(blue)})`)
+    return `rgb(${Math.round(red)}, ${Math.round(green)}, ${Math.round(blue)})`;
 }
 
 // Usage
 
+function colorStringToCesiumColor(rgbString) {
+    let parts = rgbString.match(/\d+/g).map(Number);
+    return new Cesium.Color(parts[0] / 255, parts[1] / 255, parts[2] / 255, 1);
+}
 
 
-
-function displayData(transformedData, pollutantType, labels = true, height_divisor = 1) {
-    console.log('displayData called with pollutantType:', pollutantType);
+function displayData(transformedData, labels = false, height_divisor = 1) {
 
     // Normalize data before using it
     let preNormalizedData = transformedData;
@@ -392,20 +418,8 @@ function displayData(transformedData, pollutantType, labels = true, height_divis
 
         let color;
         color = interpolateColor(height);
-        // switch(pollutantType) {
-        //     case 'PM25':
-        //         color = new Cesium.Color(height, 1.0, 0.8, 1);
-        //         break;
-        //     case 'NO2':
-        //         color = new Cesium.Color(height, 1.0, 1);
-        //         break;
-        //     case 'O3':
-        //         color = new Cesium.Color(height, 1);
-        //         break;
-        //     default:
-                
-        // }
-        // console.log(`Color for data point ${i/3}:`, color);
+        color = colorStringToCesiumColor(color);
+        console.log('Color:', color)
 
         if (labels) {
             viewer.entities.add({
@@ -453,6 +467,7 @@ function normalizeDataAtHeight(data) {
         }
     });
 }
+
 
 function displayDataAtHeight(transformedData, pollutantType, labels = true, sphere_scale = 1, value_divisor = 1) {
     // Clear previous entities
@@ -520,88 +535,104 @@ function displayDataAtHeight(transformedData, pollutantType, labels = true, sphe
 
 let dataMap = {};
 
+
+const pollutantColorMap = { 'from': 'rgb(0, 255, 0)', 'to': 'rgb(255, 0, 0)' }; // Example gradient colors
+const socioeconomicColorMap = { 'from': 'rgb(0, 0, 255)', 'to': 'rgb(255, 255, 0)' };
+const statColorMap = { 'from': 'rgb(100, 100, 0)', 'to': 'rgb(200, 0, 200)' };
+
 const fileMappings = {
-    'Data/CES_4.0_Score.json': 'CES 4.0 Score',
-    'Data/CES_4.0_Percentile.json': 'CES 4.0 Percentile',
-    'Data/CES_4.0_Percentile_Range.json': 'CES 4.0 Percentile Range',
-    'Data/Ozone.json': 'Ozone',
-    'Data/Ozone_Pctl.json': 'Ozone Pctl',
-    'Data/PM2.5.json': 'PM2.5',
-    'Data/PM2.5_Pctl.json': 'PM2.5 Pctl',
-    'Data/Diesel_PM.json': 'Diesel PM',
-    'Data/Diesel_PM_Pctl.json': 'Diesel PM Pctl',
-    'Data/Drinking_Water.json': 'Drinking Water',
-    'Data/Drinking_Water_Pctl.json': 'Drinking Water Pctl',
-    'Data/Lead.json': 'Lead',
-    'Data/Lead_Pctl.json': 'Lead Pctl',
-    'Data/Pesticides.json': 'Pesticides',
-    'Data/Pesticides_Pctl.json': 'Pesticides Pctl',
-    'Data/Tox._Release.json': 'Tox. Release',
-    'Data/Tox._Release_Pctl.json': 'Tox. Release Pctl',
-    'Data/CES_Traffic.json': 'Traffic',
-    'Data/CES_Traffic_Pctl.json': 'Traffic Pctl',
-    'Data/Cleanup_Sites.json': 'Cleanup Sites',
-    'Data/Cleanup_Sites_Pctl.json': 'Cleanup Sites Pctl',
-    'Data/Groundwater_Threats.json': 'Groundwater Threats',
-    'Data/Groundwater_Threats_Pctl.json': 'Groundwater Threats Pctl',
-    'Data/Haz._Waste.json': 'Haz. Waste',
-    'Data/Haz._Waste_Pctl.json': 'Haz. Waste Pctl',
-    'Data/Imp._Water_Bodies.json': 'Imp. Water Bodies',
-    'Data/Imp._Water_Bodies_Pctl.json': 'Imp. Water Bodies Pctl',
-    'Data/Solid_Waste.json': 'Solid Waste',
-    'Data/Solid_Waste_Pctl.json': 'Solid Waste Pctl',
-    'Data/Pollution_Burden.json': 'Pollution Burden',
-    'Data/Pollution_Burden_Score.json': 'Pollution Burden Score',
-    'Data/Pollution_Burden_Pctl.json': 'Pollution Burden Pctl',
-    'Data/Asthma.json': 'Asthma',
-    'Data/Asthma_Pctl.json': 'Asthma Pctl',
-    'Data/Low_Birth_Weight.json': 'Low Birth Weight',
-    'Data/Low_Birth_Weight_Pctl.json': 'Low Birth Weight Pctl',
-    'Data/Cardiovascular_Disease.json': 'Cardiovascular Disease',
-    'Data/Cardiovascular_Disease_Pctl.json': 'Cardiovascular Disease Pctl',
-    'Data/Education.json': 'Education',
-    'Data/Education_Pctl.json': 'Education Pctl',
-    'Data/Linguistic_Isolation.json': 'Linguistic Isolation',
-    'Data/Linguistic_Isolation_Pctl.json': 'Linguistic Isolation Pctl',
-    'Data/Poverty.json': 'Poverty',
-    'Data/Poverty_Pctl.json': 'Poverty Pctl',
-    'Data/Unemployment.json': 'Unemployment',
-    'Data/Unemployment_Pctl.json': 'Unemployment Pctl',
-    'Data/Housing_Burden.json': 'Housing Burden',
-    'Data/Housing_Burden_Pctl.json': 'Housing Burden Pctl',
-    'Data/Pop._Char._.json': 'Pop. Char. ',
-    'Data/Pop._Char._Score.json': 'Pop. Char. Score',
-    'Data/Pop._Char._Pctl.json': 'Pop. Char. Pctl',
-    'Data/pm25_predictions.json': 'pm25_predictions',
-    'Data/adult_asthma.json': 'adult_asthma',
-    'Data/traffic.json': 'traffic_counts',
-    'Data/poverty.json': 'poverty_data',
-    'Data/income.json': 'income_data'
+    'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap],
+    'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap],
+    'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap],
+    'Data/Ozone.json': ['Ozone', pollutantColorMap],
+    'Data/Ozone_Pctl.json': ['Ozone Pctl', pollutantColorMap],
+    'Data/PM2.5.json': ['PM2.5', pollutantColorMap],
+    'Data/PM2.5_Pctl.json': ['PM2.5 Pctl', pollutantColorMap],
+    'Data/Diesel_PM.json': ['Diesel PM', pollutantColorMap],
+    'Data/Diesel_PM_Pctl.json': ['Diesel PM Pctl', pollutantColorMap],
+    'Data/Drinking_Water.json': ['Drinking Water', pollutantColorMap],
+    'Data/Drinking_Water_Pctl.json': ['Drinking Water Pctl', pollutantColorMap],
+    'Data/Lead.json': ['Lead', pollutantColorMap],
+    'Data/Lead_Pctl.json': ['Lead Pctl', pollutantColorMap],
+    'Data/Pesticides.json': ['Pesticides', pollutantColorMap],
+    'Data/Pesticides_Pctl.json': ['Pesticides Pctl', pollutantColorMap],
+    'Data/Tox._Release.json': ['Tox. Release', pollutantColorMap],
+    'Data/Tox._Release_Pctl.json': ['Tox. Release Pctl', pollutantColorMap],
+    'Data/CES_Traffic.json': ['Traffic', pollutantColorMap],
+    'Data/CES_Traffic_Pctl.json': ['Traffic Pctl', pollutantColorMap],
+    'Data/Cleanup_Sites.json': ['Cleanup Sites', pollutantColorMap],
+    'Data/Cleanup_Sites_Pctl.json': ['Cleanup Sites Pctl', pollutantColorMap],
+    'Data/Groundwater_Threats.json': ['Groundwater Threats', pollutantColorMap],
+    'Data/Groundwater_Threats_Pctl.json': ['Groundwater Threats Pctl', pollutantColorMap],
+    'Data/Haz._Waste.json': ['Haz. Waste', pollutantColorMap],
+    'Data/Haz._Waste_Pctl.json': ['Haz. Waste Pctl', pollutantColorMap],
+    'Data/Imp._Water_Bodies.json': ['Imp. Water Bodies', pollutantColorMap],
+    'Data/Imp._Water_Bodies_Pctl.json': ['Imp. Water Bodies Pctl', pollutantColorMap],
+    'Data/Solid_Waste.json': ['Solid Waste', pollutantColorMap],
+    'Data/Solid_Waste_Pctl.json': ['Solid Waste Pctl', pollutantColorMap],
+    'Data/Pollution_Burden.json': ['Pollution Burden', pollutantColorMap],
+    'Data/Pollution_Burden_Score.json': ['Pollution Burden Score', pollutantColorMap],
+    'Data/Pollution_Burden_Pctl.json': ['Pollution Burden Pctl', pollutantColorMap],
+    'Data/Asthma.json': ['Asthma', socioeconomicColorMap],
+    'Data/Asthma_Pctl.json': ['Asthma Pctl', socioeconomicColorMap],
+    'Data/Low_Birth_Weight.json': ['Low Birth Weight', socioeconomicColorMap],
+    'Data/Low_Birth_Weight_Pctl.json': ['Low Birth Weight Pctl', socioeconomicColorMap],
+    'Data/Cardiovascular_Disease.json': ['Cardiovascular Disease', socioeconomicColorMap],
+    'Data/Cardiovascular_Disease_Pctl.json': ['Cardiovascular Disease Pctl', socioeconomicColorMap],
+    'Data/Education.json': ['Education', socioeconomicColorMap],
+    'Data/Education_Pctl.json': ['Education Pctl', socioeconomicColorMap],
+    'Data/Linguistic_Isolation.json': ['Linguistic Isolation', socioeconomicColorMap],
+    'Data/Linguistic_Isolation_Pctl.json': ['Linguistic Isolation Pctl', socioeconomicColorMap],
+    'Data/Poverty.json': ['Poverty', socioeconomicColorMap],
+    'Data/Poverty_Pctl.json': ['Poverty Pctl', socioeconomicColorMap],
+    'Data/Unemployment.json': ['Unemployment', socioeconomicColorMap],
+    'Data/Unemployment_Pctl.json': ['Unemployment Pctl', socioeconomicColorMap],
+    'Data/Housing_Burden.json': ['Housing Burden', socioeconomicColorMap],
+    'Data/Housing_Burden_Pctl.json': ['Housing Burden Pctl', socioeconomicColorMap],
+    'Data/Pop._Char._.json': ['Pop. Char. ', socioeconomicColorMap],
+    'Data/Pop._Char._Score.json': ['Pop. Char. Score', socioeconomicColorMap],
+    'Data/Pop._Char._Pctl.json': ['Pop. Char. Pctl', socioeconomicColorMap],
+    'Data/pm25_predictions.json': ['pm25_predictions', pollutantColorMap],
+    'Data/adult_asthma.json': ['adult_asthma', socioeconomicColorMap],
+    'Data/traffic.json': ['traffic_counts', pollutantColorMap],
+    'Data/poverty.json': ['poverty_data', socioeconomicColorMap],
+    'Data/income.json': ['income_data', socioeconomicColorMap]
 };
+
+
 
 (async function() {
     
-    for (const [file, key] of Object.entries(fileMappings)) {
+    for (const [file, value] of Object.entries(fileMappings)) {
+        const key = value[0]; // Extract the display name
         const response = await fetch(file);
-        dataMap[key] = await response.json();
+        dataMap[key] = [await response.json(), value[1]]; // Store data along with its color map
     }
-    dataMap['PM25'] = await fetchData(PARAMS_MAP.PM25);
-    dataMap['O3'] = await fetchData(PARAMS_MAP.O3);
-    dataMap['NO2'] = await fetchData(PARAMS_MAP.NO2);
+
+    // Fetch data for PM25, O3, NO2 and store them along with their color maps
+    dataMap['PM25'] = [await fetchData(PARAMS_MAP.PM25), pollutantColorMap];
+    dataMap['O3'] = [await fetchData(PARAMS_MAP.O3), pollutantColorMap];
+    dataMap['NO2'] = [await fetchData(PARAMS_MAP.NO2), pollutantColorMap];
+
 })().catch(error => {
     console.error("Error fetching data:", error);
 });
-
+console.log("DATA MAP", dataMap);
 // Event listener for select element
 document.getElementById('pollutantSelect').addEventListener('change', (event) => {
-    document.getElementById('loadingSpinner').style.display = 'block';
+    console.log('Selected value:', event.target.value);
     const selectedData = dataMap[event.target.value];
     if (selectedData) {
-        console.log(`${event.target.value} data:`, selectedData);
-        displayData(selectedData, event.target.value, labels = false);
+        const colorMap = selectedData[1];
+        console.log('Updating color map');
+        updateColorGradient(colorMap.from, colorMap.to);
+        console.log('Displaying data');
+        displayData(selectedData[0], labels = false);
+    } else {
+        console.error('No data found for selected key:', event.target.value);
     }
-    document.getElementById('loadingSpinner').style.display = 'none';
 });
+
 
 
 
@@ -648,7 +679,7 @@ async function mainLoop() {
     console.log('Main loop started.');
     while (true) {
         try {
-            const flightData = await fetchPlaneData();
+            // const flightData = await fetchPlaneData();
             // UNCOMMENT TO GET ADSBEXCHANGE FLIGHT DATA
             // await updateViewer(flightData);
             console.log('Waiting for 10 seconds before fetching again...');
