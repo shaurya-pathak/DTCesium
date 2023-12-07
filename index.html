@@ -29,8 +29,12 @@
     <!-- You can use any spinner design you prefer -->
     <img src="loading_spinner.gif" alt="Loading..."/>
   </div>
-
-  <div id="pollutantDropdown">
+  
+  <div id="controlPanel">
+    <div class="checkbox-group">
+      <label for="myCheckbox">Show Air Traffic</label>
+      <input type="checkbox" id="myCheckbox">
+    </div>
     <input type="text" id="searchPollutant" placeholder="Search Pollutant..." autocomplete="off">
     <select id="pollutantSelect" size="3">
       <option value="PM25">PM2.5</option>
@@ -92,8 +96,13 @@
       <option value="Pop. Char. ">Pop. Char. </option>
       <option value="Pop. Char. Score">Pop. Char. Score</option>
       <option value="Pop. Char. Pctl">Pop. Char. Pctl</option>
-  </select>
+    </select>
+    <!-- </div> -->
   </div>
+  
+
+
+  
   <!-- Add this somewhere in your HTML where you want the legend to appear -->
   <div id="colorMapLegend" style="
     width: 300px;

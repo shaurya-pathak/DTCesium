@@ -672,23 +672,46 @@ document.getElementById('searchPollutant').addEventListener('input', function() 
   });
   
 
+document.getElementById('myCheckbox').addEventListener('change', function() {
+    if (!this.checked) {
+        // Code to run when checkbox is unchecked
+        const entities = viewer.entities.values;
+        for (let i = 0; i < entities.length; i++) {
+            const entity = entities[i];
+            if (!(entity.path) && !(entity.cylinder)) {
+                viewer.entities.remove(entity);
+                i--;  // Adjust the index since we've modified the collection
+            }
+        }
+    }
+});
 
 
+let isLoopActive = false;
 
 async function mainLoop() {
     console.log('Main loop started.');
-    while (true) {
+    while (isLoopActive) {
         try {
-            // const flightData = await fetchPlaneData();
-            // UNCOMMENT TO GET ADSBEXCHANGE FLIGHT DATA
-            // await updateViewer(flightData);
+            const flightData = await fetchPlaneData();
+            await updateViewer(flightData);
             console.log('Waiting for 10 seconds before fetching again...');
-
-            await new Promise(resolve => setTimeout(resolve, 10000));  // Wait for 10 seconds before fetching again
+            await new Promise(resolve => setTimeout(resolve, 10000)); // Wait for 10 seconds before fetching again
         } catch (error) {
             console.error('Error in main loop:', error);
         }
     }
+    console.log('Main loop stopped.');
 }
 
-mainLoop();
+document.getElementById('myCheckbox').addEventListener('change', async function() {
+    if (this.checked) {
+        if (!isLoopActive) {
+            isLoopActive = true;
+            mainLoop();
+        }
+    } else {
+        isLoopActive = false;
+    }
+});
+
