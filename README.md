@@ -1,32 +1,26 @@
-# Cesium Flight Tracker
+# Los Angeles Digital Twin with Air Traffic Visualization
 
-To run the demo:
+## Project Overview
 
-1. Clone and open this repository.
-2. Install NPM using `npm install`
-3. Install Cesium using `npm install cesium`
-4. `npm run`
-5. `npm start`
+The Los Angeles Digital Twin project is an ambitious endeavor to create a comprehensive, real-time 3D model of Los Angeles, integrating various data sources, including air traffic data. This digital twin aims to provide insights into urban dynamics, facilitate city planning, and enhance real-time decision-making capabilities for both public and private sectors.
 
-My demo uses an aircraft model that can be found here:
-https://www.cgtrader.com/items/662998/download-page
+## Features
 
-Feel free to use your own model :grinning:
+- **3D Model of Los Angeles**: Detailed and accurate representation of the city's layout, buildings, and infrastructure.
+- **Air Traffic Data Integration**: Real-time visualization of air traffic, including commercial flights, private jets, and drones.
+- **Data Layers**: Various layers of data such as traffic patterns, public transportation, utilities, and more.
+- **Interactive Interface**: Users can interact with the model to explore different aspects of the city and air traffic.
+- **Analytics Tools**: Built-in tools for analyzing patterns and trends in urban mobility and air traffic.
 
-To update the aircraft model, upload the new model to Cesium ion and edit this line of code in `flight.js`:
+## Getting Started
 
-`const airplaneUri = await Cesium.IonResource.fromAssetId(YOUR_ASSET_ID_HERE);`
+### Prerequisites
 
-Here are some images:
-![flight_tracker_1](https://user-images.githubusercontent.com/39531367/121040358-b019bb00-c766-11eb-91cd-9f69171a7d28.gif)
+- Ensure you have [Node.js](https://nodejs.org/) installed on your machine.
+- A modern web browser.
 
-![flight_tracker_3](https://user-images.githubusercontent.com/39531367/121040505-cde72000-c766-11eb-9e4c-58ab0d4d61ed.png)
+### Installation
 
-Here is the guide from Cesium
-https://cesium.com/docs/tutorials/build-a-flight-tracker/
-
-`CloudCollection` was recently added to the CesiumJS API. I would love to enhance this demo by adding clouds.
-
-https://cesium.com/learn/cesiumjs/ref-doc/CloudCollection.html?classFilter=cloud
-
-If you are seeing this and feel particularly ambitions, please submit a pull request ;)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/shaurya-pathak/DTCesium.git
