@@ -6,7 +6,7 @@ Cesium.GoogleMaps.defaultApiKey = "AIzaSyA0SIcbfBXj0RYV7t7L5PITeNlHPd9h4DA";
 
 const viewer = new Cesium.Viewer("cesiumContainer", {
     timeline: false,
-    animation: true,
+    animation: false,
     sceneModePicker: false,
     baseLayerPicker: false,
   });
@@ -67,36 +67,36 @@ function goToLocation(latitude, longitude, height, heading = 0, pitch = -45, lon
         return interpolatedPoints;
     }
     
-    const endPoint = {
-        latitude: 34.05008,
-        longitude: -118.25333,
-        height: 280
-    };
+//     const endPoint = {
+//         latitude: 34.05008,
+//         longitude: -118.25333,
+//         height: 280
+//     };
     
-    const startPoint = {
-        latitude: 34.0632583,
-        longitude: -118.414617,
-        height: 200
-    };
+//     const startPoint = {
+//         latitude: 34.0632583,
+//         longitude: -118.414617,
+//         height: 200
+//     };
     
-    const flightData = interpolatePoints(startPoint, endPoint);
-    for (let i = 0; i < flightData.length; i++) {
+//     const flightData = interpolatePoints(startPoint, endPoint);
+//     for (let i = 0; i < flightData.length; i++) {
         
-        flightData[i].height += -1 * (i-0) * (i-100);
-    }
+//         flightData[i].height += -1 * (i-0) * (i-100);
+//     }
     
-    console.log(flightData);
+//     console.log(flightData);
     
-// Create a point for each.
-for (let i = 0; i < flightData.length; i++) {
-  const dataPoint = flightData[i];
+// // Create a point for each.
+// for (let i = 0; i < flightData.length; i++) {
+//   const dataPoint = flightData[i];
 
-  viewer.entities.add({
-    description: `Location: (${dataPoint.longitude}, ${dataPoint.latitude}, ${dataPoint.height})`,
-    position: Cesium.Cartesian3.fromDegrees(dataPoint.longitude, dataPoint.latitude, dataPoint.height),
-    point: { pixelSize: 10, color: Cesium.Color.RED }
-  });
-}
+//   viewer.entities.add({
+//     description: `Location: (${dataPoint.longitude}, ${dataPoint.latitude}, ${dataPoint.height})`,
+//     position: Cesium.Cartesian3.fromDegrees(dataPoint.longitude, dataPoint.latitude, dataPoint.height),
+//     point: { pixelSize: 10, color: Cesium.Color.RED }
+//   });
+// }
   // Hide the default globe as the Photorealistic 3D Tiles include terrain
   viewer.scene.globe.show = false;
   
@@ -122,38 +122,38 @@ for (let i = 0; i < flightData.length; i++) {
   Initialize the viewer's clock by setting its start and stop to the flight start and stop times we just calculated. 
   Also, set the viewer's current time to the start time and take the user to that time. 
 */
-const timeStepInSeconds = 30;
-const totalSeconds = timeStepInSeconds * (flightData.length - 1);
-const start = Cesium.JulianDate.fromIso8601("2020-03-09T23:10:00Z");
-const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
-viewer.clock.startTime = start.clone();
-viewer.clock.stopTime = stop.clone();
-viewer.clock.currentTime = start.clone();
-// viewer.timeline.zoomTo(start, stop);
-// Speed up the playback speed 50x.
-viewer.clock.multiplier = 50;
-// Start playing the scene.
-viewer.clock.shouldAnimate = true;
+// const timeStepInSeconds = 30;
+// const totalSeconds = timeStepInSeconds * (flightData.length - 1);
+// const start = Cesium.JulianDate.fromIso8601("2020-03-09T23:10:00Z");
+// const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
+// viewer.clock.startTime = start.clone();
+// viewer.clock.stopTime = stop.clone();
+// viewer.clock.currentTime = start.clone();
+// // viewer.timeline.zoomTo(start, stop);
+// // Speed up the playback speed 50x.
+// viewer.clock.multiplier = 50;
+// // Start playing the scene.
+// viewer.clock.shouldAnimate = true;
 
 // The SampledPositionedProperty stores the position and timestamp for each sample along the radar sample series.
-const positionProperty = new Cesium.SampledPositionProperty();
+// const positionProperty = new Cesium.SampledPositionProperty();
 
-for (let i = 0; i < flightData.length; i++) {
-  const dataPoint = flightData[i];
+// for (let i = 0; i < flightData.length; i++) {
+//   const dataPoint = flightData[i];
 
-  // Declare the time for this individual sample and store it in a new JulianDate instance.
-  const time = Cesium.JulianDate.addSeconds(start, i * timeStepInSeconds, new Cesium.JulianDate());
-  const position = Cesium.Cartesian3.fromDegrees(dataPoint.longitude, dataPoint.latitude, dataPoint.height);
-  // Store the position along with its timestamp.
-  // Here we add the positions all upfront, but these can be added at run-time as samples are received from a server.
-  positionProperty.addSample(time, position);
+//   // Declare the time for this individual sample and store it in a new JulianDate instance.
+//   const time = Cesium.JulianDate.addSeconds(start, i * timeStepInSeconds, new Cesium.JulianDate());
+//   const position = Cesium.Cartesian3.fromDegrees(dataPoint.longitude, dataPoint.latitude, dataPoint.height);
+//   // Store the position along with its timestamp.
+//   // Here we add the positions all upfront, but these can be added at run-time as samples are received from a server.
+//   positionProperty.addSample(time, position);
 
-  viewer.entities.add({
-    description: `Location: (${dataPoint.longitude}, ${dataPoint.latitude}, ${dataPoint.height})`,
-    position: position,
-    point: { pixelSize: 10, color: Cesium.Color.RED },
-  });
-}
+//   viewer.entities.add({
+//     description: `Location: (${dataPoint.longitude}, ${dataPoint.latitude}, ${dataPoint.height})`,
+//     position: position,
+//     point: { pixelSize: 10, color: Cesium.Color.RED },
+//   });
+// }
 
 // STEP 4 CODE (green circle entity)
 // Create an entity to both visualize the entire radar sample series with a line and add a point that moves along the samples.
@@ -345,7 +345,7 @@ function normalizeData(data) {
     const minVal = Math.min(...valuesToNormalize);
     const maxVal = Math.max(...valuesToNormalize);
     document.getElementById('minValue').textContent = minVal.toFixed(2);
-    document.getElementById('maxValue').textContent = maxVal.toFixed(2);
+    document.getElementById('maxValue').textContent = maxVal.toFixed(2) * 5;
     console.log('Min and max values:', minVal, maxVal)
     // Return a new array with only the third values normalized
     return data.map((value, index) => {
@@ -361,7 +361,7 @@ function normalizeData(data) {
 
 function interpolateColor(height) {
     // Ensure height is between 0 and 1
-    console.log('begin interpolate color')
+    // console.log('begin interpolate color')
     height = Math.max(0, Math.min(1, height));
 
     // Parse the RGB values from the strings
@@ -374,8 +374,8 @@ function interpolateColor(height) {
     let blue = fromColorComponents[2] + (toColorComponents[2] - fromColorComponents[2]) * height;
 
     // Return the interpolated color in 'rgb()' format
-    console.log('finish interpolate color')
-    console.log(`rgb(${Math.round(red)}, ${Math.round(green)}, ${Math.round(blue)})`)
+    // console.log('finish interpolate color')
+    // console.log(`rgb(${Math.round(red)}, ${Math.round(green)}, ${Math.round(blue)})`)
     return `rgb(${Math.round(red)}, ${Math.round(green)}, ${Math.round(blue)})`;
 }
 
@@ -392,17 +392,17 @@ function displayData(transformedData, labels = false, height_divisor = 1) {
     // Normalize data before using it
     let preNormalizedData = transformedData;
     transformedData = normalizeData(transformedData);
-    console.log('Normalized data:', transformedData);
+    // console.log('Normalized data:', transformedData);
 
     // Clear previous entities but not all entities
     let entitiesToRemove = viewer.entities.values.filter(entity => entity.ellipsoid || entity.label);
-    console.log('Removing', entitiesToRemove.length, 'ellipsoids/labels');
+    // console.log('Removing', entitiesToRemove.length, 'ellipsoids/labels');
     for (let entity of entitiesToRemove) {
         viewer.entities.remove(entity);
     }
 
     entitiesToRemove = viewer.entities.values.filter(entity => entity.cylinder);
-    console.log('Removing', entitiesToRemove.length, 'cylinders');
+    // console.log('Removing', entitiesToRemove.length, 'cylinders');
     for (let entity of entitiesToRemove) {
         viewer.entities.remove(entity);
     }
@@ -412,14 +412,14 @@ function displayData(transformedData, labels = false, height_divisor = 1) {
         const height = rawHeight / height_divisor;
 
         if (height === 0) {
-            console.log(`Skipping data point ${i/3} due to zero height.`);
+            //console.log(`Skipping data point ${i/3} due to zero height.`);
             continue;
         }
 
         let color;
         color = interpolateColor(height);
         color = colorStringToCesiumColor(color);
-        console.log('Color:', color)
+        // console.log('Color:', color)
 
         if (labels) {
             viewer.entities.add({
@@ -534,6 +534,10 @@ function displayDataAtHeight(transformedData, pollutantType, labels = true, sphe
 
 
 let dataMap = {};
+let timeStepCount = 1;
+let isPlaying = false;
+let playInterval;
+var timeSeriesData;
 
 
 const pollutantColorMap = { 'from': 'rgb(0, 255, 0)', 'to': 'rgb(255, 0, 0)' }; // Example gradient colors
@@ -541,6 +545,7 @@ const socioeconomicColorMap = { 'from': 'rgb(0, 0, 255)', 'to': 'rgb(255, 255, 0
 const statColorMap = { 'from': 'rgb(100, 100, 0)', 'to': 'rgb(200, 0, 200)' };
 
 const fileMappings = {
+    'Data/time-series-data/': ['Time Series Data', statColorMap],
     'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap],
     'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap],
     'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap],
@@ -600,16 +605,45 @@ const fileMappings = {
 };
 
 
-
 (async function() {
-    
     for (const [file, value] of Object.entries(fileMappings)) {
         const key = value[0]; // Extract the display name
-        const response = await fetch(file);
-        dataMap[key] = [await response.json(), value[1]]; // Store data along with its color map
+
+        if (key === 'Time Series Data') {
+            console.log('Fetching time series data...');
+            console.log(file)
+            // Special handling for time series data
+            try {
+                // Fetch the manifest.json file
+            const response = await fetch('Data/time-series-data/manifest.json');
+            const data = await response.json(); // Parse the JSON
+            console.log('Manifest data:', data)
+            // Extract file names from the 'files' array in the JSON
+            const fileListFromManifest = data.files.map(file => file.fileName + '.json'); // Add '.json' if necessary
+            console.log('File list from manifest:', fileListFromManifest);
+            // Define your initial fileList array
+
+            // Append the new file names from the manifest to your fileList
+            var fileList = fileListFromManifest;
+            let allTimeSeriesData = [];
+            for (const fileName of fileList) {
+                const fileResponse = await fetch(`${file}${fileName}`);
+                allTimeSeriesData.push(await fileResponse.json());
+            }
+            console.log('Time series data:', allTimeSeriesData)
+            dataMap[key] = [allTimeSeriesData, value[1]];
+            } catch (error) {
+                console.error("Error fetching time series data:", error);
+            }
+        } else {
+            // Handling for all other data types
+            const response = await fetch(file);
+            dataMap[key] = [await response.json(), value[1]]; // Store data along with its color map
+        }
     }
 
     // Fetch data for PM25, O3, NO2 and store them along with their color maps
+    // Assuming fetchData is a function you've defined elsewhere to fetch these specific data types
     dataMap['PM25'] = [await fetchData(PARAMS_MAP.PM25), pollutantColorMap];
     dataMap['O3'] = [await fetchData(PARAMS_MAP.O3), pollutantColorMap];
     dataMap['NO2'] = [await fetchData(PARAMS_MAP.NO2), pollutantColorMap];
@@ -622,17 +656,110 @@ console.log("DATA MAP", dataMap);
 document.getElementById('pollutantSelect').addEventListener('change', (event) => {
     console.log('Selected value:', event.target.value);
     const selectedData = dataMap[event.target.value];
+
     if (selectedData) {
+        console.log('selected data', selectedData)
         const colorMap = selectedData[1];
         console.log('Updating color map');
         updateColorGradient(colorMap.from, colorMap.to);
         console.log('Displaying data');
-        displayData(selectedData[0], labels = false);
+
+        if (event.target.value === 'Time Series Data') {
+            timeSeriesData = selectedData[0];
+            displayTimeSeriesData(); // Function to display time series data
+        } else {
+            displayData(selectedData[0], labels = false); // Function for other types of data
+        }
     } else {
         console.error('No data found for selected key:', event.target.value);
     }
 });
 
+function formatDateTime(isoString) {
+    const date = new Date(isoString);
+
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // Adding 1 because getMonth() returns month from 0-11
+    const day = date.getDate();
+    let hours = date.getHours();
+    const amPm = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert 24-hour time to 12-hour format
+    hours = hours % 12;
+    // The hour '0' should be '12'
+    hours = hours ? hours : 12;
+
+    const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const formattedTime = `${String(hours).padStart(2, '0')} ${amPm}`;
+
+    return `${formattedDate} ${formattedTime}`;
+}
+
+
+function updateDateDisplay(count, data) {
+    // Get the last predictionDateTime from the data
+    const lastPrediction = data.files[count].predictionDateTime;
+
+    // Format the date as needed, here we're just using the ISO string directly
+    const formattedDate = formatDateTime(lastPrediction);
+
+    // Update the currentDate span with this date
+    document.getElementById('currentDate').textContent = formattedDate;
+}
+
+async function displayTimeSeriesData() {
+    console.log('Displaying time series data...');
+    const response = await fetch('Data/time-series-data/manifest.json');
+    const data = await response.json();
+    updateDateDisplay(timeStepCount, data);
+    displayData(timeSeriesData[timeStepCount]);
+}
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    console.log("DOM fully loaded and parsed");
+
+    const playPauseButton = document.getElementById('playPauseButton');
+    const stepForwardButton = document.getElementById('stepForwardButton');
+    const stepBackButton = document.getElementById('stepBackButton');
+
+    const stepDate = (days) => {
+        timeStepCount += days;
+        timeStepCount = timeStepCount % 5;
+        console.log(`Stepped to timeStepCount: ${timeStepCount}`);
+        displayTimeSeriesData();
+    };
+
+    playPauseButton.addEventListener('click', function () {
+        isPlaying = !isPlaying;
+        console.log(`Play/pause toggled. isPlaying: ${isPlaying}`);
+        playPauseButton.textContent = isPlaying ? '⏸️' : '▶️';
+
+        if (isPlaying) {
+            console.log("Starting interval for stepping through data");
+            playInterval = setInterval(() => stepDate(1), 1750);
+        } else {
+            console.log("Clearing interval for stepping through data");
+            clearInterval(playInterval);
+        }
+    });
+
+    stepForwardButton.addEventListener('click', function () {
+        console.log("Step forward button clicked");
+        stepDate(1);
+    });
+
+    stepBackButton.addEventListener('click', function () {
+        console.log("Step back button clicked");
+        stepDate(-1);
+        
+    });
+
+    // Initialize the display
+    console.log("Initializing time series data display");
+    displayTimeSeriesData();
+});
 
 
 

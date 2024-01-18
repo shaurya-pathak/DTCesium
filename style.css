@@ -152,6 +152,19 @@ button {
 #pollutantSelect option:hover {
   background-color: #f2f2f2;
 }
+
+
+#searchPollutant {
+  font-family: 'Roboto', sans-serif; /* Ensure Roboto font */
+  color: #333; /* Slightly gray color */
+  border: 1px solid #ddd; /* Border to match the style */
+  border-radius: 4px; /* Rounded corners */
+  padding: 5px 10px; /* Padding for the input */
+  outline: none; /* Remove the default focus outline */
+  width: calc(100% - 20px); /* Full width within the container */
+  box-sizing: border-box; /* Include padding and border in the element's total width */
+  margin-top: 10px; /* Space between checkbox/label and input */
+}
 #controlPanel {
   position: fixed;
   right: 20px;
@@ -182,14 +195,25 @@ button {
   /* Additional custom styling for checkbox here if needed */
 }
 
-#searchPollutant {
-  font-family: 'Roboto', sans-serif; /* Ensure Roboto font */
-  color: #333; /* Slightly gray color */
-  border: 1px solid #ddd; /* Border to match the style */
-  border-radius: 4px; /* Rounded corners */
-  padding: 5px 10px; /* Padding for the input */
-  outline: none; /* Remove the default focus outline */
-  width: calc(100% - 20px); /* Full width within the container */
-  box-sizing: border-box; /* Include padding and border in the element's total width */
-  margin-top: 10px; /* Space between checkbox/label and input */
+#controlPanel button {
+  font-size: 16px;
+  padding: 5px 10px;
+  background-color: #ffffff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button-group {
+  display: flex; /* Aligns buttons in a row */
+  margin-top: 10px; /* Add some space above the button group */
+}
+
+#controlPanel button:hover {
+  background-color: #45a049;
+}
+
+#dateDisplay {
+  margin-left: auto; /* Pushes the date display to the right */
 }
