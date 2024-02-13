@@ -345,7 +345,7 @@ function normalizeData(data) {
     const minVal = Math.min(...valuesToNormalize);
     const maxVal = Math.max(...valuesToNormalize);
     document.getElementById('minValue').textContent = minVal.toFixed(2);
-    document.getElementById('maxValue').textContent = maxVal.toFixed(2) * 5;
+    document.getElementById('maxValue').textContent = maxVal.toFixed(2);
     console.log('Min and max values:', minVal, maxVal)
     // Return a new array with only the third values normalized
     return data.map((value, index) => {
@@ -544,8 +544,9 @@ const pollutantColorMap = { 'from': 'rgb(0, 255, 0)', 'to': 'rgb(255, 0, 0)' }; 
 const socioeconomicColorMap = { 'from': 'rgb(0, 0, 255)', 'to': 'rgb(255, 255, 0)' };
 const statColorMap = { 'from': 'rgb(100, 100, 0)', 'to': 'rgb(200, 0, 200)' };
 
+
 const fileMappings = {
-    'Data/time-series-data/': ['Time Series Data', statColorMap],
+    'Data/time-series-data/': ['Time Series Data', pollutantColorMap],
     'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap],
     'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap],
     'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap],
@@ -611,30 +612,26 @@ const fileMappings = {
 
         if (key === 'Time Series Data') {
             console.log('Fetching time series data...');
-            console.log(file)
-            // Special handling for time series data
-            try {
-                // Fetch the manifest.json file
-            const response = await fetch('Data/time-series-data/manifest.json');
-            const data = await response.json(); // Parse the JSON
-            console.log('Manifest data:', data)
-            // Extract file names from the 'files' array in the JSON
-            const fileListFromManifest = data.files.map(file => file.fileName + '.json'); // Add '.json' if necessary
-            console.log('File list from manifest:', fileListFromManifest);
-            // Define your initial fileList array
 
-            // Append the new file names from the manifest to your fileList
-            var fileList = fileListFromManifest;
+            // Define your fileList array with the specific file names
+            const fileList = ['recent_0.json', 'recent_1.json', 'recent_2.json', 'recent_3.json', 'recent_4.json'];
+
             let allTimeSeriesData = [];
+
+            // Loop through the fileList and fetch each file
             for (const fileName of fileList) {
-                const fileResponse = await fetch(`${file}${fileName}`);
-                allTimeSeriesData.push(await fileResponse.json());
+                try {
+                    const fileResponse = await fetch(`https://sagemaker-us-east-2-958520404663.s3.us-east-2.amazonaws.com/sagemaker/predictions/${fileName}`);
+                    allTimeSeriesData.push(await fileResponse.json());
+                    console.log(`Fetched data from ${fileName}`);
+                } catch (error) {
+                    console.error(`Error fetching data from ${fileName}:`, error);
+                }
             }
-            console.log('Time series data:', allTimeSeriesData)
-            dataMap[key] = [allTimeSeriesData, value[1]];
-            } catch (error) {
-                console.error("Error fetching time series data:", error);
-            }
+
+            console.log('Time series data:', allTimeSeriesData);
+            dataMap[key] = [allTimeSeriesData, value[1]]; // Assuming 'key' and 'value' are defined earlier in your code
+
         } else {
             // Handling for all other data types
             const response = await fetch(file);
@@ -734,7 +731,7 @@ document.addEventListener('DOMContentLoaded', function () {
     playPauseButton.addEventListener('click', function () {
         isPlaying = !isPlaying;
         console.log(`Play/pause toggled. isPlaying: ${isPlaying}`);
-        playPauseButton.textContent = isPlaying ? '⏸️' : '▶️';
+        document.getElementById('playPauseImg').src = isPlaying ? 'images/pause_icon.png' : 'images/play_icon.png';
 
         if (isPlaying) {
             console.log("Starting interval for stepping through data");
