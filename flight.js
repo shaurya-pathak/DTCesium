@@ -706,7 +706,12 @@ function updateDateDisplay(count, data) {
 
 async function displayTimeSeriesData() {
     console.log('Displaying time series data...');
-    const response = await fetch('Data/time-series-data/manifest.json');
+    var response;
+    try {
+        response = await fetch(`https://sagemaker-us-east-2-958520404663.s3.us-east-2.amazonaws.com/sagemaker/predictions/manifest.json`);
+    } catch (error) {
+        console.error(`Error fetching data from ${fileName}:`, error);
+    }
     const data = await response.json();
     updateDateDisplay(timeStepCount, data);
     displayData(timeSeriesData[timeStepCount]);
