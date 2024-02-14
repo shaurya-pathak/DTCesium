@@ -664,9 +664,12 @@ document.getElementById('pollutantSelect').addEventListener('change', (event) =>
         if (event.target.value === 'Time Series Data') {
             timeSeriesData = selectedData[0];
             displayTimeSeriesData(); // Function to display time series data
+            document.querySelector('.time-control').style.display = 'block'; // Show the time control for time series data
         } else {
             displayData(selectedData[0], labels = false); // Function for other types of data
+            document.querySelector('.time-control').style.display = 'none'; // Hide the time control for non-time series data
         }
+        
     } else {
         console.error('No data found for selected key:', event.target.value);
     }

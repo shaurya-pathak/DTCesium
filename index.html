@@ -35,15 +35,15 @@
       <label for="myCheckbox">Show Air Traffic</label>
       <input type="checkbox" id="myCheckbox">
     </div>
-    <input type="text" id="searchPollutant" placeholder="Search Pollutant..." autocomplete="off">
-    <select id="pollutantSelect" size="3">
+    <input type="text" id="searchPollutant" placeholder="Search Pollutant..." autocomplete="off" style="width: 300px;">
+    <select id="pollutantSelect" size="3" style="width: 320px;">
       <option value="Time Series Data">PM2.5 Predictions</option>
-      <option value="PM25">PM2.5</option>
-      <option value="O3">O3</option>
-      <option value="NO2">NO2</option>
+      <option value="PM25">Live PM2.5</option>
+      <option value="O3">Live O3</option>
+      <option value="NO2">Live NO2</option>
       <!-- <option value="pm25_predictions">PM2.5 Predictions</option> -->
-      <option value="traffic_counts">Traffic Counts </option>
-      <option value="adult_asthma">Adult Asthma (Incorrect)</option>
+      <!-- <option value="traffic_counts">Traffic Counts </option>
+      <option value="adult_asthma">Adult Asthma (Incorrect)</option> -->
       <option value="Poverty">Poverty </option>
       <option value="Income">Income </option>
       <option value="CES 4.0 Score">CES 4.0 Score</option>
@@ -98,7 +98,7 @@
       <option value="Pop. Char. Score">Pop. Char. Score</option>
       <option value="Pop. Char. Pctl">Pop. Char. Pctl</option>
     </select>
-    <div class="time-control">
+    <div class="time-control" style="display: none;">
     <div class="button-group">
       <button id="stepBackButton">
         <img src="images/left_arrow_icon.png" alt="Step Back" style="width: 30px; height: auto;">
