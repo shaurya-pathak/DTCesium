@@ -546,6 +546,7 @@ const statColorMap = { 'from': 'rgb(100, 100, 0)', 'to': 'rgb(200, 0, 200)' };
 
 
 const fileMappings = {
+    'Data/no_data.json': ['No Data', pollutantColorMap],
     'Data/time-series-data/': ['Time Series Data', pollutantColorMap],
     'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap],
     'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap],
