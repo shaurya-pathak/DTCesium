@@ -695,6 +695,28 @@ function formatDateTime(isoString) {
 
     return `${formattedDate} ${formattedTime}`;
 }
+function updatePredictionDateTime(predictions) {
+    // Get the current date and time
+    const now = new Date();
+    const leastRecent = new Date(now.getTime() - 12 * 60 * 60 * 1000); // 7 hours back
+
+    // Adjust the array as specified: most recent, then least recent to most recent - 1
+    predictions['files'].forEach((prediction, index) => {
+        let adjustedHour;
+        if (index === 0) {
+            // First prediction gets the current time (most recent)
+            adjustedHour = now;
+        } else {
+            // Subsequent predictions get leastRecent + (index - 1) to simulate the rotation
+            adjustedHour = new Date(leastRecent.getTime() + (index - 1) * 60 * 60 * 1000);
+        }
+        const formattedDateTime = adjustedHour.toISOString().substring(0, 19);
+        prediction.predictionDateTime = formattedDateTime;
+    });
+
+    // Return the updated predictions array
+    return predictions;
+}
 
 
 function updateDateDisplay(count, data) {
@@ -716,7 +738,10 @@ async function displayTimeSeriesData() {
     } catch (error) {
         console.error(`Error fetching data from ${fileName}:`, error);
     }
-    const data = await response.json();
+    var data = await response.json();
+    console.log('Time series data manifest:', data);
+    data = updatePredictionDateTime(data);
+    console.log('Time series data updated manifest:', data);
     updateDateDisplay(timeStepCount, data);
     displayData(timeSeriesData[timeStepCount]);
 }
