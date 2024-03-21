@@ -13,6 +13,9 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
 
 var color1 = 'rgb(0, 0, 0)';
 var color2 = 'rgb(100, 0, 0)';
+var threeDTiles = false;
+
+
 
 function updateColorGradient(fromColor, toColor) {
 
@@ -98,21 +101,44 @@ function goToLocation(latitude, longitude, height, heading = 0, pitch = -45, lon
 //   });
 // }
   // Hide the default globe as the Photorealistic 3D Tiles include terrain
-  viewer.scene.globe.show = false;
+  viewer.scene.globe.show = true;
   
-  // Function to add Photorealistic 3D Tiles
-  async function addPhotorealisticTiles() {
-    try {
-      // Replace the following line with the correct method to add the Google Photorealistic 3D Tiles
-      const tileset = await Cesium.createGooglePhotorealistic3DTileset();
-      viewer.scene.primitives.add(tileset);
-    } catch (error) {
-      console.log(`Error loading Photorealistic 3D Tiles: ${error}`);
-    }
+  // Global variable to keep track of the added tileset
+let photorealisticTileset = null;
+
+async function addPhotorealisticTiles() {
+  try {
+    // Assuming this method is correct for adding the tiles
+    const tileset = await Cesium.createGooglePhotorealistic3DTileset();
+    viewer.scene.primitives.add(tileset);
+    // Save the reference to the added tileset for later removal
+    photorealisticTileset = tileset;
+    viewer.scene.globe.show = false;
+    
+  } catch (error) {
+    console.log(`Error loading Photorealistic 3D Tiles: ${error}`);
   }
-  
-  // Call the function to add the Photorealistic 3D Tiles
-  addPhotorealisticTiles();
+}
+
+function deletePhotorealisticTiles() {
+  if (photorealisticTileset) {
+    // Remove the tileset from the scene
+    viewer.scene.primitives.remove(photorealisticTileset);
+    // Clear the reference
+    photorealisticTileset = null;
+    viewer.scene.globe.show = true;
+  } else {
+    console.log("No Photorealistic 3D Tiles to remove.");
+  }
+}
+
+// Call the function to add the Photorealistic 3D Tiles
+// addPhotorealisticTiles();
+
+// When needed, call the function to delete the Photorealistic 3D Tiles
+// deletePhotorealisticTiles();
+
+
 
 /* Initialize the viewer clock:
   Assume the radar samples are 30 seconds apart, and calculate the entire flight duration based on that assumption.
@@ -179,9 +205,20 @@ getDroneData();
 
 // Make the camera track this moving entity.
 
+// async function printUniqueAircraftTypes(response) {
+//     const data = await response.json();
+//     console.log('Data fetched successfully:', data);
+    
+//     const aircraftTypes = data.ac.map(ac => ac.type); // Extract the 'type' from each aircraft
+//     const uniqueAircraftTypes = [...new Set(aircraftTypes)]; // Remove duplicates
+    
+//     console.log('Unique Aircraft Types:', uniqueAircraftTypes);
+//     return uniqueAircraftTypes; // Optional, in case you need the list elsewhere
+// }
+
 async function fetchPlaneData() {
     console.log('Fetching data...');
-    const url = "https://adsbx-flight-sim-traffic.p.rapidapi.com/api/aircraft/json/lat/34.0407/lon/-118.2468/dist/25/";
+    const url = "https://adsbx-flight-sim-traffic.p.rapidapi.com/api/aircraft/json/lat/34/lon/-118.25/dist/25/";
     const headers = {
         "X-RapidAPI-Key": "a129c45c68mshbcc8bbe0572d46ap16eb71jsn638a7fcad839",
         "X-RapidAPI-Host": "adsbx-flight-sim-traffic.p.rapidapi.com"
@@ -189,9 +226,11 @@ async function fetchPlaneData() {
     
     try {
         const response = await fetch(url, { headers });
+        // await printUniqueAircraftTypes(response);
         const data = await response.json();
         console.log('Data fetched successfully:', data);
         return data.ac;
+        
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -210,61 +249,132 @@ async function updateViewer(flightData) {
     }
 
     try {
-        let airplaneUri = await Cesium.IonResource.fromAssetId(2295748);
+        // let airplaneUri = await Cesium.IonResource.fromAssetId(2295748);
         let isHelicopter = false;
-    
-        for (const dataPoint of flightData) {
-            if (dataPoint.type.length === 3) {
-                airplaneUri = await Cesium.IonResource.fromAssetId(2309852);
-                isHelicopter = true;
-                console.log("CHANGED TO HELICOPTER HELICOPTER");
-                const position = Cesium.Cartesian3.fromDegrees(parseFloat(dataPoint.lon), parseFloat(dataPoint.lat), (parseFloat(dataPoint.alt) - 40) || 0);
-            const heading = Cesium.Math.toRadians(parseFloat(dataPoint.trak - 90) || 0);
-            const pitch = 0;
-            const roll = 0;
-            const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-            const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
-            console.log("HELI ADDED")
-            viewer.entities.add({
-                position: position,
-                model: {
-                    uri: airplaneUri,
-                    scale: new Cesium.CallbackProperty(function(time, result) {
-                        var cameraPosition = viewer.camera.position;
-                        var entityPosition = position;
-                        var distance = Cesium.Cartesian3.distance(cameraPosition, entityPosition);
-                        var scale = distance / 1000.0;
-                        return Math.max(scale, 1000.0);
-                    }, false)
-                },
-                orientation: orientation,
-                description: `ICAO: ${dataPoint.icao}, Altitude: ${dataPoint.alt}, Speed: ${dataPoint.spd}`
-            });
-            }
-            else    {
-            const position = Cesium.Cartesian3.fromDegrees(parseFloat(dataPoint.lon), parseFloat(dataPoint.lat), (parseFloat(dataPoint.alt) - 40) || 0);
-            const heading = Cesium.Math.toRadians(parseFloat(dataPoint.trak - 90) || 0);
-            const pitch = 0;
-            const roll = 0;
-            const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-            const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
-    
-            viewer.entities.add({
-                position: position,
-                model: {
-                    uri: airplaneUri,
-                    scale: new Cesium.CallbackProperty(function(time, result) {
-                        var cameraPosition = viewer.camera.position;
-                        var entityPosition = position;
-                        var distance = Cesium.Cartesian3.distance(cameraPosition, entityPosition);
-                        var scale = distance / 750.0;
-                        return Math.max(scale, 25.0);
-                    }, false)
-                },
-                orientation: orientation,
-                description: `ICAO: ${dataPoint.icao}, Altitude: ${dataPoint.alt}, Speed: ${dataPoint.spd}`
-            });
+        // Define the colors using Cesium.IonResource.fromAssetId
+    const red = await Cesium.IonResource.fromAssetId(2492972);
+    const orange = await Cesium.IonResource.fromAssetId(2492971);
+    const lime = await Cesium.IonResource.fromAssetId(2492970);
+    const green = await Cesium.IonResource.fromAssetId(2492969);
+    const yellow = await Cesium.IonResource.fromAssetId(2492974);
+
+    // Function to get color based on altitude ratio
+    async function getColorBasedOnAltitudeRatio(altitude) {
+        const thresholds = [0.2, 0.4, 0.6, 0.8]; // Example altitude ratio thresholds
+        const colors = [green, lime, yellow, orange, red]; // Corresponding Cesium.IonResource colors
+        const defaultColor = red; // Default color if altitude is above all thresholds
+        
+        // Find the index of the first threshold greater than the altitude ratio
+        const index = thresholds.findIndex(threshold => altitude <= threshold);
+        
+        // Return the corresponding Cesium.IonResource, or the default color if altitude is above all thresholds
+        return index !== -1 ? colors[index] : defaultColor;
+    }
+
+    // Iterate through your flightData to add entities
+    for (const dataPoint of flightData) {
+        const position = Cesium.Cartesian3.fromDegrees(parseFloat(dataPoint.lon), parseFloat(dataPoint.lat), (parseFloat(dataPoint.alt) - 40) || 0);
+        const heading = Cesium.Math.toRadians(parseFloat(dataPoint.trak) || 0);
+        const pitch = 0;
+        const roll = 0;
+        const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+        const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+
+        // Calculate altitude ratio
+        const maxAltitude = 4200; // Maximum altitude for the data set
+        const altitudeRatio = parseFloat(dataPoint.alt) / maxAltitude;
+
+        // Get the color (Cesium.IonResource) based on the altitude ratio
+        const colorResource = await getColorBasedOnAltitudeRatio(altitudeRatio);
+
+        carbon_emissions_per_100_miles = {
+            'P28A': 65,
+            'BE36': 80,
+            'E170': 210,
+            'A21N': 220,
+            'C172': 60,
+            'SLG2': 180,
+            'B738': 200,
+            'B763': 300,
+            'B39M': 250,
+            'GLAS': 150,
+            'LNC2': 180,
+            'C72R': 70,
+            'F2TH': 350,
+            'A320': 220,
+            'G73T': 280,
+            'C152': 50,
+            'P28T': 70,
+            'B737': 200,
+            'SR22': 60,
+            'A321': 230,
+            'B789': 250,
+            'B739': 220,
+            'GLF5': 400,
+            'CL35': 300,
+            'D6SL': 280,
+            'AS50': 90,
+            'B78X': 270,
+            'GLF3': 350,
+            'AA5': 75,
+            'PA32': 90,
+            'PTS1': 100,
+            'C560': 180,
+            'CRJ7': 220,
+            'B752': 280,
+            'B350': 120,
+            'SR20': 70,
+            'R22': 40,
+            'DA40': 60,
+            'B38M': 250,
+            'F900': 400,
+            'S92': 500,
+            'E55P': 250,
+            'TOBA': 110,
+            'R44': 45,
+            'R66': 50,
+            'B753': 280,
+            'B407': 90,
+            'A20N': 220,
+            'GLF4': 380,
+            'A319': 220,
+            'E75L': 220,
+            'S22T': 150,
+            'B06': 400,
+            'A388': 550,
+            'C25C': 200,
+            'E135': 150,
+            'BE35': 80,
+            'C182': 70,
+            'GLF6': 450,
+            'C700': 300,
+            'C25B': 250,
+            'CL60': 500,
+            'C56X': 200
         }
+        const emissions = carbon_emissions_per_100_miles[dataPoint.type] || 0;
+        
+
+        // Add the entity with the model URI set based on the color (Cesium.IonResource)
+        viewer.entities.add({
+            position: position,
+            model: {
+                uri: colorResource,
+                scale: new Cesium.CallbackProperty(function(time, result) {
+                    var cameraPosition = viewer.camera.position;
+                    var entityPosition = position;
+                    var distance = Cesium.Cartesian3.distance(cameraPosition, entityPosition);
+                    var scale = distance / 3500.0;
+                    return Math.max(scale, 25.0);
+                }, false)
+            },
+            orientation: orientation,
+            description: `ICAO: ${dataPoint.icao}, Altitude: ${dataPoint.alt}, Speed: ${dataPoint.spd}, Emissions per 100 miles: ${emissions !== 0 ? `${emissions} kg of CO2 per 100 miles` : 'Data not available'}`,
+        });
+        
+
+
+        // }
         }
         console.log('Viewer updated successfully.');
     } catch (error) {
@@ -468,6 +578,13 @@ function normalizeDataAtHeight(data) {
     });
 }
 
+function updateTooltipText(newText) {
+    var tooltip = document.querySelector('.custom-tooltip');
+    if (tooltip) {
+        tooltip.textContent = newText;
+    }
+}
+
 
 function displayDataAtHeight(transformedData, pollutantType, labels = true, sphere_scale = 1, value_divisor = 1) {
     // Clear previous entities
@@ -538,6 +655,7 @@ let timeStepCount = 1;
 let isPlaying = false;
 let playInterval;
 var timeSeriesData;
+var twoDtimeSeriesData
 
 
 const pollutantColorMap = { 'from': 'rgb(0, 255, 0)', 'to': 'rgb(255, 0, 0)' }; // Example gradient colors
@@ -546,65 +664,71 @@ const statColorMap = { 'from': 'rgb(100, 100, 0)', 'to': 'rgb(200, 0, 200)' };
 
 
 const fileMappings = {
-    'Data/no_data.json': ['No Data', pollutantColorMap],
-    'Data/time-series-data/': ['Time Series Data', pollutantColorMap],
-    'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap],
-    'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap],
-    'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap],
-    'Data/Ozone.json': ['Ozone', pollutantColorMap],
-    'Data/Ozone_Pctl.json': ['Ozone Pctl', pollutantColorMap],
-    'Data/PM2.5.json': ['PM2.5', pollutantColorMap],
-    'Data/PM2.5_Pctl.json': ['PM2.5 Pctl', pollutantColorMap],
-    'Data/Diesel_PM.json': ['Diesel PM', pollutantColorMap],
-    'Data/Diesel_PM_Pctl.json': ['Diesel PM Pctl', pollutantColorMap],
-    'Data/Drinking_Water.json': ['Drinking Water', pollutantColorMap],
-    'Data/Drinking_Water_Pctl.json': ['Drinking Water Pctl', pollutantColorMap],
-    'Data/Lead.json': ['Lead', pollutantColorMap],
-    'Data/Lead_Pctl.json': ['Lead Pctl', pollutantColorMap],
-    'Data/Pesticides.json': ['Pesticides', pollutantColorMap],
-    'Data/Pesticides_Pctl.json': ['Pesticides Pctl', pollutantColorMap],
-    'Data/Tox._Release.json': ['Tox. Release', pollutantColorMap],
-    'Data/Tox._Release_Pctl.json': ['Tox. Release Pctl', pollutantColorMap],
-    'Data/CES_Traffic.json': ['Traffic', pollutantColorMap],
-    'Data/CES_Traffic_Pctl.json': ['Traffic Pctl', pollutantColorMap],
-    'Data/Cleanup_Sites.json': ['Cleanup Sites', pollutantColorMap],
-    'Data/Cleanup_Sites_Pctl.json': ['Cleanup Sites Pctl', pollutantColorMap],
-    'Data/Groundwater_Threats.json': ['Groundwater Threats', pollutantColorMap],
-    'Data/Groundwater_Threats_Pctl.json': ['Groundwater Threats Pctl', pollutantColorMap],
-    'Data/Haz._Waste.json': ['Haz. Waste', pollutantColorMap],
-    'Data/Haz._Waste_Pctl.json': ['Haz. Waste Pctl', pollutantColorMap],
-    'Data/Imp._Water_Bodies.json': ['Imp. Water Bodies', pollutantColorMap],
-    'Data/Imp._Water_Bodies_Pctl.json': ['Imp. Water Bodies Pctl', pollutantColorMap],
-    'Data/Solid_Waste.json': ['Solid Waste', pollutantColorMap],
-    'Data/Solid_Waste_Pctl.json': ['Solid Waste Pctl', pollutantColorMap],
-    'Data/Pollution_Burden.json': ['Pollution Burden', pollutantColorMap],
-    'Data/Pollution_Burden_Score.json': ['Pollution Burden Score', pollutantColorMap],
-    'Data/Pollution_Burden_Pctl.json': ['Pollution Burden Pctl', pollutantColorMap],
-    'Data/Asthma.json': ['Asthma', socioeconomicColorMap],
-    'Data/Asthma_Pctl.json': ['Asthma Pctl', socioeconomicColorMap],
-    'Data/Low_Birth_Weight.json': ['Low Birth Weight', socioeconomicColorMap],
-    'Data/Low_Birth_Weight_Pctl.json': ['Low Birth Weight Pctl', socioeconomicColorMap],
-    'Data/Cardiovascular_Disease.json': ['Cardiovascular Disease', socioeconomicColorMap],
-    'Data/Cardiovascular_Disease_Pctl.json': ['Cardiovascular Disease Pctl', socioeconomicColorMap],
-    'Data/Education.json': ['Education', socioeconomicColorMap],
-    'Data/Education_Pctl.json': ['Education Pctl', socioeconomicColorMap],
-    'Data/Linguistic_Isolation.json': ['Linguistic Isolation', socioeconomicColorMap],
-    'Data/Linguistic_Isolation_Pctl.json': ['Linguistic Isolation Pctl', socioeconomicColorMap],
-    'Data/Poverty.json': ['Poverty', socioeconomicColorMap],
-    'Data/Poverty_Pctl.json': ['Poverty Pctl', socioeconomicColorMap],
-    'Data/Unemployment.json': ['Unemployment', socioeconomicColorMap],
-    'Data/Unemployment_Pctl.json': ['Unemployment Pctl', socioeconomicColorMap],
-    'Data/Housing_Burden.json': ['Housing Burden', socioeconomicColorMap],
-    'Data/Housing_Burden_Pctl.json': ['Housing Burden Pctl', socioeconomicColorMap],
-    'Data/Pop._Char._.json': ['Pop. Char. ', socioeconomicColorMap],
-    'Data/Pop._Char._Score.json': ['Pop. Char. Score', socioeconomicColorMap],
-    'Data/Pop._Char._Pctl.json': ['Pop. Char. Pctl', socioeconomicColorMap],
-    'Data/pm25_predictions.json': ['pm25_predictions', pollutantColorMap],
-    'Data/adult_asthma.json': ['adult_asthma', socioeconomicColorMap],
-    'Data/traffic.json': ['traffic_counts', pollutantColorMap],
-    'Data/poverty.json': ['poverty_data', socioeconomicColorMap],
-    'Data/income.json': ['income_data', socioeconomicColorMap]
+    'Data/no_data.json': ['No Data', pollutantColorMap, 'No specific definition provided.'],
+    'Data/time-series-data/': ['Time Series Data', pollutantColorMap, 'PM2.5 Predictions for the next 5 days'],
+    'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap, 'CalEnviroScreen Score, Pollution Score multiplied by Population Characteristics Score'],
+    'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap, 'Percentile of the CalEnviroScreen score'],
+    'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap, 'Percentile of the CalEnviroScreen score, grouped by 5% increments'],
+    'Data/Ozone.json': ['Ozone', pollutantColorMap, 'Amount of daily maximum 8 hour Ozone concentration'],
+    'Data/Ozone_Pctl.json': ['Ozone Pctl', pollutantColorMap, 'Ozone percentile'],
+    'Data/PM2.5.json': ['PM2.5', pollutantColorMap, 'Annual mean PM2.5 concentrations'],
+    'Data/PM2.5_Pctl.json': ['PM2.5 Pctl', pollutantColorMap, 'PM2.5 percentile'],
+    'Data/Diesel_PM.json': ['Diesel PM', pollutantColorMap, 'Diesel PM emissions from on-road and non-road sources'],
+    'Data/Diesel_PM_Pctl.json': ['Diesel PM Pctl', pollutantColorMap, 'Diesel PM percentile'],
+    'Data/Drinking_Water.json': ['Drinking Water', pollutantColorMap, 'Drinking water contaminant index for selected contaminants'],
+    'Data/Drinking_Water_Pctl.json': ['Drinking Water Pctl', pollutantColorMap, 'Drinking water percentile'],
+    'Data/Lead.json': ['Lead', pollutantColorMap, 'Potential risk for lead exposure in children living in low-income communities with older housing'],
+    'Data/Lead_Pctl.json': ['Lead Pctl', pollutantColorMap, 'Children\'s lead risk from housing percentile'],
+    'Data/Pesticides.json': ['Pesticides', pollutantColorMap, 'Total pounds of selected active pesticide ingredients used in production-agriculture per square mile'],
+    'Data/Pesticides_Pctl.json': ['Pesticides Pctl', pollutantColorMap, 'Pesticides percentile'],
+    'Data/Tox._Release.json': ['Tox. Release', pollutantColorMap, 'Toxicity-weighted concentrations of modeled chemical releases to air'],
+    'Data/Tox._Release_Pctl.json': ['Tox. Release Pctl', pollutantColorMap, 'Toxic release percentile'],
+    'Data/CES_Traffic.json': ['Traffic', pollutantColorMap, 'Traffic density in vehicle-kilometers per hour per road length, within 150 meters of the census tract boundary'],
+    'Data/CES_Traffic_Pctl.json': ['Traffic Pctl', pollutantColorMap, 'Traffic percentile'],
+    'Data/Cleanup_Sites.json': ['Cleanup Sites', pollutantColorMap, 'Sum of weighted EnviroStor cleanup sites within buffered distances to populated blocks of census tracts'],
+    'Data/Cleanup_Sites_Pctl.json': ['Cleanup Sites Pctl', pollutantColorMap, 'Cleanup sites percentile'],
+    'Data/Groundwater_Threats.json': ['Groundwater Threats', pollutantColorMap, 'Sum of weighted GeoTracker leaking underground storage tank sites within buffered distances to populated blocks of census tracts'],
+    'Data/Groundwater_Threats_Pctl.json': ['Groundwater Threats Pctl', pollutantColorMap, 'Groundwater threats percentile'],
+    'Data/Haz._Waste.json': ['Haz. Waste', pollutantColorMap, 'Sum of weighted hazardous waste facilities and large quantity generators within buffered distances to populated blocks of census tracts'],
+    'Data/Haz._Waste_Pctl.json': ['Haz. Waste Pctl', pollutantColorMap, 'Hazardous waste percentile'],
+    'Data/Imp._Water_Bodies.json': ['Imp. Water Bodies', pollutantColorMap, 'Sum of number of pollutants across all impaired water bodies within buffered distances to populated blocks of census tracts'],
+    'Data/Imp._Water_Bodies_Pctl.json': ['Imp. Water Bodies Pctl', pollutantColorMap, 'Impaired water bodies percentile'],
+    'Data/Solid_Waste.json': ['Solid Waste', pollutantColorMap, 'Sum of weighted solid waste sites and facilities within buffered distances to populated blocks of census tracts'],
+    'Data/Solid_Waste_Pctl.json': ['Solid Waste Pctl', pollutantColorMap, 'Solid waste percentile'],
+    'Data/Pollution_Burden.json': ['Pollution Burden', pollutantColorMap, 'Average of percentiles from the Pollution Burden indicators'],
+    'Data/Pollution_Burden_Score.json': ['Pollution Burden Score', pollutantColorMap, 'Pollution Burden variable scaled with a range of 0-10'],
+    'Data/Pollution_Burden_Pctl.json': ['Pollution Burden Pctl', pollutantColorMap, 'Pollution burden percentile'],
+    'Data/Asthma.json': ['Asthma', socioeconomicColorMap, 'Age-adjusted rate of emergency department visits for asthma'],
+    'Data/Asthma_Pctl.json': ['Asthma Pctl', socioeconomicColorMap, 'Asthma percentile'],
+    'Data/Low_Birth_Weight.json': ['Low Birth Weight', socioeconomicColorMap, 'Percent low birth weight'],
+    'Data/Low_Birth_Weight_Pctl.json': ['Low Birth Weight Pctl', socioeconomicColorMap, 'Low birth weight percentile'],
+    'Data/Cardiovascular_Disease.json': ['Cardiovascular Disease', socioeconomicColorMap, 'Age-adjusted rate of emergency department visits for heart attacks per 10,000'],
+    'Data/Cardiovascular_Disease_Pctl.json': ['Cardiovascular Disease Pctl', socioeconomicColorMap, 'Cardiovascular disease percentile'],
+    'Data/Education.json': ['Education', socioeconomicColorMap, 'Percent of population over 25 with less than a high school education'],
+    'Data/Education_Pctl.json': ['Education Pctl', socioeconomicColorMap, 'Education percentile'],
+    'Data/Linguistic_Isolation.json': ['Linguistic Isolation', socioeconomicColorMap, 'Percent limited English speaking households'],
+    'Data/Linguistic_Isolation_Pctl.json': ['Linguistic Isolation Pctl', socioeconomicColorMap, 'Linguistic isolation percentile'],
+    'Data/Poverty.json': ['Poverty', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level'],
+    'Data/Poverty_Pctl.json': ['Poverty Pctl', socioeconomicColorMap, 'Poverty percentile'],
+    'Data/Unemployment.json': ['Unemployment', socioeconomicColorMap, 'Percent of the population over the age of 16 that is unemployed and eligible for the labor force'],
+    'Data/Unemployment_Pctl.json': ['Unemployment Pctl', socioeconomicColorMap, 'Unemployment percentile'],
+    'Data/Housing_Burden.json': ['Housing Burden', socioeconomicColorMap, 'Percent housing-burdened low-income households'],
+    'Data/Housing_Burden_Pctl.json': ['Housing Burden Pctl', socioeconomicColorMap, 'Housing burden percentile'],
+    'Data/Pop._Char._.json': ['Pop. Char. ', socioeconomicColorMap, 'Average of percentiles from the Population Characteristics indicators'],
+    'Data/Pop._Char._Score.json': ['Pop. Char. Score', socioeconomicColorMap, 'Population Characteristics variable scaled with a range of 0-10'],
+    'Data/Pop._Char._Pctl.json': ['Pop. Char. Pctl', socioeconomicColorMap, 'Population characteristics percentile'],
+    'Data/pm25_predictions.json': ['pm25_predictions', pollutantColorMap, 'Predicted PM2.5 using PWWB Machine Learning Models.'],
+    'Data/traffic.json': ['traffic_counts', pollutantColorMap, 'Traffic density or counts'],
+    'Data/poverty.json': ['poverty_data', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level'],
+    'Data/income.json': ['income_data', socioeconomicColorMap, 'No specific definition provided.']
 };
+
+// document.addEventListener('DOMContentLoaded', function() {
+//     var infoButton = document.querySelector('.info-button');
+//     infoButton.title = "You can hover over this button to see more information about how to use the control panel.";
+// });
+
+
 
 
 (async function() {
@@ -616,8 +740,23 @@ const fileMappings = {
 
             // Define your fileList array with the specific file names
             const fileList = ['recent_0.json', 'recent_1.json', 'recent_2.json', 'recent_3.json', 'recent_4.json'];
-
             let allTimeSeriesData = [];
+
+            const twodFileList = ['recent_0.png', 'recent_1.png', 'recent_2.png', 'recent_3.png', 'recent_4.png'];
+
+            let imageUrls = [];
+
+            // Base URL
+            const baseUrl = 'https://sagemaker-us-east-2-958520404663.s3.us-east-2.amazonaws.com/sagemaker/predictions/';
+
+            // Loop through the twodFileList and construct each URL
+            for (const fileName of twodFileList) {
+                const fullUrl = `${baseUrl}${fileName}`; // Construct the full URL
+                imageUrls.push(fullUrl); // Add the URL to the array
+            }
+
+            console.log(imageUrls);
+
 
             // Loop through the fileList and fetch each file
             for (const fileName of fileList) {
@@ -631,12 +770,12 @@ const fileMappings = {
             }
 
             console.log('Time series data:', allTimeSeriesData);
-            dataMap[key] = [allTimeSeriesData, value[1]]; // Assuming 'key' and 'value' are defined earlier in your code
+            dataMap[key] = [allTimeSeriesData, value[1], value[2], imageUrls]; // Assuming 'key' and 'value' are defined earlier in your code
 
         } else {
             // Handling for all other data types
             const response = await fetch(file);
-            dataMap[key] = [await response.json(), value[1]]; // Store data along with its color map
+            dataMap[key] = [await response.json(), value[1], value[2]]; // Store data along with its color map
         }
     }
 
@@ -658,12 +797,16 @@ document.getElementById('pollutantSelect').addEventListener('change', (event) =>
     if (selectedData) {
         console.log('selected data', selectedData)
         const colorMap = selectedData[1];
+        const dataDescription = selectedData[2];
+        console.log(dataDescription)
+        updateTooltipText(dataDescription);
         console.log('Updating color map');
         updateColorGradient(colorMap.from, colorMap.to);
         console.log('Displaying data');
 
         if (event.target.value === 'Time Series Data') {
             timeSeriesData = selectedData[0];
+            twoDtimeSeriesData = selectedData[3];
             displayTimeSeriesData(); // Function to display time series data
             document.querySelector('.time-control').style.display = 'block'; // Show the time control for time series data
         } else {
@@ -705,7 +848,7 @@ function updatePredictionDateTime(predictions) {
         let adjustedHour;
         if (index === 0) {
             // First prediction gets the current time (most recent)
-            adjustedHour = now;
+            adjustedHour = new Date(leastRecent.getTime() + (5 - 1) * 60 * 60 * 1000);
         } else {
             // Subsequent predictions get leastRecent + (index - 1) to simulate the rotation
             adjustedHour = new Date(leastRecent.getTime() + (index - 1) * 60 * 60 * 1000);
@@ -722,7 +865,7 @@ function updatePredictionDateTime(predictions) {
 function updateDateDisplay(count, data) {
     // Get the last predictionDateTime from the data
     const lastPrediction = data.files[count].predictionDateTime;
-
+    console.log(data.files)
     // Format the date as needed, here we're just using the ISO string directly
     const formattedDate = formatDateTime(lastPrediction);
 
@@ -730,8 +873,14 @@ function updateDateDisplay(count, data) {
     document.getElementById('currentDate').textContent = formattedDate;
 }
 
+function display2DTimeSeriesData() {
+    console.log('Displaying 2D time series data...');
+    display2DData(twoDtimeSeriesData[timeStepCount]);
+}
+
 async function displayTimeSeriesData() {
     console.log('Displaying time series data...');
+    
     var response;
     try {
         response = await fetch(`https://sagemaker-us-east-2-958520404663.s3.us-east-2.amazonaws.com/sagemaker/predictions/manifest.json`);
@@ -743,8 +892,37 @@ async function displayTimeSeriesData() {
     data = updatePredictionDateTime(data);
     console.log('Time series data updated manifest:', data);
     updateDateDisplay(timeStepCount, data);
+    if (!threeDTiles)    {
+        display2DTimeSeriesData();
+        return;
+    }
     displayData(timeSeriesData[timeStepCount]);
 }
+
+function display2DData(imageUrl) {
+    console.log('Displaying 2D data...');
+    // Explicitly define the bounds of the rectangle
+    const west = -119.62;  // Minimum longitude
+    const south = 33.22;   // Minimum latitude
+    const east = -117.53; // Maximum longitude
+    const north = 34.40;   // Maximum latitude
+    console.log("Creating SingleTileImageryProvider with bounds:", {west, south, east, north});
+
+    // Create a SingleTileImageryProvider with your image and its bounds
+    const singleTileProvider = new Cesium.SingleTileImageryProvider({
+        url: imageUrl, // Ensure the path to your image is correct
+        rectangle: Cesium.Rectangle.fromDegrees(west, south, east, north)
+    });
+
+    // Log the creation of the imagery provider
+    console.log("SingleTileImageryProvider created:", singleTileProvider);
+
+    // Create an ImageryLayer with the provider and add it to the viewer
+    const imageryLayer = new Cesium.ImageryLayer(singleTileProvider);
+    viewer.imageryLayers.add(imageryLayer);
+    console.log("Added custom imagery layer to viewer");
+}
+
 
 
 
@@ -823,11 +1001,11 @@ document.getElementById('searchPollutant').addEventListener('input', function() 
   });
   
   // Optional: hide the select when clicking outside of the dropdown
-  window.addEventListener('click', function(e) {
-    if (!document.getElementById('pollutantDropdown').contains(e.target)) {
-      document.getElementById('pollutantSelect').style.display = 'none';
-    }
-  });
+//   window.addEventListener('click', function(e) {
+//     if (!document.getElementById('pollutantDropdown').contains(e.target)) {
+//       document.getElementById('pollutantSelect').style.display = 'none';
+//     }
+//   });
   
 
 document.getElementById('myCheckbox').addEventListener('change', function() {
@@ -841,6 +1019,21 @@ document.getElementById('myCheckbox').addEventListener('change', function() {
                 i--;  // Adjust the index since we've modified the collection
             }
         }
+    }
+});
+
+document.getElementById('3dCheckbox').addEventListener('change', function() {
+
+    if (!this.checked) {
+        console.log('Removing photorealistic tiles')
+        threeDTiles = false;
+        deletePhotorealisticTiles();
+
+    }
+    if (this.checked)   {
+        console.log('Adding photorealistic tiles')
+        threeDTiles = true;
+        addPhotorealisticTiles();
     }
 });
 

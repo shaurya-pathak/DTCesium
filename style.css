@@ -217,3 +217,43 @@ button {
 #dateDisplay {
   margin-left: auto; /* Pushes the date display to the right */
 }
+
+.info-button {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  background-color: #f9f9f9;
+  cursor: help;
+  font-style: italic;
+  /* position: relative; */
+  position: absolute;
+  top: 10px; /* Adjust as needed for spacing from the top */
+  right: 10px; /* Adjust as needed for spacing from the right */
+  text-align: center;
+  width: 20px; /* Adjust size as needed */
+}
+
+.info-button .custom-tooltip {
+  visibility: hidden;
+  width: 200px; /* Adjust width as needed */
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -200px; /* Adjust to ensure the tooltip is centered */
+  /* Use opacity to transition the appearance */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.info-button:hover .custom-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
