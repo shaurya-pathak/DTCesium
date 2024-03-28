@@ -19,25 +19,21 @@
             padding: 10px 20px;
             margin: 5px;
             cursor: pointer;
-            opacity: 0.7; /* Make the buttons semi-transparent */
+            opacity: 1.0; /* Make the buttons semi-transparent */
         }
     </style>
 </head>
 <body>
   <div id="cesiumContainer"></div>
-  <div id="loadingSpinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1000; font-size: 30px; color: #fff;">
+  <div id="loadingSpinner" style="display: none;position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1000; font-size: 30px; color: #fff;">
     <!-- You can use any spinner design you prefer -->
-    <img src="loading_spinner.gif" alt="Loading..."/>
+    <img src="images/modern_spinner.gif" alt="Loading..."/>
   </div>
   
   <div id="controlPanel">
     <div class="checkbox-group">
-      <label for="myCheckbox">Show Air Traffic</label>
-      <input type="checkbox" id="myCheckbox">
-    </div>
-    <div class="checkbox-group">
       <label for="3dCheckbox">3D Tiles</label>
-      <input type="checkbox" id="3dCheckbox">
+      <input type="checkbox" id="3dInCheckbox">
     </div>
     <div class="info-button">
       i
@@ -47,6 +43,7 @@
     <select id="pollutantSelect" size="3" style="width: 320px;">
       <option value="No Data">No Data</option>
       <option value="Time Series Data">PM2.5 Predictions</option>
+      <option value="Live Air Traffic">Live Air Traffic</option>
         <!-- <option value="PM25">Live PM2.5</option>
         <option value="O3">Live O3</option>
         <option value="NO2">Live NO2</option> -->
@@ -60,7 +57,7 @@
       <option value="CES 4.0 Percentile Range">CES 4.0 Percentile Range</option>
       <option value="Ozone">Ozone</option>
       <option value="Ozone Pctl">Ozone Pctl</option>
-      <option value="PM2.5">PM2.5</option>
+      <option value="PM2.5">PM2.5 Average</option>
       <option value="PM2.5 Pctl">PM2.5 Pctl</option>
       <option value="Diesel PM">Diesel PM</option>
       <option value="Diesel PM Pctl">Diesel PM Pctl</option>
@@ -122,6 +119,7 @@
 
     <div id="dateDisplay"><label>Current Date:</label> <span id="currentDate">--/--/----</span></div>
     </div>
+    <div id="notificationContainer" style="position: fixed; bottom: 20px; right: 20px; z-index: 100;"></div>
   </div>
   
 
@@ -147,6 +145,34 @@
       <span id="maxValue">Max</span>
   </div>
 
+  <style>
+    .threshold-legend {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      z-index: 1000;
+    }
+  </style>
+  
+  <div class="threshold-legend">
+    <svg width="200" height="50" xmlns="http://www.w3.org/2000/svg">
+      <!-- Colored Rectangles for Thresholds -->
+      <rect x="0" y="15" width="40" height="20" fill="green" />
+      <rect x="40" y="15" width="40" height="20" fill="lime" />
+      <rect x="80" y="15" width="40" height="20" fill="yellow" />
+      <rect x="120" y="15" width="40" height="20" fill="orange" />
+      <rect x="160" y="15" width="40" height="20" fill="red" />
+      
+      <!-- Text Labels for Thresholds -->
+      <text id="label0" x="20" y="12" font-size="12" text-anchor="middle" fill="white">0.2</text>
+      <text id="label1" x="60" y="12" font-size="12" text-anchor="middle" fill="white">0.4</text>
+      <text id="label2" x="100" y="12" font-size="12" text-anchor="middle" fill="white">0.6</text>
+      <text id="label3" x="140" y="12" font-size="12" text-anchor="middle" fill="white">0.8</text>
+      <text id="label4" x="180" y="12" font-size="12" text-anchor="middle" fill="white">1.0</text>
+
+    </svg>
+  </div>
+  
 
   
 
@@ -155,13 +181,13 @@
       <button class="storyButton" onclick="goToLocation(33.84, -118.2468, 100000)">Los Angeles</button>
       <button class="storyButton" onclick="goToLocation(34.0522, -118.2437, 1000)">Downtown LA</button>
       <button class="storyButton" onclick="goToLocation(34.1381, -118.3534, 1000)">Universal Studios</button>
-      <button class="storyButton" onclick="goToLocation(34.0569, -118.2386, 1000)">Chinatown</button>
-      <button class="storyButton" onclick="goToLocation(34.1469, -118.2551, 1000)">Pasadena</button>
+      <!-- <button class="storyButton" onclick="goToLocation(34.0569, -118.2386, 1000)">Chinatown</button> -->
+      <!-- <button class="storyButton" onclick="goToLocation(34.1469, -118.2551, 1000)">Pasadena</button> -->
       <button class="storyButton" onclick="goToLocation(34.0219, -118.4814, 1000)">Santa Monica Pier</button>
-      <button class="storyButton" onclick="goToLocation(34.1184, -118.3004, 1000)">Griffith Observatory</button>
+      <!-- <button class="storyButton" onclick="goToLocation(34.1184, -118.3004, 1000)">Griffith Observatory</button> -->
       <button class="storyButton" onclick="goToLocation(34.0259, -118.7798, 1000)">Malibu</button>
       <button class="storyButton" onclick="goToLocation(33.9438, -118.4091, 7000)">LAX</button>
-      <button class="storyButton" onclick="goToLocation(34.0722, -118.3581, 1000)">Hollywood</button>
+      <!-- <button class="storyButton" onclick="goToLocation(34.0722, -118.3581, 1000)">Hollywood</button> -->
       <button class="storyButton" onclick="goToLocation(34.053757845552184, -118.24607801275346, 193 , 93, -16, 0, 0)">City Hall</button>
 
   </div>

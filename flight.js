@@ -13,7 +13,10 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
 
 var color1 = 'rgb(0, 0, 0)';
 var color2 = 'rgb(100, 0, 0)';
+var height_multiplier = 30;
 var threeDTiles = false;
+var cmap_pollution = true;
+var isLoopActive = false;
 
 
 
@@ -235,6 +238,29 @@ async function fetchPlaneData() {
         console.error('Error fetching data:', error);
     }
 }
+
+function updateThresholdLabels(newValues) {
+    // Ensure there are exactly 5 new values for the 5 labels
+    if(newValues.length !== 5) {
+      console.error('Expected exactly 5 values to update threshold labels.');
+      return;
+    }
+    
+    // Update each label with the new values
+    newValues.forEach((value, index) => {
+      const labelId = `label${index}`; // Construct the label's ID
+      const labelElement = document.getElementById(labelId);
+      if(labelElement) {
+        labelElement.textContent = '>' + value; // Update the label's text with ">" prepended
+      } else {
+        console.error(`Label element with ID ${labelId} not found.`);
+      }
+    });
+  }
+function generateRawThresholds(maxValue) {
+    newValues = [0, maxValue / 5, maxValue *2  / 5, maxValue * 3 / 5, maxValue *4  / 5];
+    return newValues;
+}    
   
 
 async function updateViewer(flightData) {
@@ -279,13 +305,6 @@ async function updateViewer(flightData) {
         const roll = 0;
         const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
         const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
-
-        // Calculate altitude ratio
-        const maxAltitude = 4200; // Maximum altitude for the data set
-        const altitudeRatio = parseFloat(dataPoint.alt) / maxAltitude;
-
-        // Get the color (Cesium.IonResource) based on the altitude ratio
-        const colorResource = await getColorBasedOnAltitudeRatio(altitudeRatio);
 
         carbon_emissions_per_100_miles = {
             'P28A': 65,
@@ -353,7 +372,23 @@ async function updateViewer(flightData) {
             'C56X': 200
         }
         const emissions = carbon_emissions_per_100_miles[dataPoint.type] || 0;
-        
+        // Calculate altitude ratio
+        const maxAltitude = 4200; // Maximum altitude for the data set
+        const altitudeRatio = parseFloat(dataPoint.alt) / maxAltitude;
+        const maxCO2Emissions = 600; // Maximum CO2 emissions for the data set
+        const pollutionRatio = emissions / maxCO2Emissions;
+        var colorResource;
+        // Get the color (Cesium.IonResource) based on the altitude ratio
+        if (cmap_pollution) {
+            var rawThresholds = generateRawThresholds(maxCO2Emissions);
+            updateThresholdLabels(rawThresholds);
+            colorResource = await getColorBasedOnAltitudeRatio(pollutionRatio);
+        }
+        // else {
+        //     var rawThresholds = generateRawThresholds(maxAltitude);
+        //     updateThresholdLabels(rawThresholds);
+        //     colorResource = await getColorBasedOnAltitudeRatio(altitudeRatio);
+        // }
 
         // Add the entity with the model URI set based on the color (Cesium.IonResource)
         viewer.entities.add({
@@ -496,6 +531,21 @@ function colorStringToCesiumColor(rgbString) {
     return new Cesium.Color(parts[0] / 255, parts[1] / 255, parts[2] / 255, 1);
 }
 
+// Function to show the loading spinner
+function enableLoadingSpinner() {
+    console.log('Enabling loading spinner');
+    var spinner = document.getElementById('loadingSpinner');
+    spinner.style.display = 'block'; // Use 'block' to show the spinner
+}
+
+// Function to hide the loading spinner
+function disableLoadingSpinner() {
+    console.log('Disabling loading spinner');
+    var spinner = document.getElementById('loadingSpinner');
+    spinner.style.display = 'none'; // Use 'none' to hide the spinner
+}
+
+
 
 function displayData(transformedData, labels = false, height_divisor = 1) {
 
@@ -544,11 +594,13 @@ function displayData(transformedData, labels = false, height_divisor = 1) {
             });
             // console.log(`Label added for data point ${i/3}`);
         }
+
+        
         
         viewer.entities.add({
             position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
             cylinder: {
-                length: height * 30000,
+                length: height * 100 * height_multiplier, // Scale the height by 3000
                 topRadius: 500,
                 bottomRadius: 500,
                 material: color
@@ -584,6 +636,29 @@ function updateTooltipText(newText) {
         tooltip.textContent = newText;
     }
 }
+
+document.getElementById('3dInCheckbox').addEventListener('change', function() {
+
+    if (!this.checked) {
+        console.log('Removing photorealistic tiles')
+        threeDTiles = false;
+        if (document.getElementById('pollutantSelect').value === "Time Series Data") {
+            // Your code here to execute if the selected value is "Time Series Data"
+            displayTimeSeriesData();
+        }
+        deletePhotorealisticTiles();
+
+    }
+    if (this.checked)   {
+        console.log('Adding photorealistic tiles')
+        threeDTiles = true;
+        if (document.getElementById('pollutantSelect').value === "Time Series Data") {
+            // Your code here to execute if the selected value is "Time Series Data"
+            displayTimeSeriesData();
+        }
+        addPhotorealisticTiles();
+    }
+});
 
 
 function displayDataAtHeight(transformedData, pollutantType, labels = true, sphere_scale = 1, value_divisor = 1) {
@@ -772,7 +847,8 @@ const fileMappings = {
             console.log('Time series data:', allTimeSeriesData);
             dataMap[key] = [allTimeSeriesData, value[1], value[2], imageUrls]; // Assuming 'key' and 'value' are defined earlier in your code
 
-        } else {
+        }
+        else {
             // Handling for all other data types
             const response = await fetch(file);
             dataMap[key] = [await response.json(), value[1], value[2]]; // Store data along with its color map
@@ -790,9 +866,37 @@ const fileMappings = {
 });
 console.log("DATA MAP", dataMap);
 // Event listener for select element
+
+
 document.getElementById('pollutantSelect').addEventListener('change', (event) => {
     console.log('Selected value:', event.target.value);
+    
+    while (viewer.imageryLayers.length > 1) {
+        viewer.imageryLayers.remove(viewer.imageryLayers.get(viewer.imageryLayers.length - 1));
+    }
+    console.log("Removed all custom imagery layers from viewer");
+    // console.log('Removing', entitiesToRemove.length, 'cylinders');
+    const entities = viewer.entities.values;
+    for (let i = 0; i < entities.length; i++) {
+        const entity = entities[i];
+        viewer.entities.remove(entity);
+        i--;
+    }
+    
+    console.log("Removed all imagery layers from viewer");
+    if (event.target.value == 'Live Air Traffic'){
+        if (!isLoopActive) {
+                isLoopActive = true;
+                updateTooltipText('Uses Radar from AdsBE Exchange to show live air traffic');
+                mainLoop();
+            }
+        return;
+    }
+    else {
+        isLoopActive = false;
+    }
     const selectedData = dataMap[event.target.value];
+
 
     if (selectedData) {
         console.log('selected data', selectedData)
@@ -902,10 +1006,10 @@ async function displayTimeSeriesData() {
 function display2DData(imageUrl) {
     console.log('Displaying 2D data...');
     // Explicitly define the bounds of the rectangle
-    const west = -119.62;  // Minimum longitude
-    const south = 33.22;   // Minimum latitude
-    const east = -117.53; // Maximum longitude
-    const north = 34.40;   // Maximum latitude
+    const west = -119.78;  // Minimum longitude
+    const south = 33.18;   // Minimum latitude
+    const east = -117.42; // Maximum longitude
+    const north = 34.47;   // Maximum latitude
     console.log("Creating SingleTileImageryProvider with bounds:", {west, south, east, north});
 
     // Create a SingleTileImageryProvider with your image and its bounds
@@ -987,6 +1091,21 @@ document.getElementById('searchPollutant').addEventListener('input', function() 
       }
     }
   });
+
+  // Listen for clicks on the entire document
+    document.addEventListener('click', function(event) {
+        // Get the controlPanel element
+        var controlPanel = document.getElementById('controlPanel');
+
+        // Check if the click occurred inside the controlPanel
+        var isClickInside = controlPanel.contains(event.target);
+
+        // If the click is outside the controlPanel, hide the pollutantSelect
+        if (!isClickInside) {
+            document.getElementById('pollutantSelect').style.display = "none";
+        }
+    });
+
   
   document.getElementById('searchPollutant').addEventListener('focus', function() {
     document.getElementById('pollutantSelect').style.display = "block";
@@ -1006,6 +1125,87 @@ document.getElementById('searchPollutant').addEventListener('input', function() 
 //       document.getElementById('pollutantSelect').style.display = 'none';
 //     }
 //   });
+
+function updateCylindersToHeight() {
+    var finalPosition = viewer.camera.positionWC;
+    
+    // Convert the position to cartographic coordinates (radians)
+    var cartographicPosition = Cesium.Cartographic.fromCartesian(finalPosition);
+    
+    // Convert radians to degrees for longitude and latitude
+    var longitude = Cesium.Math.toDegrees(cartographicPosition.longitude);
+    var latitude = Cesium.Math.toDegrees(cartographicPosition.latitude);
+    var height = cartographicPosition.height;
+    
+    // Log the camera's final longitude, latitude, and height
+    console.log('Camera movement ended. Final position:', `Longitude: ${longitude}, Latitude: ${latitude}, Height: ${height}`);
+    
+    // Place your additional code here
+    var entities = viewer.entities.values;
+    for (var i = 0; i < entities.length; i++) {
+        var entity = entities[i];
+        // Check if the entity is a cylinder
+        if (entity.cylinder) {
+            // Update the cylinder's height (length)
+            entity.cylinder.length = (entity.cylinder.length / height_multiplier) * (height / 1000);
+            
+            if (height < 10000) {
+                var newOpacity = 0.5; // Opacity ranges from 0 (completely transparent) to 1 (completely opaque)
+                var currentColor = entity.cylinder.material.color.getValue(); // Get the current color of the cylinder
+                var newColor = new Cesium.Color(currentColor.red, currentColor.green, currentColor.blue, newOpacity);
+                
+                // Set the new color with updated opacity
+                entity.cylinder.material = new Cesium.ColorMaterialProperty(newColor);
+            }
+            else    {
+                var newOpacity = 1.0; // Opacity ranges from 0 (completely transparent) to 1 (completely opaque)
+                var currentColor = entity.cylinder.material.color.getValue(); // Get the current color of the cylinder
+                var newColor = new Cesium.Color(currentColor.red, currentColor.green, currentColor.blue, newOpacity);
+                
+                // Set the new color with updated opacity
+                entity.cylinder.material = new Cesium.ColorMaterialProperty(newColor);
+            }
+        }
+    }
+    height_multiplier = Math.min(200, height / 1000);
+    console.log('Height Multiplier:', height_multiplier);
+
+}
+
+
+var previousCameraHeight = 0; // Initialize the previous camera height
+var thresholdDistance = 2000; // Define the threshold distance, e.g., 10,000 meters
+
+function hasCylinders(viewer) {
+    var entities = viewer.entities.values;
+    for (var i = 0; i < entities.length; i++) {
+        // Assuming cylinders are added as ellipsoids or through a custom cylinder property
+        if (entities[i].ellipsoid || entities[i].cylinder) {
+            return true; // Found at least one cylinder
+        }
+    }
+    return false; // No cylinders found
+}
+
+viewer.camera.moveEnd.addEventListener(function() {
+    var currentCameraHeight = viewer.camera.positionCartographic.height;
+    
+    // Calculate the absolute difference between the current and previous camera heights
+    var heightDifference = Math.abs(currentCameraHeight - previousCameraHeight);
+    
+    // Check if the height difference exceeds the threshold
+    if (heightDifference > thresholdDistance && hasCylinders(viewer)) {
+        // The camera's distance from the Earth's surface has changed significantly
+        // Run the desired code block
+        
+        enableLoadingSpinner();
+        updateCylindersToHeight();
+        setTimeout(disableLoadingSpinner, 5000);
+        
+        // Update the previous camera height for the next comparison
+        previousCameraHeight = currentCameraHeight;
+    }
+});
   
 
 document.getElementById('myCheckbox').addEventListener('change', function() {
@@ -1022,23 +1222,65 @@ document.getElementById('myCheckbox').addEventListener('change', function() {
     }
 });
 
-document.getElementById('3dCheckbox').addEventListener('change', function() {
+
+
+// Function to show a notification
+function showNotification(message) {
+    // Create the notification element
+    var notification = document.createElement('div');
+    notification.style.background = 'rgba(0, 0, 0, 0.7)';
+    notification.style.color = 'white';
+    notification.style.padding = '10px';
+    notification.style.borderRadius = '5px';
+    notification.style.marginBottom = '10px';
+    notification.innerText = message;
+  
+    // Add the notification to the notification container
+    var container = document.getElementById('notificationContainer');
+    container.appendChild(notification);
+  
+    // Remove the notification after 5 seconds
+    setTimeout(function() {
+      container.removeChild(notification);
+    }, 5000);
+  }
+  
+  // Example usage
+  document.getElementById('myCheckbox').addEventListener('change', function() {
+    if(this.checked) {
+      showNotification('Air Traffic is now visible.');
+    } else {
+      showNotification('Air Traffic is now hidden.');
+    }
+  });
+  document.getElementById('3dCheckbox').addEventListener('change', function() {
+    if(this.checked) {
+        
+        
+      showNotification('3d tiles are on, time series data will take significantly longer to load');
+    } else {
+      showNotification('2d tiles will be shown.');
+    }
+  });
+  // You can similarly attach event listeners to other elements to show notifications based on different scenarios
+  
+
+document.getElementById('polCheckbox').addEventListener('change', function() {
 
     if (!this.checked) {
-        console.log('Removing photorealistic tiles')
-        threeDTiles = false;
-        deletePhotorealisticTiles();
+        //console.log('Removing photorealistic tiles')
+        cmap_pollution = false;
+        //deletePhotorealisticTiles();
 
     }
     if (this.checked)   {
-        console.log('Adding photorealistic tiles')
-        threeDTiles = true;
-        addPhotorealisticTiles();
+        //console.log('Adding photorealistic tiles')
+        cmap_pollution = true;
+        //addPhotorealisticTiles();
     }
 });
 
 
-let isLoopActive = false;
 
 async function mainLoop() {
     console.log('Main loop started.');
@@ -1065,4 +1307,6 @@ document.getElementById('myCheckbox').addEventListener('change', async function(
         isLoopActive = false;
     }
 });
+
+
 
