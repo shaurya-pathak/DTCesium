@@ -13,25 +13,14 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
 
 var color1 = 'rgb(0, 0, 0)';
 var color2 = 'rgb(100, 0, 0)';
-var height_multiplier = 30;
+var height_multiplier = 70;
 var threeDTiles = false;
 var cmap_pollution = true;
 var isLoopActive = false;
 
 
 
-function updateColorGradient(fromColor, toColor) {
 
-    color1 = fromColor;
-    color2 = toColor;
-    // Get the div and span elements
-    var colorMapLegend = document.getElementById('colorMapLegend');
-  
-    // Update the background gradient
-    colorMapLegend.style.background = `linear-gradient(to right, ${fromColor}, ${toColor})`;
-  
-    // Update the displayed color values
-  }
 
 function goToLocation(latitude, longitude, height, heading = 0, pitch = -45, lonOffset = 0, latOffset = -(height / 100000)) {
     // Log the current camera position and orientation
@@ -240,22 +229,7 @@ async function fetchPlaneData() {
 }
 
 function updateThresholdLabels(newValues) {
-    // Ensure there are exactly 5 new values for the 5 labels
-    if(newValues.length !== 5) {
-      console.error('Expected exactly 5 values to update threshold labels.');
-      return;
-    }
-    
-    // Update each label with the new values
-    newValues.forEach((value, index) => {
-      const labelId = `label${index}`; // Construct the label's ID
-      const labelElement = document.getElementById(labelId);
-      if(labelElement) {
-        labelElement.textContent = '>' + value; // Update the label's text with ">" prepended
-      } else {
-        console.error(`Label element with ID ${labelId} not found.`);
-      }
-    });
+    createIntervals(["green", "lime", "yellow", "orange", "red"], newValues);
   }
 function generateRawThresholds(maxValue) {
     newValues = [0, maxValue / 5, maxValue *2  / 5, maxValue * 3 / 5, maxValue *4  / 5];
@@ -489,8 +463,9 @@ function normalizeData(data) {
     const valuesToNormalize = data.filter((_, index) => index % 3 === 2);
     const minVal = Math.min(...valuesToNormalize);
     const maxVal = Math.max(...valuesToNormalize);
-    document.getElementById('minValue').textContent = minVal.toFixed(2);
-    document.getElementById('maxValue').textContent = maxVal.toFixed(2);
+    updateLabels([minVal, maxVal]);
+    // document.getElementById('minValue').textContent = minVal.toFixed(2);
+    // document.getElementById('maxValue').textContent = maxVal.toFixed(2);
     console.log('Min and max values:', minVal, maxVal)
     // Return a new array with only the third values normalized
     return data.map((value, index) => {
@@ -632,6 +607,7 @@ function normalizeDataAtHeight(data) {
 
 function updateTooltipText(newText) {
     var tooltip = document.querySelector('.custom-tooltip');
+    showNotification(newText);
     if (tooltip) {
         tooltip.textContent = newText;
     }
@@ -658,7 +634,23 @@ document.getElementById('3dInCheckbox').addEventListener('change', function() {
         }
         addPhotorealisticTiles();
     }
+    if(this.checked) {
+        
+    
+        showNotification('3d tiles are on, time series data will take significantly longer to load');
+      } else {
+        showNotification('2d tiles will be shown.');
+      }
 });
+
+function updateLegendUnits(units) {
+    // Find the element that contains the units
+    const unitsElement = document.getElementById('legendUnits');
+
+    // Update the text content of the element to the new units
+    unitsElement.textContent = units;
+}
+
 
 
 function displayDataAtHeight(transformedData, pollutantType, labels = true, sphere_scale = 1, value_divisor = 1) {
@@ -739,63 +731,63 @@ const statColorMap = { 'from': 'rgb(100, 100, 0)', 'to': 'rgb(200, 0, 200)' };
 
 
 const fileMappings = {
-    'Data/no_data.json': ['No Data', pollutantColorMap, 'No specific definition provided.'],
-    'Data/time-series-data/': ['Time Series Data', pollutantColorMap, 'PM2.5 Predictions for the next 5 days'],
-    'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap, 'CalEnviroScreen Score, Pollution Score multiplied by Population Characteristics Score'],
-    'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap, 'Percentile of the CalEnviroScreen score'],
-    'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap, 'Percentile of the CalEnviroScreen score, grouped by 5% increments'],
-    'Data/Ozone.json': ['Ozone', pollutantColorMap, 'Amount of daily maximum 8 hour Ozone concentration'],
-    'Data/Ozone_Pctl.json': ['Ozone Pctl', pollutantColorMap, 'Ozone percentile'],
-    'Data/PM2.5.json': ['PM2.5', pollutantColorMap, 'Annual mean PM2.5 concentrations'],
-    'Data/PM2.5_Pctl.json': ['PM2.5 Pctl', pollutantColorMap, 'PM2.5 percentile'],
-    'Data/Diesel_PM.json': ['Diesel PM', pollutantColorMap, 'Diesel PM emissions from on-road and non-road sources'],
-    'Data/Diesel_PM_Pctl.json': ['Diesel PM Pctl', pollutantColorMap, 'Diesel PM percentile'],
-    'Data/Drinking_Water.json': ['Drinking Water', pollutantColorMap, 'Drinking water contaminant index for selected contaminants'],
-    'Data/Drinking_Water_Pctl.json': ['Drinking Water Pctl', pollutantColorMap, 'Drinking water percentile'],
-    'Data/Lead.json': ['Lead', pollutantColorMap, 'Potential risk for lead exposure in children living in low-income communities with older housing'],
-    'Data/Lead_Pctl.json': ['Lead Pctl', pollutantColorMap, 'Children\'s lead risk from housing percentile'],
-    'Data/Pesticides.json': ['Pesticides', pollutantColorMap, 'Total pounds of selected active pesticide ingredients used in production-agriculture per square mile'],
-    'Data/Pesticides_Pctl.json': ['Pesticides Pctl', pollutantColorMap, 'Pesticides percentile'],
-    'Data/Tox._Release.json': ['Tox. Release', pollutantColorMap, 'Toxicity-weighted concentrations of modeled chemical releases to air'],
-    'Data/Tox._Release_Pctl.json': ['Tox. Release Pctl', pollutantColorMap, 'Toxic release percentile'],
-    'Data/CES_Traffic.json': ['Traffic', pollutantColorMap, 'Traffic density in vehicle-kilometers per hour per road length, within 150 meters of the census tract boundary'],
-    'Data/CES_Traffic_Pctl.json': ['Traffic Pctl', pollutantColorMap, 'Traffic percentile'],
-    'Data/Cleanup_Sites.json': ['Cleanup Sites', pollutantColorMap, 'Sum of weighted EnviroStor cleanup sites within buffered distances to populated blocks of census tracts'],
-    'Data/Cleanup_Sites_Pctl.json': ['Cleanup Sites Pctl', pollutantColorMap, 'Cleanup sites percentile'],
-    'Data/Groundwater_Threats.json': ['Groundwater Threats', pollutantColorMap, 'Sum of weighted GeoTracker leaking underground storage tank sites within buffered distances to populated blocks of census tracts'],
-    'Data/Groundwater_Threats_Pctl.json': ['Groundwater Threats Pctl', pollutantColorMap, 'Groundwater threats percentile'],
-    'Data/Haz._Waste.json': ['Haz. Waste', pollutantColorMap, 'Sum of weighted hazardous waste facilities and large quantity generators within buffered distances to populated blocks of census tracts'],
-    'Data/Haz._Waste_Pctl.json': ['Haz. Waste Pctl', pollutantColorMap, 'Hazardous waste percentile'],
-    'Data/Imp._Water_Bodies.json': ['Imp. Water Bodies', pollutantColorMap, 'Sum of number of pollutants across all impaired water bodies within buffered distances to populated blocks of census tracts'],
-    'Data/Imp._Water_Bodies_Pctl.json': ['Imp. Water Bodies Pctl', pollutantColorMap, 'Impaired water bodies percentile'],
-    'Data/Solid_Waste.json': ['Solid Waste', pollutantColorMap, 'Sum of weighted solid waste sites and facilities within buffered distances to populated blocks of census tracts'],
-    'Data/Solid_Waste_Pctl.json': ['Solid Waste Pctl', pollutantColorMap, 'Solid waste percentile'],
-    'Data/Pollution_Burden.json': ['Pollution Burden', pollutantColorMap, 'Average of percentiles from the Pollution Burden indicators'],
-    'Data/Pollution_Burden_Score.json': ['Pollution Burden Score', pollutantColorMap, 'Pollution Burden variable scaled with a range of 0-10'],
-    'Data/Pollution_Burden_Pctl.json': ['Pollution Burden Pctl', pollutantColorMap, 'Pollution burden percentile'],
-    'Data/Asthma.json': ['Asthma', socioeconomicColorMap, 'Age-adjusted rate of emergency department visits for asthma'],
-    'Data/Asthma_Pctl.json': ['Asthma Pctl', socioeconomicColorMap, 'Asthma percentile'],
-    'Data/Low_Birth_Weight.json': ['Low Birth Weight', socioeconomicColorMap, 'Percent low birth weight'],
-    'Data/Low_Birth_Weight_Pctl.json': ['Low Birth Weight Pctl', socioeconomicColorMap, 'Low birth weight percentile'],
-    'Data/Cardiovascular_Disease.json': ['Cardiovascular Disease', socioeconomicColorMap, 'Age-adjusted rate of emergency department visits for heart attacks per 10,000'],
-    'Data/Cardiovascular_Disease_Pctl.json': ['Cardiovascular Disease Pctl', socioeconomicColorMap, 'Cardiovascular disease percentile'],
-    'Data/Education.json': ['Education', socioeconomicColorMap, 'Percent of population over 25 with less than a high school education'],
-    'Data/Education_Pctl.json': ['Education Pctl', socioeconomicColorMap, 'Education percentile'],
-    'Data/Linguistic_Isolation.json': ['Linguistic Isolation', socioeconomicColorMap, 'Percent limited English speaking households'],
-    'Data/Linguistic_Isolation_Pctl.json': ['Linguistic Isolation Pctl', socioeconomicColorMap, 'Linguistic isolation percentile'],
-    'Data/Poverty.json': ['Poverty', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level'],
-    'Data/Poverty_Pctl.json': ['Poverty Pctl', socioeconomicColorMap, 'Poverty percentile'],
-    'Data/Unemployment.json': ['Unemployment', socioeconomicColorMap, 'Percent of the population over the age of 16 that is unemployed and eligible for the labor force'],
-    'Data/Unemployment_Pctl.json': ['Unemployment Pctl', socioeconomicColorMap, 'Unemployment percentile'],
-    'Data/Housing_Burden.json': ['Housing Burden', socioeconomicColorMap, 'Percent housing-burdened low-income households'],
-    'Data/Housing_Burden_Pctl.json': ['Housing Burden Pctl', socioeconomicColorMap, 'Housing burden percentile'],
-    'Data/Pop._Char._.json': ['Pop. Char. ', socioeconomicColorMap, 'Average of percentiles from the Population Characteristics indicators'],
-    'Data/Pop._Char._Score.json': ['Pop. Char. Score', socioeconomicColorMap, 'Population Characteristics variable scaled with a range of 0-10'],
-    'Data/Pop._Char._Pctl.json': ['Pop. Char. Pctl', socioeconomicColorMap, 'Population characteristics percentile'],
-    'Data/pm25_predictions.json': ['pm25_predictions', pollutantColorMap, 'Predicted PM2.5 using PWWB Machine Learning Models.'],
-    'Data/traffic.json': ['traffic_counts', pollutantColorMap, 'Traffic density or counts'],
-    'Data/poverty.json': ['poverty_data', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level'],
-    'Data/income.json': ['income_data', socioeconomicColorMap, 'No specific definition provided.']
+    'Data/no_data.json': ['No Data', pollutantColorMap, 'No specific definition provided.', ''],
+    'Data/time-series-data/': ['Time Series Data', pollutantColorMap, 'PM2.5 Predictions for the next 5 days', 'μg/m³'],
+    'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap, 'CalEnviroScreen Score, Pollution Score multiplied by Population Characteristics Score', ''],
+    'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap, 'Percentile of the CalEnviroScreen score', ''],
+    'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap, 'Percentile of the CalEnviroScreen score, grouped by 5% increments', ''],
+    'Data/Ozone.json': ['Ozone', pollutantColorMap, 'Amount of daily maximum 8 hour Ozone concentration', 'μg/m³'],
+    'Data/Ozone_Pctl.json': ['Ozone Pctl', pollutantColorMap, 'Ozone percentile', ''],
+    'Data/PM2.5.json': ['PM2.5', pollutantColorMap, 'Annual mean PM2.5 concentrations', 'μg/m³'],
+    'Data/PM2.5_Pctl.json': ['PM2.5 Pctl', pollutantColorMap, 'PM2.5 percentile', ''],
+    'Data/Diesel_PM.json': ['Diesel PM', pollutantColorMap, 'Diesel PM emissions from on-road and non-road sources', 'μg/m³'],
+    'Data/Diesel_PM_Pctl.json': ['Diesel PM Pctl', pollutantColorMap, 'Diesel PM percentile', ''],
+    'Data/Drinking_Water.json': ['Drinking Water', pollutantColorMap, 'Drinking water contaminant index for selected contaminants', ''],
+    'Data/Drinking_Water_Pctl.json': ['Drinking Water Pctl', pollutantColorMap, 'Drinking water percentile', ''],
+    'Data/Lead.json': ['Lead', pollutantColorMap, 'Potential risk for lead exposure in children living in low-income communities with older housing', ''],
+    'Data/Lead_Pctl.json': ['Lead Pctl', pollutantColorMap, 'Children\'s lead risk from housing percentile', ''],
+    'Data/Pesticides.json': ['Pesticides', pollutantColorMap, 'Total pounds of selected active pesticide ingredients used in production-agriculture per square mile', 'lbs/mi²'],
+    'Data/Pesticides_Pctl.json': ['Pesticides Pctl', pollutantColorMap, 'Pesticides percentile', ''],
+    'Data/Tox._Release.json': ['Tox. Release', pollutantColorMap, 'Toxicity-weighted concentrations of modeled chemical releases to air', 'TEQ'],
+    'Data/Tox._Release_Pctl.json': ['Tox. Release Pctl', pollutantColorMap, 'Toxic release percentile', ''],
+    'Data/CES_Traffic.json': ['Traffic', pollutantColorMap, 'Traffic density in vehicle-kilometers per hour per road length, within 150 meters of the census tract boundary', 'veh-km/hr'],
+    'Data/CES_Traffic_Pctl.json': ['Traffic Pctl', pollutantColorMap, 'Traffic percentile', ''],
+    'Data/Cleanup_Sites.json': ['Cleanup Sites', pollutantColorMap, 'Sum of weighted EnviroStor cleanup sites within buffered distances to populated blocks of census tracts', ''],
+    'Data/Cleanup_Sites_Pctl.json': ['Cleanup Sites Pctl', pollutantColorMap, 'Cleanup sites percentile', ''],
+    'Data/Groundwater_Threats.json': ['Groundwater Threats', pollutantColorMap, 'Sum of weighted GeoTracker leaking underground storage tank sites within buffered distances to populated blocks of census tracts', ''],
+    'Data/Groundwater_Threats_Pctl.json': ['Groundwater Threats Pctl', pollutantColorMap, 'Groundwater threats percentile', ''],
+    'Data/Haz._Waste.json': ['Haz. Waste', pollutantColorMap, 'Sum of weighted hazardous waste facilities and large quantity generators within buffered distances to populated blocks of census tracts', ''],
+    'Data/Haz._Waste_Pctl.json': ['Haz. Waste Pctl', pollutantColorMap, 'Hazardous waste percentile', ''],
+    'Data/Imp._Water_Bodies.json': ['Imp. Water Bodies', pollutantColorMap, 'Sum of number of pollutants across all impaired water bodies within buffered distances to populated blocks of census tracts', ''],
+    'Data/Imp._Water_Bodies_Pctl.json': ['Imp. Water Bodies Pctl', pollutantColorMap, 'Impaired water bodies percentile', ''],
+    'Data/Solid_Waste.json': ['Solid Waste', pollutantColorMap, 'Sum of weighted solid waste sites and facilities within buffered distances to populated blocks of census tracts', ''],
+    'Data/Solid_Waste_Pctl.json': ['Solid Waste Pctl', pollutantColorMap, 'Solid waste percentile', ''],
+    'Data/Pollution_Burden.json': ['Pollution Burden', pollutantColorMap, 'Average of percentiles from the Pollution Burden indicators', ''],
+    'Data/Pollution_Burden_Score.json': ['Pollution Burden Score', pollutantColorMap, 'Pollution Burden variable scaled with a range of 0-10', ''],
+    'Data/Pollution_Burden_Pctl.json': ['Pollution Burden Pctl', pollutantColorMap, 'Pollution burden percentile', ''],
+    'Data/Asthma.json': ['Asthma', socioeconomicColorMap, 'Age-adjusted rate of emergency department visits for asthma', ''],
+    'Data/Asthma_Pctl.json': ['Asthma Pctl', socioeconomicColorMap, 'Asthma percentile', ''],
+    'Data/Low_Birth_Weight.json': ['Low Birth Weight', socioeconomicColorMap, 'Percent low birth weight', ''],
+    'Data/Low_Birth_Weight_Pctl.json': ['Low Birth Weight Pctl', socioeconomicColorMap, 'Low birth weight percentile', ''],
+    'Data/Cardiovascular_Disease.json': ['Cardiovascular Disease', socioeconomicColorMap, 'Age-adjusted rate of emergency department visits for heart attacks per 10,000', ''],
+    'Data/Cardiovascular_Disease_Pctl.json': ['Cardiovascular Disease Pctl', socioeconomicColorMap, 'Cardiovascular disease percentile', ''],
+    'Data/Education.json': ['Education', socioeconomicColorMap, 'Percent of population over 25 with less than a high school education', ''],
+    'Data/Education_Pctl.json': ['Education Pctl', socioeconomicColorMap, 'Education percentile', ''],
+    'Data/Linguistic_Isolation.json': ['Linguistic Isolation', socioeconomicColorMap, 'Percent limited English speaking households', ''],
+    'Data/Linguistic_Isolation_Pctl.json': ['Linguistic Isolation Pctl', socioeconomicColorMap, 'Linguistic isolation percentile', ''],
+    'Data/Poverty.json': ['Poverty', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level', ''],
+    'Data/Poverty_Pctl.json': ['Poverty Pctl', socioeconomicColorMap, 'Poverty percentile', ''],
+    'Data/Unemployment.json': ['Unemployment', socioeconomicColorMap, 'Percent of the population over the age of 16 that is unemployed and eligible for the labor force', ''],
+    'Data/Unemployment_Pctl.json': ['Unemployment Pctl', socioeconomicColorMap, 'Unemployment percentile', ''],
+    'Data/Housing_Burden.json': ['Housing Burden', socioeconomicColorMap, 'Percent housing-burdened low-income households', ''],
+    'Data/Housing_Burden_Pctl.json': ['Housing Burden Pctl', socioeconomicColorMap, 'Housing burden percentile', ''],
+    'Data/Pop._Char._.json': ['Pop. Char. ', socioeconomicColorMap, 'Average of percentiles from the Population Characteristics indicators', ''],
+    'Data/Pop._Char._Score.json': ['Pop. Char. Score', socioeconomicColorMap, 'Population Characteristics variable scaled with a range of 0-10', ''],
+    'Data/Pop._Char._Pctl.json': ['Pop. Char. Pctl', socioeconomicColorMap, 'Population characteristics percentile', ''],
+    'Data/pm25_predictions.json': ['pm25_predictions', pollutantColorMap, 'Predicted PM2.5 using PWWB Machine Learning Models.', ''],
+    'Data/traffic.json': ['traffic_counts', pollutantColorMap, 'Traffic density or counts', ''],
+    'Data/poverty.json': ['poverty_data', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level', ''],
+    'Data/income.json': ['income_data', socioeconomicColorMap, 'No specific definition provided.', ''],
 };
 
 // document.addEventListener('DOMContentLoaded', function() {
@@ -845,13 +837,13 @@ const fileMappings = {
             }
 
             console.log('Time series data:', allTimeSeriesData);
-            dataMap[key] = [allTimeSeriesData, value[1], value[2], imageUrls]; // Assuming 'key' and 'value' are defined earlier in your code
+            dataMap[key] = [allTimeSeriesData, value[1], value[2], value[3], imageUrls]; // Assuming 'key' and 'value' are defined earlier in your code
 
         }
         else {
             // Handling for all other data types
             const response = await fetch(file);
-            dataMap[key] = [await response.json(), value[1], value[2]]; // Store data along with its color map
+            dataMap[key] = [await response.json(), value[1], value[2], value[3]]; // Store data along with its color map
         }
     }
 
@@ -902,15 +894,16 @@ document.getElementById('pollutantSelect').addEventListener('change', (event) =>
         console.log('selected data', selectedData)
         const colorMap = selectedData[1];
         const dataDescription = selectedData[2];
+        updateLegendUnits(selectedData[3]);
         console.log(dataDescription)
         updateTooltipText(dataDescription);
         console.log('Updating color map');
-        updateColorGradient(colorMap.from, colorMap.to);
+        createGradient([colorMap.from, colorMap.to]);
         console.log('Displaying data');
 
         if (event.target.value === 'Time Series Data') {
             timeSeriesData = selectedData[0];
-            twoDtimeSeriesData = selectedData[3];
+            twoDtimeSeriesData = selectedData[4];
             displayTimeSeriesData(); // Function to display time series data
             document.querySelector('.time-control').style.display = 'block'; // Show the time control for time series data
         } else {
@@ -997,6 +990,12 @@ async function displayTimeSeriesData() {
     console.log('Time series data updated manifest:', data);
     updateDateDisplay(timeStepCount, data);
     if (!threeDTiles)    {
+        _ = normalizeData(timeSeriesData[timeStepCount]);
+        entitiesToRemove = viewer.entities.values.filter(entity => entity.cylinder);
+        // console.log('Removing', entitiesToRemove.length, 'cylinders');
+        for (let entity of entitiesToRemove) {
+            viewer.entities.remove(entity);
+        }
         display2DTimeSeriesData();
         return;
     }
@@ -1234,6 +1233,7 @@ function showNotification(message) {
     notification.style.borderRadius = '5px';
     notification.style.marginBottom = '10px';
     notification.innerText = message;
+    console.log('Notification: ', message);
   
     // Add the notification to the notification container
     var container = document.getElementById('notificationContainer');
@@ -1244,41 +1244,23 @@ function showNotification(message) {
       container.removeChild(notification);
     }, 5000);
   }
-  
-  // Example usage
-  document.getElementById('myCheckbox').addEventListener('change', function() {
-    if(this.checked) {
-      showNotification('Air Traffic is now visible.');
-    } else {
-      showNotification('Air Traffic is now hidden.');
-    }
-  });
-  document.getElementById('3dCheckbox').addEventListener('change', function() {
-    if(this.checked) {
-        
-        
-      showNotification('3d tiles are on, time series data will take significantly longer to load');
-    } else {
-      showNotification('2d tiles will be shown.');
-    }
-  });
   // You can similarly attach event listeners to other elements to show notifications based on different scenarios
   
 
-document.getElementById('polCheckbox').addEventListener('change', function() {
+// document.getElementById('polCheckbox').addEventListener('change', function() {
 
-    if (!this.checked) {
-        //console.log('Removing photorealistic tiles')
-        cmap_pollution = false;
-        //deletePhotorealisticTiles();
+//     if (!this.checked) {
+//         //console.log('Removing photorealistic tiles')
+//         cmap_pollution = false;
+//         //deletePhotorealisticTiles();
 
-    }
-    if (this.checked)   {
-        //console.log('Adding photorealistic tiles')
-        cmap_pollution = true;
-        //addPhotorealisticTiles();
-    }
-});
+//     }
+//     if (this.checked)   {
+//         //console.log('Adding photorealistic tiles')
+//         cmap_pollution = true;
+//         //addPhotorealisticTiles();
+//     }
+// });
 
 
 
@@ -1307,6 +1289,97 @@ document.getElementById('myCheckbox').addEventListener('change', async function(
         isLoopActive = false;
     }
 });
+
+function createGradient(colors) {
+    color1 = colors[0];
+    color2 = colors[1];
+    const svg = document.getElementById("colorLegend");
+    let gradientStops = '';
+    const step = 100 / (colors.length - 1); // Calculate the step percentage for each color
+
+    // Generate the gradient stops based on the colors array
+    colors.forEach((color, index) => {
+        gradientStops += `<stop offset="${step * index}%" style="stop-color:${color};stop-opacity:1" />`;
+    });
+
+    // Set the innerHTML of the SVG to include the linearGradient with dynamically created stops
+    svg.innerHTML = `<defs>
+                        <linearGradient id="gradientColors" x1="0%" y1="0%" x2="100%" y2="0%">
+                            ${gradientStops}
+                        </linearGradient>
+                     </defs>
+                     <rect x="0" y="15" width="200" height="20" fill="url(#gradientColors)" />`;
+}
+
+
+// Function to create discrete intervals
+function createIntervals(colors, labels) {
+    const svg = document.getElementById("colorLegend");
+    svg.innerHTML = ''; // Clear existing content
+    const intervalWidth = 200 / colors.length;
+
+    // Adding each rectangle
+    colors.forEach((color, index) => {
+        const rect = `<rect x="${intervalWidth * index}" y="15" width="${intervalWidth}" height="20" fill="${color}" />`;
+        svg.innerHTML += rect;
+    });
+
+    // Adding labels
+    updateLabels(labels);
+}
+
+// Function to update labels
+function updateLabels(labels) {
+    const svg = document.getElementById("colorLegend");
+    const svgWidth = 200; // Match the SVG width
+    const intervalWidth = svgWidth / labels.length;
+
+    // Clear existing text to prevent overlapping labels
+    const textElements = svg.querySelectorAll('text');
+    textElements.forEach(element => element.remove());
+
+    labels.forEach((label, index) => {
+        // Convert label to a number and check if it's an integer
+        const numberLabel = Number(label);
+        let formattedLabel = numberLabel;
+        if (!Number.isInteger(numberLabel)) {
+            // If not an integer, round to one decimal place, but avoid unnecessary trailing zeros
+            formattedLabel = parseFloat(numberLabel.toFixed(1));
+        }
+
+        let xPosition = intervalWidth * index + intervalWidth / 2;
+        let textAnchor = "middle"; // Default text anchor
+
+        // Adjust position and anchoring for the first and last labels
+        if (index === 0) {
+            xPosition = 0; // Move to the very left
+            textAnchor = "start"; // Left-justify the first label
+        } else if (index === labels.length - 1) {
+            xPosition = svgWidth; // Move to the very right
+            textAnchor = "end"; // Right-justify the last label
+        }
+
+        // Create SVG text element for better compatibility
+        const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        textElement.setAttribute("x", xPosition.toString());
+        textElement.setAttribute("y", "12");
+        textElement.setAttribute("font-size", "12");
+        textElement.setAttribute("text-anchor", textAnchor);
+        textElement.setAttribute("fill", "white");
+        textElement.textContent = formattedLabel.toString();
+
+        svg.appendChild(textElement);
+    });
+}
+
+
+ 
+// Example usage
+// For Gradient
+// createGradient(0, 1);
+
+// For Discrete Intervals
+// createIntervals(["green", "lime", "yellow", "orange", "red"], [0.2, 0.4, 0.6, 0.8, 1.0]);
 
 
 

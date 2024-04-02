@@ -5,6 +5,8 @@
     <script src="/node_modules/cesium/Build/Cesium/Cesium.js"></script>
     <link href="/node_modules/cesium/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
     <style>
         /* Add a modern font */
         body {
@@ -42,7 +44,7 @@
     <input type="text" id="searchPollutant" placeholder="Search Pollutant..." autocomplete="off" style="width: 300px;">
     <select id="pollutantSelect" size="3" style="width: 320px;">
       <option value="No Data">No Data</option>
-      <option value="Time Series Data">PM2.5 Predictions</option>
+      <option value="Time Series Data">PM2.5 Predictions (Time Series)</option>
       <option value="Live Air Traffic">Live Air Traffic</option>
         <!-- <option value="PM25">Live PM2.5</option>
         <option value="O3">Live O3</option>
@@ -119,14 +121,14 @@
 
     <div id="dateDisplay"><label>Current Date:</label> <span id="currentDate">--/--/----</span></div>
     </div>
-    <div id="notificationContainer" style="position: fixed; bottom: 20px; right: 20px; z-index: 100;"></div>
+    <div id="notificationContainer" style="position: fixed; bottom: 100px; right: 20px; z-index: 100;"></div>
   </div>
   
 
 
   
   <!-- Add this somewhere in your HTML where you want the legend to appear -->
-  <div id="colorMapLegend" style="
+  <!-- <div id="colorMapLegend" style="
     width: 300px;
     height: 20px;
     position: absolute;
@@ -143,7 +145,7 @@
   ">
       <span id="minValue">Min</span>
       <span id="maxValue">Max</span>
-  </div>
+  </div> -->
 
   <style>
     .threshold-legend {
@@ -155,23 +157,16 @@
   </style>
   
   <div class="threshold-legend">
-    <svg width="200" height="50" xmlns="http://www.w3.org/2000/svg">
-      <!-- Colored Rectangles for Thresholds -->
-      <rect x="0" y="15" width="40" height="20" fill="green" />
-      <rect x="40" y="15" width="40" height="20" fill="lime" />
-      <rect x="80" y="15" width="40" height="20" fill="yellow" />
-      <rect x="120" y="15" width="40" height="20" fill="orange" />
-      <rect x="160" y="15" width="40" height="20" fill="red" />
-      
-      <!-- Text Labels for Thresholds -->
-      <text id="label0" x="20" y="12" font-size="12" text-anchor="middle" fill="white">0.2</text>
-      <text id="label1" x="60" y="12" font-size="12" text-anchor="middle" fill="white">0.4</text>
-      <text id="label2" x="100" y="12" font-size="12" text-anchor="middle" fill="white">0.6</text>
-      <text id="label3" x="140" y="12" font-size="12" text-anchor="middle" fill="white">0.8</text>
-      <text id="label4" x="180" y="12" font-size="12" text-anchor="middle" fill="white">1.0</text>
-
+    <svg id="colorLegend" width="200" height="50" xmlns="http://www.w3.org/2000/svg">
+      <!-- Placeholder for Gradient or Rectangles -->
+      <!-- Placeholder for Labels -->
+      <defs id="gradientDef">
+        <!-- Placeholder for Gradient Definition -->
+      </defs>
     </svg>
+    <span id="legendUnits" style="padding-left: 10px; margin-top: 50px; vertical-align: top; color: white; font-family: 'Roboto', sans-serif;"></span>
   </div>
+  
   
 
   
