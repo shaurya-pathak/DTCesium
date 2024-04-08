@@ -257,3 +257,19 @@ button {
   visibility: visible;
   opacity: 1;
 }
+
+.form-control {
+  font-family: 'Roboto', sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px 12px;
+  margin-right: 10px; /* Spacing between elements */
+  font-size: 16px; /* Matching font size */
+  height: 40px; /* Ensuring consistent height */
+}
+.search-input {
+  width: 288px; /* Adjusted to account for padding and border to match select width */
+}
+.select-dropdown {
+  width: 320px; /* Width as per your requirement */
+}

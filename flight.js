@@ -11,10 +11,12 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
     baseLayerPicker: false,
   });
 
+  addPhotorealisticTiles();
+
 var color1 = 'rgb(0, 0, 0)';
 var color2 = 'rgb(100, 0, 0)';
 var height_multiplier = 70;
-var threeDTiles = false;
+var threeDTiles = true;
 var cmap_pollution = true;
 var isLoopActive = false;
 
@@ -524,6 +526,8 @@ function disableLoadingSpinner() {
 
 function displayData(transformedData, labels = false, height_divisor = 1) {
 
+    enableLoadingSpinner();
+    setTimeout(disableLoadingSpinner, 5000);
     // Normalize data before using it
     let preNormalizedData = transformedData;
     transformedData = normalizeData(transformedData);
@@ -541,6 +545,17 @@ function displayData(transformedData, labels = false, height_divisor = 1) {
     for (let entity of entitiesToRemove) {
         viewer.entities.remove(entity);
     }
+    var finalPosition = viewer.camera.positionWC;
+    
+    // Convert the position to cartographic coordinates (radians)
+    var cartographicPosition = Cesium.Cartographic.fromCartesian(finalPosition);
+    var pos_height = cartographicPosition.height;
+    var opacity = 1.0
+    if (pos_height < 10000) {
+        opacity = 0.5;
+    }
+    height_multiplier = Math.min(200, pos_height / 1000);
+
 
     for (let i = 0; i < transformedData.length; i += 3) {
         const [latitude, longitude, rawHeight] = [transformedData[i], transformedData[i + 1], transformedData[i + 2]];
@@ -554,6 +569,7 @@ function displayData(transformedData, labels = false, height_divisor = 1) {
         let color;
         color = interpolateColor(height);
         color = colorStringToCesiumColor(color);
+        color = new Cesium.Color(color.red, color.green, color.blue, opacity);
         // console.log('Color:', color)
 
         if (labels) {
@@ -575,12 +591,13 @@ function displayData(transformedData, labels = false, height_divisor = 1) {
         viewer.entities.add({
             position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
             cylinder: {
-                length: height * 100 * height_multiplier, // Scale the height by 3000
+                length: height * 100 * (pos_height / 1000), // Scale the height by 3000
                 topRadius: 500,
                 bottomRadius: 500,
                 material: color
             }
         });
+        // updateCylindersToHeight();
         // console.log(`Cylinder added for data point ${i/3}`);
     }
 }
@@ -736,7 +753,7 @@ const fileMappings = {
     'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap, 'CalEnviroScreen Score, Pollution Score multiplied by Population Characteristics Score', ''],
     'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap, 'Percentile of the CalEnviroScreen score', ''],
     'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap, 'Percentile of the CalEnviroScreen score, grouped by 5% increments', ''],
-    'Data/Ozone.json': ['Ozone', pollutantColorMap, 'Amount of daily maximum 8 hour Ozone concentration', 'μg/m³'],
+    'Data/Ozone.json': ['Ozone', pollutantColorMap, 'Amount of daily maximum 8 hour Ozone concentration', 'ppm'],
     'Data/Ozone_Pctl.json': ['Ozone Pctl', pollutantColorMap, 'Ozone percentile', ''],
     'Data/PM2.5.json': ['PM2.5', pollutantColorMap, 'Annual mean PM2.5 concentrations', 'μg/m³'],
     'Data/PM2.5_Pctl.json': ['PM2.5 Pctl', pollutantColorMap, 'PM2.5 percentile', ''],
@@ -1021,7 +1038,10 @@ function display2DData(imageUrl) {
     console.log("SingleTileImageryProvider created:", singleTileProvider);
 
     // Create an ImageryLayer with the provider and add it to the viewer
-    const imageryLayer = new Cesium.ImageryLayer(singleTileProvider);
+    const imageryLayer = new Cesium.ImageryLayer(singleTileProvider, {
+        alpha: 0.7 // Set the transparency of the layer (0.0 - 1.0)
+    });
+
     viewer.imageryLayers.add(imageryLayer);
     console.log("Added custom imagery layer to viewer");
 }
@@ -1130,7 +1150,6 @@ function updateCylindersToHeight() {
     
     // Convert the position to cartographic coordinates (radians)
     var cartographicPosition = Cesium.Cartographic.fromCartesian(finalPosition);
-    
     // Convert radians to degrees for longitude and latitude
     var longitude = Cesium.Math.toDegrees(cartographicPosition.longitude);
     var latitude = Cesium.Math.toDegrees(cartographicPosition.latitude);
