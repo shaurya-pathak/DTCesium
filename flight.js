@@ -1016,6 +1016,7 @@ async function displayTimeSeriesData() {
         display2DTimeSeriesData();
         return;
     }
+    showNotification('3d tiles are on, time series data will take significantly longer to load');
     displayData(timeSeriesData[timeStepCount]);
 }
 
