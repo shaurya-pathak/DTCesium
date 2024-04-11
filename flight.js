@@ -460,11 +460,16 @@ async function fetchData(params) {
     }
 }
 
-function normalizeData(data) {
+function normalizeData(data, time_series=false) {
     // Extract only every third value to normalize
     const valuesToNormalize = data.filter((_, index) => index % 3 === 2);
-    const minVal = Math.min(...valuesToNormalize);
-    const maxVal = Math.max(...valuesToNormalize);
+    var minVal = Math.min(...valuesToNormalize);
+    var maxVal = Math.max(...valuesToNormalize);
+    if (time_series) {
+        minVal = 0;
+        maxVal = 50;
+    }
+    console.log('Min and max values to update:', minVal, maxVal)
     updateLabels([minVal, maxVal]);
     // document.getElementById('minValue').textContent = minVal.toFixed(2);
     // document.getElementById('maxValue').textContent = maxVal.toFixed(2);
@@ -524,13 +529,13 @@ function disableLoadingSpinner() {
 
 
 
-function displayData(transformedData, labels = false, height_divisor = 1) {
+function displayData(transformedData, labels = false, height_divisor = 1, time_series = false) {
 
     enableLoadingSpinner();
     setTimeout(disableLoadingSpinner, 5000);
     // Normalize data before using it
     let preNormalizedData = transformedData;
-    transformedData = normalizeData(transformedData);
+    transformedData = normalizeData(transformedData, time_series=time_series);
     // console.log('Normalized data:', transformedData);
 
     // Clear previous entities but not all entities
@@ -1007,7 +1012,7 @@ async function displayTimeSeriesData() {
     console.log('Time series data updated manifest:', data);
     updateDateDisplay(timeStepCount, data);
     if (!threeDTiles)    {
-        _ = normalizeData(timeSeriesData[timeStepCount]);
+        _ = normalizeData(timeSeriesData[timeStepCount], time_series = true);
         entitiesToRemove = viewer.entities.values.filter(entity => entity.cylinder);
         // console.log('Removing', entitiesToRemove.length, 'cylinders');
         for (let entity of entitiesToRemove) {
@@ -1017,7 +1022,7 @@ async function displayTimeSeriesData() {
         return;
     }
     showNotification('3d tiles are on, time series data will take significantly longer to load');
-    displayData(timeSeriesData[timeStepCount]);
+    displayData(timeSeriesData[timeStepCount], labels = false, height_divisor = 1, time_series = true);
 }
 
 function display2DData(imageUrl) {
@@ -1094,23 +1099,44 @@ document.addEventListener('DOMContentLoaded', function () {
     displayTimeSeriesData();
 });
 
+document.getElementById('searchPollutant').addEventListener('input', filterPollutants);
+document.getElementById('categorySelect').addEventListener('change', filterPollutants);
 
+function filterPollutants() {
+    var input = document.getElementById('searchPollutant');
+    var filter = input.value.toUpperCase();
+    var categorySelect = document.getElementById('categorySelect');
+    var category = categorySelect.value;
+    var div = document.getElementById("pollutantSelect");
+    var options = div.getElementsByTagName('option');
 
-document.getElementById('searchPollutant').addEventListener('input', function() {
-    var input, filter, ul, li, a, i, txtValue;
-    input = document.getElementById('searchPollutant');
-    filter = input.value.toUpperCase();
-    div = document.getElementById("pollutantSelect");
-    a = div.getElementsByTagName('option');
-    for (i = 0; i < a.length; i++) {
-      txtValue = a[i].textContent || a[i].innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        a[i].style.display = "";
-      } else {
-        a[i].style.display = "none";
-      }
+    for (var i = 0; i < options.length; i++) {
+        var txtValue = options[i].textContent || options[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1 && (options[i].dataset.category === category || category === "all")) {
+            options[i].style.display = "";
+        } else {
+            options[i].style.display = "none";
+        }
     }
-  });
+}
+
+
+
+// document.getElementById('searchPollutant').addEventListener('input', function() {
+//     var input, filter, ul, li, a, i, txtValue;
+//     input = document.getElementById('searchPollutant');
+//     filter = input.value.toUpperCase();
+//     div = document.getElementById("pollutantSelect");
+//     a = div.getElementsByTagName('option');
+//     for (i = 0; i < a.length; i++) {
+//       txtValue = a[i].textContent || a[i].innerText;
+//       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+//         a[i].style.display = "";
+//       } else {
+//         a[i].style.display = "none";
+//       }
+//     }
+//   });
 
   // Listen for clicks on the entire document
     document.addEventListener('click', function(event) {
@@ -1193,7 +1219,7 @@ function updateCylindersToHeight() {
 
 
 var previousCameraHeight = 0; // Initialize the previous camera height
-var thresholdDistance = 2000; // Define the threshold distance, e.g., 10,000 meters
+var thresholdDistance = 5000; // Define the threshold distance, e.g., 10,000 meters
 
 function hasCylinders(viewer) {
     var entities = viewer.entities.values;
@@ -1245,25 +1271,41 @@ document.getElementById('myCheckbox').addEventListener('change', function() {
 
 // Function to show a notification
 function showNotification(message) {
-    // Create the notification element
-    var notification = document.createElement('div');
-    notification.style.background = 'rgba(0, 0, 0, 0.7)';
-    notification.style.color = 'white';
-    notification.style.padding = '10px';
-    notification.style.borderRadius = '5px';
-    notification.style.marginBottom = '10px';
-    notification.innerText = message;
-    console.log('Notification: ', message);
-  
-    // Add the notification to the notification container
     var container = document.getElementById('notificationContainer');
-    container.appendChild(notification);
+    
+    // Check if a notification already exists
+    var existingNotification = container.querySelector('div');
+    
+    if (existingNotification) {
+        // Update the existing notification text
+        existingNotification.innerText = message;
+        console.log('Updated Notification: ', message);
+    } else {
+        // Create the notification element
+        var notification = document.createElement('div');
+        notification.style.background = 'rgba(0, 0, 0, 0.7)';
+        notification.style.color = 'white';
+        notification.style.padding = '10px';
+        notification.style.borderRadius = '5px';
+        notification.style.marginBottom = '10px';
+        notification.innerText = message;
+        console.log('Notification: ', message);
+
+        // Add the notification to the notification container
+        container.appendChild(notification);
+    }
+
+    // Clear any existing timeout to reset the timer
+    clearTimeout(container.timeoutId);
   
-    // Remove the notification after 5 seconds
-    setTimeout(function() {
-      container.removeChild(notification);
-    }, 5000);
-  }
+    // Remove the notification after 5 seconds of no new notifications
+    // container.timeoutId = setTimeout(function() {
+    //     if (container.firstChild) {
+    //         container.removeChild(container.firstChild);
+    //     }
+    // }, 000);
+}
+
   // You can similarly attach event listeners to other elements to show notifications based on different scenarios
   
 

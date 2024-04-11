@@ -41,71 +41,75 @@
       i
       <span class="custom-tooltip">You can hover over this button to see more information about how to use the control panel.</span>
     </div>
+    <select id="categorySelect" onchange="filterPollutants()">
+      <option value="all">All Categories</option>
+      <option value="air">Air Quality</option>
+      <option value="water">Water Quality</option>
+      <option value="waste">Waste & Pollution</option>
+      <option value="health">Health Impacts</option>
+      <option value="socioeconomic">Socioeconomic Factors</option>
+    </select>    
     <input type="text" id="searchPollutant" placeholder="Search Pollutant..." autocomplete="off" style="width: 300px;">
-    <select id="pollutantSelect" size="3" style="width: 320px;">
+    <select id="pollutantSelect" size="3" style="width: 320px; z-index:1000;">
+      <!-- Air Quality -->
       <option value="No Data">No Data</option>
-      <option value="Time Series Data">PM2.5 Predictions (Time Series)</option>
-      <option value="Live Air Traffic">Live Air Traffic</option>
-        <!-- <option value="PM25">Live PM2.5</option>
-        <option value="O3">Live O3</option>
-        <option value="NO2">Live NO2</option> -->
-      <!-- <option value="pm25_predictions">PM2.5 Predictions</option> -->
-      <!-- <option value="traffic_counts">Traffic Counts </option>
-      <option value="adult_asthma">Adult Asthma (Incorrect)</option> -->
-      <option value="Poverty">Poverty </option>
-      <option value="Income">Income </option>
-      <option value="CES 4.0 Score">CES 4.0 Score</option>
-      <option value="CES 4.0 Percentile">CES 4.0 Percentile</option>
-      <!-- <option value="CES 4.0 Percentile Range">CES 4.0 Percentile Range</option> -->
-      <option value="Ozone">Ozone</option>
-      <option value="Ozone Pctl">Ozone Pctl</option>
-      <option value="PM2.5">PM2.5 Average</option>
-      <option value="PM2.5 Pctl">PM2.5 Pctl</option>
-      <option value="Diesel PM">Diesel PM</option>
-      <option value="Diesel PM Pctl">Diesel PM Pctl</option>
-      <option value="Drinking Water">Drinking Water</option>
-      <option value="Drinking Water Pctl">Drinking Water Pctl</option>
-      <option value="Lead">Lead</option>
-      <option value="Lead Pctl">Lead Pctl</option>
-      <option value="Pesticides">Pesticides</option>
-      <option value="Pesticides Pctl">Pesticides Pctl</option>
-      <option value="Tox. Release">Tox. Release</option>
-      <option value="Tox. Release Pctl">Tox. Release Pctl</option>
-      <option value="Traffic">Traffic</option>
-      <option value="Traffic Pctl">Traffic Pctl</option>
-      <option value="Cleanup Sites">Cleanup Sites</option>
-      <option value="Cleanup Sites Pctl">Cleanup Sites Pctl</option>
-      <option value="Groundwater Threats">Groundwater Threats</option>
-      <option value="Groundwater Threats Pctl">Groundwater Threats Pctl</option>
-      <option value="Haz. Waste">Haz. Waste</option>
-      <option value="Haz. Waste Pctl">Haz. Waste Pctl</option>
-      <option value="Imp. Water Bodies">Imp. Water Bodies</option>
-      <option value="Imp. Water Bodies Pctl">Imp. Water Bodies Pctl</option>
-      <option value="Solid Waste">Solid Waste</option>
-      <option value="Solid Waste Pctl">Solid Waste Pctl</option>
-      <option value="Pollution Burden">Pollution Burden</option>
-      <option value="Pollution Burden Score">Pollution Burden Score</option>
-      <option value="Pollution Burden Pctl">Pollution Burden Pctl</option>
-      <option value="Asthma">Asthma</option>
-      <option value="Asthma Pctl">Asthma Pctl</option>
-      <option value="Low Birth Weight">Low Birth Weight</option>
-      <option value="Low Birth Weight Pctl">Low Birth Weight Pctl</option>
-      <option value="Cardiovascular Disease">Cardiovascular Disease</option>
-      <option value="Cardiovascular Disease Pctl">Cardiovascular Disease Pctl</option>
-      <option value="Education">Education</option>
-      <option value="Education Pctl">Education Pctl</option>
-      <option value="Linguistic Isolation">Linguistic Isolation</option>
-      <option value="Linguistic Isolation Pctl">Linguistic Isolation Pctl</option>
-      <option value="Poverty">Poverty</option>
-      <option value="Poverty Pctl">Poverty Pctl</option>
-      <option value="Unemployment">Unemployment</option>
-      <option value="Unemployment Pctl">Unemployment Pctl</option>
-      <option value="Housing Burden">Housing Burden</option>
-      <option value="Housing Burden Pctl">Housing Burden Pctl</option>
-      <option value="Pop. Char. ">Pop. Char. </option>
-      <option value="Pop. Char. Score">Pop. Char. Score</option>
-      <option value="Pop. Char. Pctl">Pop. Char. Pctl</option>
+      <option value="Time Series Data" data-category="air">PM2.5 Predictions (Time Series)</option>
+      <option value="Live Air Traffic" data-category="air">Live Air Traffic</option>
+      <option value="Ozone" data-category="air">Ozone</option>
+      <option value="Ozone Pctl" data-category="air">Ozone Pctl</option>
+      <option value="PM2.5" data-category="air">PM2.5 Average</option>
+      <option value="PM2.5 Pctl" data-category="air">PM2.5 Pctl</option>
+      <option value="Diesel PM" data-category="air">Diesel PM</option>
+      <option value="Diesel PM Pctl" data-category="air">Diesel PM Pctl</option>
+      <option value="Tox. Release" data-category="air">Tox. Release</option>
+      <option value="Tox. Release Pctl" data-category="air">Tox. Release Pctl</option>
+    
+      <!-- Water Quality -->
+      <option value="Drinking Water" data-category="water">Drinking Water</option>
+      <option value="Drinking Water Pctl" data-category="water">Drinking Water Pctl</option>
+      <option value="Lead" data-category="water">Lead</option>
+      <option value="Lead Pctl" data-category="water">Lead Pctl</option>
+      <option value="Groundwater Threats" data-category="water">Groundwater Threats</option>
+      <option value="Groundwater Threats Pctl" data-category="water">Groundwater Threats Pctl</option>
+      <option value="Imp. Water Bodies" data-category="water">Imp. Water Bodies</option>
+      <option value="Imp. Water Bodies Pctl" data-category="water">Imp. Water Bodies Pctl</option>
+    
+      <!-- Waste & Pollution -->
+      <option value="Solid Waste" data-category="waste">Solid Waste</option>
+      <option value="Solid Waste Pctl" data-category="waste">Solid Waste Pctl</option>
+      <option value="Cleanup Sites" data-category="waste">Cleanup Sites</option>
+      <option value="Cleanup Sites Pctl" data-category="waste">Cleanup Sites Pctl</option>
+      <option value="Haz. Waste" data-category="waste">Haz. Waste</option>
+      <option value="Haz. Waste Pctl" data-category="waste">Haz. Waste Pctl</option>
+      <option value="Pesticides" data-category="waste">Pesticides</option>
+      <option value="Pesticides Pctl" data-category="waste">Pesticides Pctl</option>
+    
+      <!-- Health Impacts -->
+      <option value="Asthma" data-category="health">Asthma</option>
+      <option value="Asthma Pctl" data-category="health">Asthma Pctl</option>
+      <option value="Low Birth Weight" data-category="health">Low Birth Weight</option>
+      <option value="Low Birth Weight Pctl" data-category="health">Low Birth Weight Pctl</option>
+      <option value="Cardiovascular Disease" data-category="health">Cardiovascular Disease</option>
+      <option value="Cardiovascular Disease Pctl" data-category="health">Cardiovascular Disease Pctl</option>
+    
+      <!-- Socioeconomic Factors -->
+      <option value="Poverty" data-category="socioeconomic">Poverty</option>
+      <option value="Poverty Pctl" data-category="socioeconomic">Poverty Pctl</option>
+      <option value="income_data" data-category="socioeconomic">Income</option>
+      <option value="Unemployment" data-category="socioeconomic">Unemployment</option>
+      <option value="Unemployment Pctl" data-category="socioeconomic">Unemployment Pctl</option>
+      <option value="Education" data-category="socioeconomic">Education</option>
+      <option value="Education Pctl" data-category="socioeconomic">Education Pctl</option>
+      <option value="Housing Burden" data-category="socioeconomic">Housing Burden</option>
+      <option value="Housing Burden Pctl" data-category="socioeconomic">Housing Burden Pctl</option>
+      <option value="Linguistic Isolation" data-category="socioeconomic">Linguistic Isolation</option>
+      <option value="Linguistic Isolation Pctl" data-category="socioeconomic"> Linguistic Isolation Pctl </option>
+      <option value="Pop. Char. " data-category="socioeconomic">Pop. Char. </option>
+      <option value="Pop. Char. Score" data-category="socioeconomic">Pop. Char. Score</option>
+      <option value="Pop. Char. Pctl" data-category="socioeconomic">Pop. Char. Pctl</option>
     </select>
+    
+    
     <div class="time-control" style="display: none;">
     <div class="button-group">
       <button id="stepBackButton">
@@ -121,7 +125,7 @@
 
     <div id="dateDisplay"><label>Current Date:</label> <span id="currentDate">--/--/----</span></div>
     </div>
-    <div id="notificationContainer" style="position: fixed; bottom: 100px; right: 20px; z-index: 100;"></div>
+    <div id="notificationContainer" style="position: fixed; bottom: 200px; right: 20px; z-index: 100;"></div>
   </div>
   
 
