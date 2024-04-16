@@ -467,7 +467,7 @@ function normalizeData(data, time_series=false) {
     var maxVal = Math.max(...valuesToNormalize);
     if (time_series) {
         minVal = 0;
-        maxVal = 50;
+        maxVal = 35;
     }
     console.log('Min and max values to update:', minVal, maxVal)
     updateLabels([minVal, maxVal]);
@@ -562,11 +562,15 @@ function displayData(transformedData, labels = false, height_divisor = 1, time_s
     height_multiplier = Math.min(200, pos_height / 1000);
     var adder = 3;
     if (time_series)  {
-        adder = 12;
+        adder = 3;
     }
     for (let i = 0; i < transformedData.length; i += adder) {
         const [latitude, longitude, rawHeight] = [transformedData[i], transformedData[i + 1], transformedData[i + 2]];
         const height = rawHeight / height_divisor;
+        if (latitude >= 33.3 && latitude <= 33.6 && longitude >= -118.55 && longitude <= -118.25) {
+            continue; // Skip the rest of the loop and move to the next iteration
+        }
+    
 
         if (height === 0) {
             //console.log(`Skipping data point ${i/3} due to zero height.`);
@@ -595,15 +599,26 @@ function displayData(transformedData, labels = false, height_divisor = 1, time_s
 
         
         
+        // Define a minimum height for the cylinder in meters
+        const minHeight = 500; // Example: 1000 meters
+
+        // Calculate the scaled height
+        let scaledHeight = height * 100 * (pos_height / 1000); // Your original scaling formula
+
+        // Ensure the height does not drop below the minimum
+        let finalHeight = Math.max(scaledHeight, minHeight);
+
+        // Add the entity with the adjusted height
         viewer.entities.add({
             position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
             cylinder: {
-                length: height * 100 * (pos_height / 1000), // Scale the height by 3000
-                topRadius: 500,
-                bottomRadius: 500,
-                material: color
+                length: finalHeight,  // Use the maximum of scaled height or minimum height
+                topRadius: 500,       // Set top radius of the cylinder
+                bottomRadius: 500,    // Set bottom radius of the cylinder
+                material: color       // Set material/color of the cylinder
             }
         });
+
         // updateCylindersToHeight();
         // console.log(`Cylinder added for data point ${i/3}`);
     }
@@ -830,10 +845,25 @@ const fileMappings = {
             console.log('Fetching time series data...');
 
             // Define your fileList array with the specific file names
-            const fileList = ['recent_0.json', 'recent_1.json', 'recent_2.json', 'recent_3.json', 'recent_4.json'];
+            // Populate fileList with 'new_0.json' through 'new_24.json'
+            var fileList = [];
+            for (let i = 0; i <= 1; i++) {
+                fileList.push(`retest_${i}.json`);
+            }
+
+            // Declare and populate allTimeSeriesData as an empty array (if needed, based on your context)
             let allTimeSeriesData = [];
 
-            const twodFileList = ['0.png', '1.png', '2.png', '3.png', '4.png'];
+            // Populate twoDFileList with '0.png' through '24.png'
+            var twoDFileList = [];
+            for (let i = 0; i <= 1; i++) {
+                twoDFileList.push(`${i}.png`);
+            }
+
+            // Display the populated arrays (you can remove this part if not needed for debugging)
+            console.log("File List:", fileList);
+            console.log("2D File List:", twoDFileList);
+
 
             let imageUrls = [];
 
@@ -841,7 +871,7 @@ const fileMappings = {
             const baseUrl = 'https://sagemaker-us-east-2-958520404663.s3.us-east-2.amazonaws.com/sagemaker/predictions/';
 
             // Loop through the twodFileList and construct each URL
-            for (const fileName of twodFileList) {
+            for (const fileName of twoDFileList) {
                 const fullUrl = `${baseUrl}${fileName}`; // Construct the full URL
                 imageUrls.push(fullUrl); // Add the URL to the array
             }
