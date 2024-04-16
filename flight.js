@@ -539,7 +539,7 @@ function displayData(transformedData, labels = false, height_divisor = 1, time_s
     // console.log('Normalized data:', transformedData);
 
     // Clear previous entities but not all entities
-    let entitiesToRemove = viewer.entities.values.filter(entity => entity.ellipsoid || entity.label);
+    let entitiesToRemove = viewer.entities.values;
     // console.log('Removing', entitiesToRemove.length, 'ellipsoids/labels');
     for (let entity of entitiesToRemove) {
         viewer.entities.remove(entity);
@@ -560,9 +560,11 @@ function displayData(transformedData, labels = false, height_divisor = 1, time_s
         opacity = 0.5;
     }
     height_multiplier = Math.min(200, pos_height / 1000);
-
-
-    for (let i = 0; i < transformedData.length; i += 3) {
+    var adder = 3;
+    if (time_series)  {
+        adder = 12;
+    }
+    for (let i = 0; i < transformedData.length; i += adder) {
         const [latitude, longitude, rawHeight] = [transformedData[i], transformedData[i + 1], transformedData[i + 2]];
         const height = rawHeight / height_divisor;
 
@@ -809,7 +811,7 @@ const fileMappings = {
     'Data/pm25_predictions.json': ['pm25_predictions', pollutantColorMap, 'Predicted PM2.5 using PWWB Machine Learning Models.', ''],
     'Data/traffic.json': ['traffic_counts', pollutantColorMap, 'Traffic density or counts', ''],
     'Data/poverty.json': ['poverty_data', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level', ''],
-    'Data/income.json': ['income_data', socioeconomicColorMap, 'No specific definition provided.', ''],
+    'Data/income.json': ['Income', socioeconomicColorMap, 'No specific definition provided.', ''],
 };
 
 // document.addEventListener('DOMContentLoaded', function() {
@@ -831,7 +833,7 @@ const fileMappings = {
             const fileList = ['recent_0.json', 'recent_1.json', 'recent_2.json', 'recent_3.json', 'recent_4.json'];
             let allTimeSeriesData = [];
 
-            const twodFileList = ['recent_0.png', 'recent_1.png', 'recent_2.png', 'recent_3.png', 'recent_4.png'];
+            const twodFileList = ['0.png', '1.png', '2.png', '3.png', '4.png'];
 
             let imageUrls = [];
 
@@ -1028,10 +1030,10 @@ async function displayTimeSeriesData() {
 function display2DData(imageUrl) {
     console.log('Displaying 2D data...');
     // Explicitly define the bounds of the rectangle
-    const west = -119.78;  // Minimum longitude
-    const south = 33.18;   // Minimum latitude
-    const east = -117.42; // Maximum longitude
-    const north = 34.47;   // Maximum latitude
+    const west = -119.95;  // Minimum longitude
+    const south = 33.03;   // Minimum latitude
+    const east = -117.32; // Maximum longitude
+    const north = 34.64;   // Maximum latitude
     console.log("Creating SingleTileImageryProvider with bounds:", {west, south, east, north});
 
     // Create a SingleTileImageryProvider with your image and its bounds
@@ -1064,7 +1066,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const stepDate = (days) => {
         timeStepCount += days;
-        timeStepCount = timeStepCount % 5;
+        timeStepCount = ((timeStepCount % 5) + 5) % 5;
         console.log(`Stepped to timeStepCount: ${timeStepCount}`);
         displayTimeSeriesData();
     };
@@ -1102,6 +1104,15 @@ document.addEventListener('DOMContentLoaded', function () {
 document.getElementById('searchPollutant').addEventListener('input', filterPollutants);
 document.getElementById('categorySelect').addEventListener('change', filterPollutants);
 
+var searchInput = document.getElementById('searchPollutant');
+
+  // Add a click event listener to the input element
+  searchInput.addEventListener('click', function() {
+    // Clear the input value when it is clicked
+    this.value = '';
+    filterPollutants();
+  });
+
 function filterPollutants() {
     var input = document.getElementById('searchPollutant');
     var filter = input.value.toUpperCase();
@@ -1110,7 +1121,7 @@ function filterPollutants() {
     var div = document.getElementById("pollutantSelect");
     var options = div.getElementsByTagName('option');
 
-    for (var i = 0; i < options.length; i++) {
+    for (var i = 0; i < options.length; i++) {2
         var txtValue = options[i].textContent || options[i].innerText;
         if (txtValue.toUpperCase().indexOf(filter) > -1 && (options[i].dataset.category === category || category === "all")) {
             options[i].style.display = "";
