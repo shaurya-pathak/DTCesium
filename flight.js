@@ -847,7 +847,7 @@ const fileMappings = {
             // Define your fileList array with the specific file names
             // Populate fileList with 'new_0.json' through 'new_24.json'
             var fileList = [];
-            for (let i = 0; i <= 1; i++) {
+            for (let i = 0; i <= 23; i++) {
                 fileList.push(`retest_${i}.json`);
             }
 
@@ -856,7 +856,7 @@ const fileMappings = {
 
             // Populate twoDFileList with '0.png' through '24.png'
             var twoDFileList = [];
-            for (let i = 0; i <= 1; i++) {
+            for (let i = 0; i <= 23; i++) {
                 twoDFileList.push(`${i}.png`);
             }
 
