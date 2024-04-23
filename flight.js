@@ -467,7 +467,7 @@ function normalizeData(data, time_series=false) {
     var maxVal = Math.max(...valuesToNormalize);
     if (time_series) {
         minVal = 0;
-        maxVal = 35;
+        maxVal = 25;
     }
     console.log('Min and max values to update:', minVal, maxVal)
     updateLabels([minVal, maxVal]);
@@ -771,7 +771,7 @@ const statColorMap = { 'from': 'rgb(100, 100, 0)', 'to': 'rgb(200, 0, 200)' };
 
 const fileMappings = {
     'Data/no_data.json': ['No Data', pollutantColorMap, 'No specific definition provided.', ''],
-    'Data/time-series-data/': ['Time Series Data', pollutantColorMap, 'PM2.5 Predictions for the next 5 days', 'μg/m³'],
+    'Data/time-series-data/': ['Time Series Data', pollutantColorMap, 'PM2.5 Predictions for the next 24 hours', 'μg/m³'],
     'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap, 'CalEnviroScreen Score, Pollution Score multiplied by Population Characteristics Score', ''],
     'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap, 'Percentile of the CalEnviroScreen score', ''],
     'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap, 'Percentile of the CalEnviroScreen score, grouped by 5% increments', ''],
@@ -990,9 +990,11 @@ function formatDateTime(isoString) {
     return `${formattedDate} ${formattedTime}`;
 }
 function updatePredictionDateTime(predictions) {
+    console.log('Number of predictions:', predictions['files'].length)
+    console.log('First prediction:', predictions['files'][0])
     // Get the current date and time
     const now = new Date();
-    const leastRecent = new Date(now.getTime() - 12 * 60 * 60 * 1000); // 7 hours back
+    const leastRecent = new Date(now.getTime() - (12+19) * 60 * 60 * 1000); // 12 hours back
 
     // Adjust the array as specified: most recent, then least recent to most recent - 1
     predictions['files'].forEach((prediction, index) => {
@@ -1096,7 +1098,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const stepDate = (days) => {
         timeStepCount += days;
-        timeStepCount = ((timeStepCount % 24) + 5) % 24;
+        timeStepCount = ((timeStepCount % 24) + 24) % 24;
         console.log(`Stepped to timeStepCount: ${timeStepCount}`);
         displayTimeSeriesData();
     };
