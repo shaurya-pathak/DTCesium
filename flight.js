@@ -1096,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const stepDate = (days) => {
         timeStepCount += days;
-        timeStepCount = ((timeStepCount % 5) + 5) % 5;
+        timeStepCount = ((timeStepCount % 24) + 5) % 24;
         console.log(`Stepped to timeStepCount: ${timeStepCount}`);
         displayTimeSeriesData();
     };
