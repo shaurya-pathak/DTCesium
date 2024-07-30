@@ -3,6 +3,7 @@
 <head>
     <!-- Update the following paths to point to your local copy of CesiumJS -->
     <script src="/node_modules/cesium/Build/Cesium/Cesium.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <link href="/node_modules/cesium/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
@@ -33,6 +34,7 @@
   </div>
   
   <div id="controlPanel">
+    <input type="file" id="fileInput" accept=".json">
     <div class="checkbox-group">
       <label for="3dCheckbox">3D Tiles</label>
       <input type="checkbox" id="3dInCheckbox" checked>
@@ -53,16 +55,27 @@
     <select id="pollutantSelect" size="3" style="width: 320px; z-index:1000;">
       <!-- Air Quality -->
       <option value="No Data">No Data</option>
-      <option value="Time Series Data" data-category="air">PM2.5 Predictions (Time Series)</option>
-      <option value="Live Air Traffic" data-category="air mobility">Live Air Traffic</option>
-      <option value="Ozone" data-category="air">Ozone</option>
-      <option value="Ozone Pctl" data-category="air">Ozone Pctl</option>
-      <option value="PM2.5" data-category="air">PM2.5 Average</option>
-      <option value="PM2.5 Pctl" data-category="air">PM2.5 Pctl</option>
-      <option value="Diesel PM" data-category="air">Diesel PM</option>
-      <option value="Diesel PM Pctl" data-category="air">Diesel PM Pctl</option>
-      <option value="Tox. Release" data-category="air">Tox. Release</option>
-      <option value="Tox. Release Pctl" data-category="air">Tox. Release Pctl</option>
+  <option value="Time Series Data" data-category="air">PM2.5 Predictions (Time Series)</option>
+  <option value="Wind Data" data-category="air">Wind Data</option>
+  <option value="Live Air Traffic" data-category="air mobility">Live Air Traffic</option>
+  <option value="Ozone" data-category="air">Ozone</option>
+  <option value="Ozone Pctl" data-category="air">Ozone Pctl</option>
+  <option value="PM2.5" data-category="air">PM2.5 Average</option>
+  <option value="PM2.5 Pctl" data-category="air">PM2.5 Pctl</option>
+  <option value="Diesel PM" data-category="air">Diesel PM</option>
+  <option value="Diesel PM Pctl" data-category="air">Diesel PM Pctl</option>
+  <option value="Tox. Release" data-category="air">Tox. Release</option>
+  <option value="Tox. Release Pctl" data-category="air">Tox. Release Pctl</option>
+  <option value="13-Butadine" data-category="air">13-Butadine</option>
+  <option value="Acrolein" data-category="air">Acrolein</option>
+  <option value="Benzene" data-category="air">Benzene</option>
+  <option value="Black Carbon 1" data-category="air">Black Carbon</option>
+  <option value="Ethylbenzene" data-category="air">Ethylbenzene</option>
+  <option value="mp-Xylenes" data-category="air">mp-Xylenes</option>
+  <option value="o-Xylene" data-category="air">o-Xylene</option>
+  <option value="Toluene" data-category="air">Toluene</option>
+  <option value="Ultra Fine Particles 1" data-category="air">Ultra Fine Particles</option>
+
     
       <!-- Water Quality -->
       <option value="Drinking Water" data-category="water">Drinking Water</option>
@@ -75,6 +88,7 @@
       <option value="Imp. Water Bodies Pctl" data-category="water">Imp. Water Bodies Pctl</option>
     
       <!-- Waste & Pollution -->
+      <option value="EPA Sites" data-category="waste">EPA Sites</option>
       <option value="Solid Waste" data-category="waste">Solid Waste</option>
       <option value="Solid Waste Pctl" data-category="waste">Solid Waste Pctl</option>
       <option value="Cleanup Sites" data-category="waste">Cleanup Sites</option>
@@ -108,6 +122,37 @@
       <option value="Pop. Char. Score" data-category="socioeconomic">Pop. Char. Score</option>
       <option value="Pop. Char. Pctl" data-category="socioeconomic">Pop. Char. Pctl</option>
     </select>
+
+    <!-- <div class="filter-section" style="display: none;">
+      <h5>Filter by Industry Sector</h5>
+      <button onclick="displayEpaSitesData()">Filter</button>
+      <label><input type="checkbox" name="industry" value="Petroleum">Petroleum</label>
+      <label><input type="checkbox" name="industry" value="Petroleum Bulk Terminals">Petroleum Bulk Terminals</label>
+      <label><input type="checkbox" name="industry" value="Nonmetallic Mineral Product">Nonmetallic Mineral Product</label>
+      <label><input type="checkbox" name="industry" value="Hazardous Waste">Hazardous Waste</label>
+      <label><input type="checkbox" name="industry" value="Machinery">Machinery</label>
+      <label><input type="checkbox" name="industry" value="Food">Food</label>
+      <label><input type="checkbox" name="industry" value="Fabricated Metals">Fabricated Metals</label>
+      <label><input type="checkbox" name="industry" value="Computers and Electronic Products">Computers and Electronic Products</label>
+      <label><input type="checkbox" name="industry" value="Transportation Equipment">Transportation Equipment</label>
+      <label><input type="checkbox" name="industry" value="Primary Metals">Primary Metals</label>
+      <label><input type="checkbox" name="industry" value="Chemicals">Chemicals</label>
+      <label><input type="checkbox" name="industry" value="Miscellaneous Manufacturing">Miscellaneous Manufacturing</label>
+      <label><input type="checkbox" name="industry" value="Chemical Wholesalers">Chemical Wholesalers</label>
+      <label><input type="checkbox" name="industry" value="Electrical Equipment">Electrical Equipment</label>
+      <label><input type="checkbox" name="industry" value="Plastics and Rubber">Plastics and Rubber</label>
+      <label><input type="checkbox" name="industry" value="Other">Other</label>
+      <label><input type="checkbox" name="industry" value="Wood Products">Wood Products</label>
+      <label><input type="checkbox" name="industry" value="Paper">Paper</label>
+      <label><input type="checkbox" name="industry" value="Furniture">Furniture</label>
+      <label><input type="checkbox" name="industry" value="Beverages">Beverages</label>
+      <label><input type="checkbox" name="industry" value="Metal Mining">Metal Mining</label>
+      <label><input type="checkbox" name="industry" value="Textiles">Textiles</label>
+      <label><input type="checkbox" name="industry" value="Electric Utilities">Electric Utilities</label>
+      <label><input type="checkbox" name="industry" value="Printing">Printing</label>
+      <label><input type="checkbox" name="industry" value="Textile Product">Textile Product</label>
+
+  </div> -->
     
     
     <div class="time-control" style="display: none;">
@@ -122,6 +167,8 @@
         <img src="images/right_arrow_icon.png" alt="Step Forward" style="width: 30px; height: auto;">
       </button>
     </div>
+
+    
 
     <div id="dateDisplay"><label>Current Date:</label> <span id="currentDate">--/--/----</span></div>
     </div>

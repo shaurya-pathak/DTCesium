@@ -1,0 +1,2405 @@
+{
+  "location": "Los Angeles",
+  "windData": [
+    {
+      "latitude": 34.49421979584239,
+      "longitude": -118.26346343648757,
+      "speed": 4.0,
+      "degree": 45
+    },
+    {
+      "latitude": 34.37860815611178,
+      "longitude": -118.9190733705366,
+      "speed": 4.5,
+      "degree": 75
+    },
+    {
+      "latitude": 33.82132011264689,
+      "longitude": -118.13809847380848,
+      "speed": 2.2,
+      "degree": 34
+    },
+    {
+      "latitude": 34.02179488571668,
+      "longitude": -118.91631057894959,
+      "speed": 4.0,
+      "degree": 87
+    },
+    {
+      "latitude": 34.24479535218368,
+      "longitude": -118.55970565828412,
+      "speed": 2.7,
+      "degree": 68
+    },
+    {
+      "latitude": 33.50147421289898,
+      "longitude": -118.89297666584804,
+      "speed": 5.3,
+      "degree": 82
+    },
+    {
+      "latitude": 34.340248224699494,
+      "longitude": -118.10833195207003,
+      "speed": 4.4,
+      "degree": 39
+    },
+    {
+      "latitude": 34.06447039839879,
+      "longitude": -118.57832540930707,
+      "speed": 4.3,
+      "degree": 70
+    },
+    {
+      "latitude": 33.89065032901989,
+      "longitude": -118.84324754426265,
+      "speed": 2.1,
+      "degree": 86
+    },
+    {
+      "latitude": 33.642022896674305,
+      "longitude": -118.29199106376025,
+      "speed": 2.2,
+      "degree": 39
+    },
+    {
+      "latitude": 34.08380508442688,
+      "longitude": -118.57887473839732,
+      "speed": 2.8,
+      "degree": 70
+    },
+    {
+      "latitude": 33.670496406290056,
+      "longitude": -118.78517348380855,
+      "speed": 3.5,
+      "degree": 81
+    },
+    {
+      "latitude": 34.05637891591098,
+      "longitude": -118.52300755347589,
+      "speed": 2.6,
+      "degree": 66
+    },
+    {
+      "latitude": 33.839940960357026,
+      "longitude": -118.43162946057637,
+      "speed": 4.5,
+      "degree": 56
+    },
+    {
+      "latitude": 34.26576263633787,
+      "longitude": -118.77465726829891,
+      "speed": 2.8,
+      "degree": 79
+    },
+    {
+      "latitude": 33.80656843516635,
+      "longitude": -118.34778936575515,
+      "speed": 3.2,
+      "degree": 48
+    },
+    {
+      "latitude": 34.20353577041372,
+      "longitude": -118.94357860507654,
+      "speed": 4.8,
+      "degree": 84
+    },
+    {
+      "latitude": 33.88531693187306,
+      "longitude": -118.48819860444428,
+      "speed": 5.4,
+      "degree": 61
+    },
+    {
+      "latitude": 33.8483290477392,
+      "longitude": -118.90547979014927,
+      "speed": 3.8,
+      "degree": 89
+    },
+    {
+      "latitude": 34.45493393240456,
+      "longitude": -118.4407086608663,
+      "speed": 3.3,
+      "degree": 56
+    },
+    {
+      "latitude": 34.38031009322153,
+      "longitude": -118.26724802144695,
+      "speed": 4.3,
+      "degree": 48
+    },
+    {
+      "latitude": 33.81636036979741,
+      "longitude": -118.62961327176113,
+      "speed": 2.1,
+      "degree": 72
+    },
+    {
+      "latitude": 34.407032131258745,
+      "longitude": -118.33586877940435,
+      "speed": 3.9,
+      "degree": 51
+    },
+    {
+      "latitude": 34.22224408240675,
+      "longitude": -118.28563953129003,
+      "speed": 4.3,
+      "degree": 49
+    },
+    {
+      "latitude": 33.88582347571312,
+      "longitude": -118.95410202379672,
+      "speed": 3.1,
+      "degree": 90
+    },
+    {
+      "latitude": 33.65573212577862,
+      "longitude": -118.48030386228118,
+      "speed": 3.3,
+      "degree": 55
+    },
+    {
+      "latitude": 33.908710761085956,
+      "longitude": -118.96986663051044,
+      "speed": 3.0,
+      "degree": 90
+    },
+    {
+      "latitude": 34.44826609349143,
+      "longitude": -118.7893305904331,
+      "speed": 3.3,
+      "degree": 70
+    },
+    {
+      "latitude": 33.86849141438849,
+      "longitude": -118.72793014114612,
+      "speed": 3.1,
+      "degree": 79
+    },
+    {
+      "latitude": 33.641154545271306,
+      "longitude": -118.24560043585902,
+      "speed": 4.5,
+      "degree": 36
+    },
+    {
+      "latitude": 34.45138103006994,
+      "longitude": -118.61586742512945,
+      "speed": 3.2,
+      "degree": 65
+    },
+    {
+      "latitude": 33.67533776148813,
+      "longitude": -118.33502901098967,
+      "speed": 1.4,
+      "degree": 44
+    },
+    {
+      "latitude": 34.4768019320764,
+      "longitude": -118.43908304367788,
+      "speed": 4.3,
+      "degree": 56
+    },
+    {
+      "latitude": 34.2962325493656,
+      "longitude": -118.51038468118176,
+      "speed": 5.3,
+      "degree": 64
+    },
+    {
+      "latitude": 33.86352988809957,
+      "longitude": -118.28459811737508,
+      "speed": 2.9,
+      "degree": 45
+    },
+    {
+      "latitude": 33.644893614508966,
+      "longitude": -118.33949187537874,
+      "speed": 4.2,
+      "degree": 43
+    },
+    {
+      "latitude": 34.40759043010658,
+      "longitude": -118.21214939766126,
+      "speed": 5.8,
+      "degree": 44
+    },
+    {
+      "latitude": 33.77851091782704,
+      "longitude": -118.08810629134425,
+      "speed": 3.0,
+      "degree": 30
+    },
+    {
+      "latitude": 34.043274684432184,
+      "longitude": -118.06445852013472,
+      "speed": 2.6,
+      "degree": 34
+    },
+    {
+      "latitude": 34.28110113488257,
+      "longitude": -118.89399357401197,
+      "speed": 3.7,
+      "degree": 81
+    },
+    {
+      "latitude": 34.20319088322858,
+      "longitude": -118.80506942992731,
+      "speed": 2.7,
+      "degree": 81
+    },
+    {
+      "latitude": 34.19624878191851,
+      "longitude": -118.97257804033242,
+      "speed": 3.6,
+      "degree": 85
+    },
+    {
+      "latitude": 34.23659544845966,
+      "longitude": -118.60875186380477,
+      "speed": 3.6,
+      "degree": 71
+    },
+    {
+      "latitude": 34.19968271787246,
+      "longitude": -118.11361292620606,
+      "speed": 3.1,
+      "degree": 39
+    },
+    {
+      "latitude": 33.526034973756495,
+      "longitude": -118.29190000747384,
+      "speed": 3.3,
+      "degree": 35
+    },
+    {
+      "latitude": 33.82029227516634,
+      "longitude": -118.87318994621968,
+      "speed": 3.1,
+      "degree": 87
+    },
+    {
+      "latitude": 34.13026842288421,
+      "longitude": -118.74305103099228,
+      "speed": 1.8,
+      "degree": 80
+    },
+    {
+      "latitude": 34.23755826761923,
+      "longitude": -118.43530547860182,
+      "speed": 4.9,
+      "degree": 60
+    },
+    {
+      "latitude": 34.250921309940374,
+      "longitude": -118.91006029256833,
+      "speed": 4.8,
+      "degree": 82
+    },
+    {
+      "latitude": 33.994966413832415,
+      "longitude": -118.16109566261362,
+      "speed": 3.2,
+      "degree": 39
+    },
+    {
+      "latitude": 34.215315743535754,
+      "longitude": -118.21481492094448,
+      "speed": 5.0,
+      "degree": 45
+    },
+    {
+      "latitude": 34.0753729131906,
+      "longitude": -118.77347618484254,
+      "speed": 1.9,
+      "degree": 82
+    },
+    {
+      "latitude": 33.56623065108414,
+      "longitude": -118.7829515859657,
+      "speed": 3.5,
+      "degree": 77
+    },
+    {
+      "latitude": 34.004258857599694,
+      "longitude": -118.48277995910115,
+      "speed": 2.8,
+      "degree": 62
+    },
+    {
+      "latitude": 34.21405128277747,
+      "longitude": -118.38382387137011,
+      "speed": 2.4,
+      "degree": 56
+    },
+    {
+      "latitude": 34.257901514661924,
+      "longitude": -118.25172380279494,
+      "speed": 4.7,
+      "degree": 47
+    },
+    {
+      "latitude": 33.506470568716345,
+      "longitude": -118.76787249505816,
+      "speed": 6.1,
+      "degree": 74
+    },
+    {
+      "latitude": 33.709054585545346,
+      "longitude": -118.08004718455575,
+      "speed": 3.4,
+      "degree": 28
+    },
+    {
+      "latitude": 34.26253783788135,
+      "longitude": -118.45301892911223,
+      "speed": 3.4,
+      "degree": 61
+    },
+    {
+      "latitude": 34.317095574048516,
+      "longitude": -118.82666418078537,
+      "speed": 3.0,
+      "degree": 78
+    },
+    {
+      "latitude": 33.75299194290153,
+      "longitude": -118.75134856173057,
+      "speed": 3.3,
+      "degree": 80
+    },
+    {
+      "latitude": 34.178341424812594,
+      "longitude": -118.49304071105871,
+      "speed": 5.5,
+      "degree": 64
+    },
+    {
+      "latitude": 34.3026665707811,
+      "longitude": -118.10900123398258,
+      "speed": 4.2,
+      "degree": 39
+    },
+    {
+      "latitude": 33.978817152741485,
+      "longitude": -118.61717897345093,
+      "speed": 4.1,
+      "degree": 72
+    },
+    {
+      "latitude": 34.120455148304664,
+      "longitude": -118.09623966129239,
+      "speed": 4.1,
+      "degree": 37
+    },
+    {
+      "latitude": 34.25583650340102,
+      "longitude": -118.34310539188117,
+      "speed": 4.0,
+      "degree": 53
+    },
+    {
+      "latitude": 33.532715948792486,
+      "longitude": -118.99179238406275,
+      "speed": 4.4,
+      "degree": 88
+    },
+    {
+      "latitude": 34.178051312128986,
+      "longitude": -118.4560663668735,
+      "speed": 3.4,
+      "degree": 61
+    },
+    {
+      "latitude": 33.78952132135534,
+      "longitude": -118.50833773573491,
+      "speed": 4.3,
+      "degree": 61
+    },
+    {
+      "latitude": 33.74110924894174,
+      "longitude": -118.1295299395091,
+      "speed": 5.2,
+      "degree": 32
+    },
+    {
+      "latitude": 33.5058917309192,
+      "longitude": -118.25809661628087,
+      "speed": 2.5,
+      "degree": 32
+    },
+    {
+      "latitude": 34.423123393000594,
+      "longitude": -118.65470212748428,
+      "speed": 4.3,
+      "degree": 68
+    },
+    {
+      "latitude": 33.92774239265623,
+      "longitude": -118.44240515991446,
+      "speed": 3.6,
+      "degree": 58
+    },
+    {
+      "latitude": 34.37605842118148,
+      "longitude": -118.62847072291572,
+      "speed": 3.6,
+      "degree": 69
+    },
+    {
+      "latitude": 34.15227034721337,
+      "longitude": -118.52138328996064,
+      "speed": 3.2,
+      "degree": 66
+    },
+    {
+      "latitude": 34.22106022070302,
+      "longitude": -118.97494548110916,
+      "speed": 3.0,
+      "degree": 84
+    },
+    {
+      "latitude": 34.44204764813602,
+      "longitude": -118.95989788664436,
+      "speed": 3.6,
+      "degree": 70
+    },
+    {
+      "latitude": 34.41405919407726,
+      "longitude": -118.92079306561872,
+      "speed": 4.1,
+      "degree": 73
+    },
+    {
+      "latitude": 34.3053814088366,
+      "longitude": -118.91418691241459,
+      "speed": 3.2,
+      "degree": 80
+    },
+    {
+      "latitude": 34.38508112305562,
+      "longitude": -118.239968530387,
+      "speed": 2.2,
+      "degree": 46
+    },
+    {
+      "latitude": 33.557096859925466,
+      "longitude": -118.23197629213797,
+      "speed": 2.7,
+      "degree": 32
+    },
+    {
+      "latitude": 34.439819620704604,
+      "longitude": -118.32165648600746,
+      "speed": 3.9,
+      "degree": 50
+    },
+    {
+      "latitude": 34.0311807125839,
+      "longitude": -118.34392845745359,
+      "speed": 4.7,
+      "degree": 52
+    },
+    {
+      "latitude": 34.28874770585814,
+      "longitude": -118.45007784412599,
+      "speed": 1.9,
+      "degree": 60
+    },
+    {
+      "latitude": 33.58898873376321,
+      "longitude": -118.14460393637458,
+      "speed": 3.7,
+      "degree": 28
+    },
+    {
+      "latitude": 34.07936923647276,
+      "longitude": -118.61438651331346,
+      "speed": 3.9,
+      "degree": 73
+    },
+    {
+      "latitude": 33.83304753204648,
+      "longitude": -118.34466011621669,
+      "speed": 4.9,
+      "degree": 49
+    },
+    {
+      "latitude": 33.589245442183355,
+      "longitude": -118.38418882135315,
+      "speed": 2.5,
+      "degree": 45
+    },
+    {
+      "latitude": 34.486034750971164,
+      "longitude": -118.7258041890994,
+      "speed": 3.7,
+      "degree": 67
+    },
+    {
+      "latitude": 33.76048389062266,
+      "longitude": -118.59417629981985,
+      "speed": 3.3,
+      "degree": 68
+    },
+    {
+      "latitude": 34.05516809425539,
+      "longitude": -118.78990225405323,
+      "speed": 3.9,
+      "degree": 83
+    },
+    {
+      "latitude": 34.30709828692091,
+      "longitude": -118.02843207722859,
+      "speed": 3.7,
+      "degree": 35
+    },
+    {
+      "latitude": 33.643669385223944,
+      "longitude": -118.00127402160291,
+      "speed": 4.5,
+      "degree": 22
+    },
+    {
+      "latitude": 34.326064607878585,
+      "longitude": -118.20352045081161,
+      "speed": 5.6,
+      "degree": 44
+    },
+    {
+      "latitude": 33.932389876620306,
+      "longitude": -118.09846205405606,
+      "speed": 3.2,
+      "degree": 34
+    },
+    {
+      "latitude": 34.4164834806184,
+      "longitude": -118.20913007782325,
+      "speed": 4.3,
+      "degree": 44
+    },
+    {
+      "latitude": 34.07945949316397,
+      "longitude": -118.07421838679937,
+      "speed": 2.5,
+      "degree": 35
+    },
+    {
+      "latitude": 34.264113610528305,
+      "longitude": -118.05549379224486,
+      "speed": 4.1,
+      "degree": 36
+    },
+    {
+      "latitude": 33.921981984908555,
+      "longitude": -118.69440398512428,
+      "speed": 4.5,
+      "degree": 77
+    },
+    {
+      "latitude": 34.30900734429556,
+      "longitude": -118.28507044095129,
+      "speed": 3.0,
+      "degree": 49
+    },
+    {
+      "latitude": 33.65657406716234,
+      "longitude": -118.94421247808057,
+      "speed": 4.5,
+      "degree": 89
+    },
+    {
+      "latitude": 33.65006278885751,
+      "longitude": -118.14495186116362,
+      "speed": 2.6,
+      "degree": 30
+    },
+    {
+      "latitude": 34.147543092013684,
+      "longitude": -118.91970203182436,
+      "speed": 2.6,
+      "degree": 86
+    },
+    {
+      "latitude": 33.75656116048267,
+      "longitude": -118.87444793033892,
+      "speed": 3.2,
+      "degree": 87
+    },
+    {
+      "latitude": 33.81661705590362,
+      "longitude": -118.86914524870339,
+      "speed": 4.3,
+      "degree": 87
+    },
+    {
+      "latitude": 34.22237417352061,
+      "longitude": -118.71622935468953,
+      "speed": 2.4,
+      "degree": 77
+    },
+    {
+      "latitude": 33.97292719418701,
+      "longitude": -118.23879427677223,
+      "speed": 4.5,
+      "degree": 43
+    },
+    {
+      "latitude": 33.78933076349637,
+      "longitude": -118.37323382382547,
+      "speed": 3.9,
+      "degree": 50
+    },
+    {
+      "latitude": 33.50451546069741,
+      "longitude": -118.5267351703577,
+      "speed": 4.6,
+      "degree": 53
+    },
+    {
+      "latitude": 34.06572477925422,
+      "longitude": -118.15459640962216,
+      "speed": 3.1,
+      "degree": 40
+    },
+    {
+      "latitude": 33.59781317598,
+      "longitude": -118.94879970732151,
+      "speed": 4.5,
+      "degree": 88
+    },
+    {
+      "latitude": 33.79956854891595,
+      "longitude": -118.02511283680153,
+      "speed": 2.6,
+      "degree": 27
+    },
+    {
+      "latitude": 34.09943520252323,
+      "longitude": -118.05273270647663,
+      "speed": 5.5,
+      "degree": 34
+    },
+    {
+      "latitude": 33.556080077292044,
+      "longitude": -118.75458667569164,
+      "speed": 4.7,
+      "degree": 75
+    },
+    {
+      "latitude": 33.80140555437333,
+      "longitude": -118.57890954910187,
+      "speed": 4.5,
+      "degree": 67
+    },
+    {
+      "latitude": 34.08112804686539,
+      "longitude": -118.00761766623796,
+      "speed": 2.6,
+      "degree": 32
+    },
+    {
+      "latitude": 33.96969565643185,
+      "longitude": -118.21212026398429,
+      "speed": 4.5,
+      "degree": 42
+    },
+    {
+      "latitude": 34.12395530890015,
+      "longitude": -118.91750709991597,
+      "speed": 3.2,
+      "degree": 86
+    },
+    {
+      "latitude": 33.60671641213097,
+      "longitude": -118.6451002486779,
+      "speed": 2.2,
+      "degree": 68
+    },
+    {
+      "latitude": 33.863281804384414,
+      "longitude": -118.73911860953513,
+      "speed": 4.9,
+      "degree": 80
+    },
+    {
+      "latitude": 34.09261518120144,
+      "longitude": -118.90507454250456,
+      "speed": 3.2,
+      "degree": 86
+    },
+    {
+      "latitude": 34.313727305693874,
+      "longitude": -118.62526631910808,
+      "speed": 3.9,
+      "degree": 71
+    },
+    {
+      "latitude": 34.38593840645032,
+      "longitude": -118.39469117419563,
+      "speed": 3.4,
+      "degree": 55
+    },
+    {
+      "latitude": 33.77237018130932,
+      "longitude": -118.04513437326878,
+      "speed": 3.3,
+      "degree": 28
+    },
+    {
+      "latitude": 33.68341498356604,
+      "longitude": -118.91972450072156,
+      "speed": 4.2,
+      "degree": 88
+    },
+    {
+      "latitude": 34.28801198964467,
+      "longitude": -118.57564648977151,
+      "speed": 4.5,
+      "degree": 68
+    },
+    {
+      "latitude": 33.60817224209335,
+      "longitude": -118.0799515953812,
+      "speed": 3.1,
+      "degree": 25
+    },
+    {
+      "latitude": 34.052447050650585,
+      "longitude": -118.56714781001642,
+      "speed": 3.3,
+      "degree": 69
+    },
+    {
+      "latitude": 34.01079613343188,
+      "longitude": -118.0895065207923,
+      "speed": 3.0,
+      "degree": 35
+    },
+    {
+      "latitude": 33.684625819211455,
+      "longitude": -118.73192150640347,
+      "speed": 3.5,
+      "degree": 77
+    },
+    {
+      "latitude": 34.09545257265931,
+      "longitude": -118.58028455565304,
+      "speed": 1.8,
+      "degree": 70
+    },
+    {
+      "latitude": 33.815648308463395,
+      "longitude": -118.65955263646542,
+      "speed": 2.5,
+      "degree": 74
+    },
+    {
+      "latitude": 33.88558962673351,
+      "longitude": -118.16377606729769,
+      "speed": 4.5,
+      "degree": 37
+    },
+    {
+      "latitude": 33.62988420723405,
+      "longitude": -118.97443821267728,
+      "speed": 3.2,
+      "degree": 90
+    },
+    {
+      "latitude": 33.90478765943146,
+      "longitude": -118.99809137505933,
+      "speed": 3.0,
+      "degree": 90
+    },
+    {
+      "latitude": 34.42765003422259,
+      "longitude": -118.98309312197455,
+      "speed": 3.8,
+      "degree": 71
+    },
+    {
+      "latitude": 34.47541535870278,
+      "longitude": -118.1547830219647,
+      "speed": 3.8,
+      "degree": 40
+    },
+    {
+      "latitude": 34.25617242359317,
+      "longitude": -118.71034102742732,
+      "speed": 3.5,
+      "degree": 76
+    },
+    {
+      "latitude": 34.29567105410119,
+      "longitude": -118.13318722134721,
+      "speed": 5.3,
+      "degree": 40
+    },
+    {
+      "latitude": 34.27920270250327,
+      "longitude": -118.94454768014414,
+      "speed": 3.6,
+      "degree": 81
+    },
+    {
+      "latitude": 33.97224495953052,
+      "longitude": -118.2667025930553,
+      "speed": 4.0,
+      "degree": 45
+    },
+    {
+      "latitude": 33.96610182783062,
+      "longitude": -118.55668468957934,
+      "speed": 4.9,
+      "degree": 68
+    },
+    {
+      "latitude": 33.67753026959753,
+      "longitude": -118.96849425611774,
+      "speed": 4.3,
+      "degree": 90
+    },
+    {
+      "latitude": 33.947846330648794,
+      "longitude": -118.85837893143253,
+      "speed": 2.4,
+      "degree": 86
+    },
+    {
+      "latitude": 34.32951223170721,
+      "longitude": -118.34965454700361,
+      "speed": 4.8,
+      "degree": 53
+    },
+    {
+      "latitude": 33.93593752820294,
+      "longitude": -118.23050605395836,
+      "speed": 2.2,
+      "degree": 42
+    },
+    {
+      "latitude": 34.442187499002216,
+      "longitude": -118.9379691086232,
+      "speed": 2.1,
+      "degree": 71
+    },
+    {
+      "latitude": 33.802715238959436,
+      "longitude": -118.75519319404543,
+      "speed": 4.4,
+      "degree": 81
+    },
+    {
+      "latitude": 33.893520857703614,
+      "longitude": -118.23435712436424,
+      "speed": 3.6,
+      "degree": 42
+    },
+    {
+      "latitude": 34.47817215288522,
+      "longitude": -118.78656131852149,
+      "speed": 5.6,
+      "degree": 68
+    },
+    {
+      "latitude": 34.235627601869,
+      "longitude": -118.58258756806755,
+      "speed": 4.0,
+      "degree": 70
+    },
+    {
+      "latitude": 34.187713471700484,
+      "longitude": -118.1968336958504,
+      "speed": 2.0,
+      "degree": 44
+    },
+    {
+      "latitude": 33.81829499970646,
+      "longitude": -118.54785648095444,
+      "speed": 5.1,
+      "degree": 65
+    },
+    {
+      "latitude": 34.15935028130037,
+      "longitude": -118.81895541806036,
+      "speed": 2.6,
+      "degree": 83
+    },
+    {
+      "latitude": 34.01721022282118,
+      "longitude": -118.16586174472954,
+      "speed": 4.9,
+      "degree": 39
+    },
+    {
+      "latitude": 33.90408084971203,
+      "longitude": -118.01728040369969,
+      "speed": 4.0,
+      "degree": 29
+    },
+    {
+      "latitude": 33.676641655334485,
+      "longitude": -118.85251493948441,
+      "speed": 3.4,
+      "degree": 85
+    },
+    {
+      "latitude": 33.96853363168621,
+      "longitude": -118.45903231777473,
+      "speed": 3.5,
+      "degree": 60
+    },
+    {
+      "latitude": 34.396379545145635,
+      "longitude": -118.18135987789837,
+      "speed": 3.1,
+      "degree": 42
+    },
+    {
+      "latitude": 34.23950076184192,
+      "longitude": -118.10498789006213,
+      "speed": 2.8,
+      "degree": 39
+    },
+    {
+      "latitude": 33.84788980203422,
+      "longitude": -118.69023480927682,
+      "speed": 3.1,
+      "degree": 77
+    },
+    {
+      "latitude": 34.26397782334975,
+      "longitude": -118.66371872450715,
+      "speed": 4.1,
+      "degree": 74
+    },
+    {
+      "latitude": 34.20253748570582,
+      "longitude": -118.7205669068144,
+      "speed": 2.0,
+      "degree": 78
+    },
+    {
+      "latitude": 33.81649511635524,
+      "longitude": -118.62408731535594,
+      "speed": 3.9,
+      "degree": 71
+    },
+    {
+      "latitude": 33.57839787812543,
+      "longitude": -118.42047799487014,
+      "speed": 2.9,
+      "degree": 47
+    },
+    {
+      "latitude": 33.94143119694423,
+      "longitude": -118.3514301476736,
+      "speed": 4.2,
+      "degree": 51
+    },
+    {
+      "latitude": 33.6109401095653,
+      "longitude": -118.20908950295808,
+      "speed": 2.2,
+      "degree": 33
+    },
+    {
+      "latitude": 34.19320622106543,
+      "longitude": -118.07893924712724,
+      "speed": 3.2,
+      "degree": 37
+    },
+    {
+      "latitude": 33.51410864186637,
+      "longitude": -118.65199383404044,
+      "speed": 2.8,
+      "degree": 65
+    },
+    {
+      "latitude": 33.68446426786583,
+      "longitude": -118.68423185229528,
+      "speed": 2.6,
+      "degree": 73
+    },
+    {
+      "latitude": 34.07704643914339,
+      "longitude": -118.77069621923182,
+      "speed": 3.3,
+      "degree": 82
+    },
+    {
+      "latitude": 33.98236858586146,
+      "longitude": -118.21636088910097,
+      "speed": 5.2,
+      "degree": 42
+    },
+    {
+      "latitude": 34.42154603441193,
+      "longitude": -118.87120116138772,
+      "speed": 4.7,
+      "degree": 73
+    },
+    {
+      "latitude": 34.08583332929993,
+      "longitude": -118.88212762406658,
+      "speed": 5.0,
+      "degree": 86
+    },
+    {
+      "latitude": 34.040954636600496,
+      "longitude": -118.76589437779067,
+      "speed": 2.5,
+      "degree": 82
+    },
+    {
+      "latitude": 34.28692415941524,
+      "longitude": -118.15127923434999,
+      "speed": 2.6,
+      "degree": 41
+    },
+    {
+      "latitude": 34.402406022015754,
+      "longitude": -118.53244668916128,
+      "speed": 6.2,
+      "degree": 63
+    },
+    {
+      "latitude": 33.80028925632517,
+      "longitude": -118.34583803577647,
+      "speed": 2.5,
+      "degree": 48
+    },
+    {
+      "latitude": 33.93067582831592,
+      "longitude": -118.37826429382007,
+      "speed": 2.8,
+      "degree": 53
+    },
+    {
+      "latitude": 34.16917262166177,
+      "longitude": -118.96793900100688,
+      "speed": 1.9,
+      "degree": 85
+    },
+    {
+      "latitude": 34.194547358766584,
+      "longitude": -118.1645346349748,
+      "speed": 3.4,
+      "degree": 42
+    },
+    {
+      "latitude": 33.95660753355129,
+      "longitude": -118.54548313131568,
+      "speed": 4.6,
+      "degree": 67
+    },
+    {
+      "latitude": 33.623141284350304,
+      "longitude": -118.05405468137216,
+      "speed": 4.8,
+      "degree": 24
+    },
+    {
+      "latitude": 34.050922716831884,
+      "longitude": -118.05719387117949,
+      "speed": 2.8,
+      "degree": 34
+    },
+    {
+      "latitude": 34.1226316839467,
+      "longitude": -118.11542335579405,
+      "speed": 4.2,
+      "degree": 38
+    },
+    {
+      "latitude": 33.62533572414138,
+      "longitude": -118.26720647416383,
+      "speed": 2.0,
+      "degree": 37
+    },
+    {
+      "latitude": 33.592276749353665,
+      "longitude": -118.75371363658908,
+      "speed": 5.2,
+      "degree": 76
+    },
+    {
+      "latitude": 34.1258144107434,
+      "longitude": -118.79198234880765,
+      "speed": 3.8,
+      "degree": 82
+    },
+    {
+      "latitude": 33.82652236080809,
+      "longitude": -118.95508267554048,
+      "speed": 3.9,
+      "degree": 90
+    },
+    {
+      "latitude": 33.95842438423169,
+      "longitude": -118.00829369043383,
+      "speed": 4.6,
+      "degree": 30
+    },
+    {
+      "latitude": 34.39462682193176,
+      "longitude": -118.69423134499984,
+      "speed": 5.1,
+      "degree": 71
+    },
+    {
+      "latitude": 33.569021610154444,
+      "longitude": -118.95720203053534,
+      "speed": 0.9,
+      "degree": 88
+    },
+    {
+      "latitude": 33.736811449724144,
+      "longitude": -118.23385186179627,
+      "speed": 2.8,
+      "degree": 38
+    },
+    {
+      "latitude": 33.87831976939053,
+      "longitude": -118.58201966422072,
+      "speed": 3.1,
+      "degree": 69
+    },
+    {
+      "latitude": 34.10083563963689,
+      "longitude": -118.63936579718703,
+      "speed": 2.3,
+      "degree": 74
+    },
+    {
+      "latitude": 34.40048870682668,
+      "longitude": -118.02313214693228,
+      "speed": 2.1,
+      "degree": 34
+    },
+    {
+      "latitude": 33.64402690002655,
+      "longitude": -118.72123737698796,
+      "speed": 2.5,
+      "degree": 75
+    },
+    {
+      "latitude": 34.29470111681646,
+      "longitude": -118.13844737581955,
+      "speed": 3.8,
+      "degree": 40
+    },
+    {
+      "latitude": 33.75950075491446,
+      "longitude": -118.24645246886064,
+      "speed": 4.3,
+      "degree": 40
+    },
+    {
+      "latitude": 33.808588196135695,
+      "longitude": -118.19043955590148,
+      "speed": 4.7,
+      "degree": 37
+    },
+    {
+      "latitude": 34.080534006188316,
+      "longitude": -118.94067977599943,
+      "speed": 2.8,
+      "degree": 87
+    },
+    {
+      "latitude": 34.40271778709992,
+      "longitude": -118.70726639784519,
+      "speed": 3.4,
+      "degree": 71
+    },
+    {
+      "latitude": 34.48677416738293,
+      "longitude": -118.54382495985703,
+      "speed": 5.1,
+      "degree": 60
+    },
+    {
+      "latitude": 33.58441997709878,
+      "longitude": -118.83347176586061,
+      "speed": 4.1,
+      "degree": 81
+    },
+    {
+      "latitude": 34.19273360058786,
+      "longitude": -118.65163091927967,
+      "speed": 4.2,
+      "degree": 74
+    },
+    {
+      "latitude": 33.676520448163835,
+      "longitude": -118.24160792098621,
+      "speed": 1.8,
+      "degree": 37
+    },
+    {
+      "latitude": 34.00306394405429,
+      "longitude": -118.46830357706928,
+      "speed": 4.1,
+      "degree": 61
+    },
+    {
+      "latitude": 33.64568890399221,
+      "longitude": -118.19353852249667,
+      "speed": 2.6,
+      "degree": 33
+    },
+    {
+      "latitude": 33.612190986413864,
+      "longitude": -118.60090755022652,
+      "speed": 4.1,
+      "degree": 64
+    },
+    {
+      "latitude": 34.07441140300961,
+      "longitude": -118.31846053378932,
+      "speed": 3.8,
+      "degree": 50
+    },
+    {
+      "latitude": 33.84636527699636,
+      "longitude": -118.2830257354729,
+      "speed": 3.9,
+      "degree": 44
+    },
+    {
+      "latitude": 34.27711629356141,
+      "longitude": -118.10618634972217,
+      "speed": 4.4,
+      "degree": 39
+    },
+    {
+      "latitude": 34.134978475852634,
+      "longitude": -118.33960434800923,
+      "speed": 5.6,
+      "degree": 53
+    },
+    {
+      "latitude": 34.396737989665226,
+      "longitude": -118.02622520552754,
+      "speed": 4.4,
+      "degree": 34
+    },
+    {
+      "latitude": 34.19603199859223,
+      "longitude": -118.28140657842633,
+      "speed": 2.2,
+      "degree": 49
+    },
+    {
+      "latitude": 34.31835645266404,
+      "longitude": -118.43472101336503,
+      "speed": 4.8,
+      "degree": 59
+    },
+    {
+      "latitude": 33.65330043994416,
+      "longitude": -118.77596481555501,
+      "speed": 3.2,
+      "degree": 80
+    },
+    {
+      "latitude": 33.945814023775476,
+      "longitude": -118.97002239588092,
+      "speed": 3.5,
+      "degree": 89
+    },
+    {
+      "latitude": 34.38751717268483,
+      "longitude": -118.19781296330048,
+      "speed": 4.0,
+      "degree": 43
+    },
+    {
+      "latitude": 34.32657708602277,
+      "longitude": -118.79822524790309,
+      "speed": 3.0,
+      "degree": 77
+    },
+    {
+      "latitude": 34.349022769204495,
+      "longitude": -118.93944407638996,
+      "speed": 3.8,
+      "degree": 77
+    },
+    {
+      "latitude": 33.66564602866293,
+      "longitude": -118.28355004870797,
+      "speed": 2.8,
+      "degree": 39
+    },
+    {
+      "latitude": 33.92183833940903,
+      "longitude": -118.80297796525025,
+      "speed": 3.6,
+      "degree": 84
+    },
+    {
+      "latitude": 34.47241736909503,
+      "longitude": -118.96214616804801,
+      "speed": 5.5,
+      "degree": 68
+    },
+    {
+      "latitude": 33.76228283551654,
+      "longitude": -118.33377077455106,
+      "speed": 3.1,
+      "degree": 46
+    },
+    {
+      "latitude": 34.325891183982655,
+      "longitude": -118.41129277383088,
+      "speed": 3.8,
+      "degree": 57
+    },
+    {
+      "latitude": 34.08715740091341,
+      "longitude": -118.9913670451042,
+      "speed": 5.0,
+      "degree": 87
+    },
+    {
+      "latitude": 34.25059871080724,
+      "longitude": -118.71511327630674,
+      "speed": 4.3,
+      "degree": 77
+    },
+    {
+      "latitude": 33.784162036424874,
+      "longitude": -118.90290689973574,
+      "speed": 3.1,
+      "degree": 89
+    },
+    {
+      "latitude": 33.70610180178035,
+      "longitude": -118.06205645138843,
+      "speed": 3.2,
+      "degree": 27
+    },
+    {
+      "latitude": 33.94365711930659,
+      "longitude": -118.50126269652483,
+      "speed": 3.9,
+      "degree": 63
+    },
+    {
+      "latitude": 33.66762019348243,
+      "longitude": -118.8794431751953,
+      "speed": 3.6,
+      "degree": 86
+    },
+    {
+      "latitude": 34.42462936099636,
+      "longitude": -118.83000819149814,
+      "speed": 3.6,
+      "degree": 72
+    },
+    {
+      "latitude": 34.16973029673101,
+      "longitude": -118.03211546606332,
+      "speed": 4.1,
+      "degree": 34
+    },
+    {
+      "latitude": 33.79651156843955,
+      "longitude": -118.90977332512297,
+      "speed": 2.6,
+      "degree": 89
+    },
+    {
+      "latitude": 34.37108004026617,
+      "longitude": -118.48472962725869,
+      "speed": 2.7,
+      "degree": 61
+    },
+    {
+      "latitude": 33.58915716939613,
+      "longitude": -118.16151137569766,
+      "speed": 1.8,
+      "degree": 29
+    },
+    {
+      "latitude": 34.15360455776633,
+      "longitude": -118.25833110232503,
+      "speed": 4.4,
+      "degree": 47
+    },
+    {
+      "latitude": 33.76562307929366,
+      "longitude": -118.03385973271021,
+      "speed": 3.1,
+      "degree": 27
+    },
+    {
+      "latitude": 33.714078944445774,
+      "longitude": -118.68853309595177,
+      "speed": 3.9,
+      "degree": 75
+    },
+    {
+      "latitude": 33.8143691323207,
+      "longitude": -118.72123716346725,
+      "speed": 3.4,
+      "degree": 79
+    },
+    {
+      "latitude": 34.24340331390938,
+      "longitude": -118.83824345742832,
+      "speed": 4.6,
+      "degree": 81
+    },
+    {
+      "latitude": 34.451988093724566,
+      "longitude": -118.26833363844071,
+      "speed": 3.1,
+      "degree": 47
+    },
+    {
+      "latitude": 33.66055772089473,
+      "longitude": -118.47516096398678,
+      "speed": 4.9,
+      "degree": 55
+    },
+    {
+      "latitude": 33.78953291849936,
+      "longitude": -118.12635932743247,
+      "speed": 4.1,
+      "degree": 33
+    },
+    {
+      "latitude": 33.59132819974182,
+      "longitude": -118.78258571872504,
+      "speed": 3.3,
+      "degree": 78
+    },
+    {
+      "latitude": 33.92548153291769,
+      "longitude": -118.76833641345506,
+      "speed": 2.8,
+      "degree": 82
+    },
+    {
+      "latitude": 34.20802765479355,
+      "longitude": -118.80616199900169,
+      "speed": 2.4,
+      "degree": 81
+    },
+    {
+      "latitude": 34.1039954465164,
+      "longitude": -118.44728386135066,
+      "speed": 4.3,
+      "degree": 60
+    },
+    {
+      "latitude": 33.887671731261136,
+      "longitude": -118.24755174233984,
+      "speed": 3.7,
+      "degree": 43
+    },
+    {
+      "latitude": 34.34614610039705,
+      "longitude": -118.23333259493037,
+      "speed": 3.5,
+      "degree": 46
+    },
+    {
+      "latitude": 33.97701852735181,
+      "longitude": -118.09120928791249,
+      "speed": 3.8,
+      "degree": 34
+    },
+    {
+      "latitude": 33.818428327912216,
+      "longitude": -118.20517470307291,
+      "speed": 2.9,
+      "degree": 38
+    },
+    {
+      "latitude": 34.19792596245983,
+      "longitude": -118.05651008229499,
+      "speed": 4.5,
+      "degree": 36
+    },
+    {
+      "latitude": 34.08815888231908,
+      "longitude": -118.51290026131815,
+      "speed": 4.5,
+      "degree": 65
+    },
+    {
+      "latitude": 34.3054603990464,
+      "longitude": -118.2473562880108,
+      "speed": 4.5,
+      "degree": 47
+    },
+    {
+      "latitude": 33.544914018035385,
+      "longitude": -118.40876291286783,
+      "speed": 3.8,
+      "degree": 45
+    },
+    {
+      "latitude": 33.953456633660686,
+      "longitude": -118.35973065186262,
+      "speed": 4.3,
+      "degree": 52
+    },
+    {
+      "latitude": 34.157193794523856,
+      "longitude": -118.95114671668277,
+      "speed": 6.1,
+      "degree": 86
+    },
+    {
+      "latitude": 34.46397344402427,
+      "longitude": -118.8695243802329,
+      "speed": 2.7,
+      "degree": 70
+    },
+    {
+      "latitude": 34.016305669882094,
+      "longitude": -118.04082608186876,
+      "speed": 4.4,
+      "degree": 32
+    },
+    {
+      "latitude": 33.70032941849034,
+      "longitude": -118.46861131059383,
+      "speed": 3.8,
+      "degree": 56
+    },
+    {
+      "latitude": 33.66759848666208,
+      "longitude": -118.52257990163842,
+      "speed": 3.9,
+      "degree": 59
+    },
+    {
+      "latitude": 33.77477186406926,
+      "longitude": -118.52170465432177,
+      "speed": 3.2,
+      "degree": 62
+    },
+    {
+      "latitude": 33.622628509531594,
+      "longitude": -118.26933413909451,
+      "speed": 3.1,
+      "degree": 37
+    },
+    {
+      "latitude": 34.31707614371486,
+      "longitude": -118.64125282948,
+      "speed": 4.4,
+      "degree": 71
+    },
+    {
+      "latitude": 34.45489284616856,
+      "longitude": -118.4370927634357,
+      "speed": 4.5,
+      "degree": 56
+    },
+    {
+      "latitude": 34.17009083289713,
+      "longitude": -118.71346639416294,
+      "speed": 2.2,
+      "degree": 78
+    },
+    {
+      "latitude": 33.64400499907153,
+      "longitude": -118.47903992747263,
+      "speed": 3.4,
+      "degree": 55
+    },
+    {
+      "latitude": 33.76208526213268,
+      "longitude": -118.8627531794092,
+      "speed": 3.2,
+      "degree": 87
+    },
+    {
+      "latitude": 34.26942665877391,
+      "longitude": -118.12592327821227,
+      "speed": 4.5,
+      "degree": 40
+    },
+    {
+      "latitude": 33.81531678187998,
+      "longitude": -118.91463353851414,
+      "speed": 3.5,
+      "degree": 89
+    },
+    {
+      "latitude": 34.40353214735892,
+      "longitude": -118.04527622276396,
+      "speed": 6.3,
+      "degree": 35
+    },
+    {
+      "latitude": 34.00441614341261,
+      "longitude": -118.66463726361073,
+      "speed": 4.3,
+      "degree": 76
+    },
+    {
+      "latitude": 33.90861868640474,
+      "longitude": -118.87393348884481,
+      "speed": 4.0,
+      "degree": 87
+    },
+    {
+      "latitude": 34.38736808841561,
+      "longitude": -118.22509141943621,
+      "speed": 4.2,
+      "degree": 45
+    },
+    {
+      "latitude": 33.58270215299795,
+      "longitude": -118.5868049089277,
+      "speed": 3.4,
+      "degree": 62
+    },
+    {
+      "latitude": 33.99585753608645,
+      "longitude": -118.88237228527456,
+      "speed": 4.3,
+      "degree": 87
+    },
+    {
+      "latitude": 33.529661919242464,
+      "longitude": -118.3213590988738,
+      "speed": 4.3,
+      "degree": 37
+    },
+    {
+      "latitude": 34.133562996591806,
+      "longitude": -118.60008213473634,
+      "speed": 4.0,
+      "degree": 72
+    },
+    {
+      "latitude": 33.95542279167852,
+      "longitude": -118.47732186900893,
+      "speed": 3.3,
+      "degree": 61
+    },
+    {
+      "latitude": 33.71739914879286,
+      "longitude": -118.47506642711043,
+      "speed": 1.2,
+      "degree": 57
+    },
+    {
+      "latitude": 34.38313642067426,
+      "longitude": -118.8565765144415,
+      "speed": 3.7,
+      "degree": 75
+    },
+    {
+      "latitude": 34.145735973171206,
+      "longitude": -118.00453489616962,
+      "speed": 1.8,
+      "degree": 32
+    },
+    {
+      "latitude": 33.59900618136654,
+      "longitude": -118.87940850627932,
+      "speed": 5.0,
+      "degree": 85
+    },
+    {
+      "latitude": 33.627583658332355,
+      "longitude": -118.30078260101861,
+      "speed": 2.0,
+      "degree": 39
+    },
+    {
+      "latitude": 34.395734378376275,
+      "longitude": -118.95040512984866,
+      "speed": 3.3,
+      "degree": 74
+    },
+    {
+      "latitude": 33.78978144457406,
+      "longitude": -118.43465724869405,
+      "speed": 4.3,
+      "degree": 55
+    },
+    {
+      "latitude": 34.01458553164207,
+      "longitude": -118.59409594535003,
+      "speed": 4.4,
+      "degree": 71
+    },
+    {
+      "latitude": 34.11755990166603,
+      "longitude": -118.7950297559376,
+      "speed": 5.1,
+      "degree": 83
+    },
+    {
+      "latitude": 33.998979131904115,
+      "longitude": -118.30864073406153,
+      "speed": 2.7,
+      "degree": 49
+    },
+    {
+      "latitude": 34.490325260733236,
+      "longitude": -118.25108987074643,
+      "speed": 4.0,
+      "degree": 45
+    },
+    {
+      "latitude": 33.666799028963275,
+      "longitude": -118.26906735174447,
+      "speed": 3.7,
+      "degree": 38
+    },
+    {
+      "latitude": 33.972884707535975,
+      "longitude": -118.35092951310362,
+      "speed": 4.4,
+      "degree": 51
+    },
+    {
+      "latitude": 34.038817833243876,
+      "longitude": -118.21002852668248,
+      "speed": 2.4,
+      "degree": 43
+    },
+    {
+      "latitude": 34.05954744530506,
+      "longitude": -118.64226116807099,
+      "speed": 4.6,
+      "degree": 74
+    },
+    {
+      "latitude": 34.439393591520776,
+      "longitude": -118.33230648512276,
+      "speed": 3.8,
+      "degree": 51
+    },
+    {
+      "latitude": 34.321217042071645,
+      "longitude": -118.65347306049928,
+      "speed": 3.1,
+      "degree": 72
+    },
+    {
+      "latitude": 34.03748393370095,
+      "longitude": -118.23922665569737,
+      "speed": 5.1,
+      "degree": 44
+    },
+    {
+      "latitude": 33.98800920734662,
+      "longitude": -118.45792802620943,
+      "speed": 5.2,
+      "degree": 60
+    },
+    {
+      "latitude": 34.26195954326672,
+      "longitude": -118.94049111069802,
+      "speed": 3.8,
+      "degree": 82
+    },
+    {
+      "latitude": 33.8793055767563,
+      "longitude": -118.55482480868122,
+      "speed": 3.7,
+      "degree": 67
+    },
+    {
+      "latitude": 33.574731477944475,
+      "longitude": -118.03816256171166,
+      "speed": 3.4,
+      "degree": 22
+    },
+    {
+      "latitude": 33.97968862642053,
+      "longitude": -118.23912704839792,
+      "speed": 2.9,
+      "degree": 44
+    },
+    {
+      "latitude": 34.03685245711197,
+      "longitude": -118.63946523219906,
+      "speed": 3.7,
+      "degree": 74
+    },
+    {
+      "latitude": 34.024036690304804,
+      "longitude": -118.50434855060097,
+      "speed": 4.6,
+      "degree": 64
+    },
+    {
+      "latitude": 34.47030905669994,
+      "longitude": -118.81149924807103,
+      "speed": 3.0,
+      "degree": 69
+    },
+    {
+      "latitude": 33.719873747939616,
+      "longitude": -118.88388385179029,
+      "speed": 4.3,
+      "degree": 87
+    },
+    {
+      "latitude": 34.160750093752576,
+      "longitude": -118.02736133513568,
+      "speed": 4.5,
+      "degree": 34
+    },
+    {
+      "latitude": 34.14755655103035,
+      "longitude": -118.31018926477955,
+      "speed": 4.3,
+      "degree": 51
+    },
+    {
+      "latitude": 34.41273416095863,
+      "longitude": -118.79701281266617,
+      "speed": 4.8,
+      "degree": 73
+    },
+    {
+      "latitude": 34.057645039546514,
+      "longitude": -118.59313834192884,
+      "speed": 2.5,
+      "degree": 71
+    },
+    {
+      "latitude": 33.87689466764378,
+      "longitude": -118.96115710057337,
+      "speed": 3.6,
+      "degree": 90
+    },
+    {
+      "latitude": 34.414314552802885,
+      "longitude": -118.53172845405821,
+      "speed": 2.4,
+      "degree": 63
+    },
+    {
+      "latitude": 33.86084807638989,
+      "longitude": -118.6258343505342,
+      "speed": 4.1,
+      "degree": 72
+    },
+    {
+      "latitude": 33.520807511376354,
+      "longitude": -118.4183745586109,
+      "speed": 3.0,
+      "degree": 45
+    },
+    {
+      "latitude": 33.673674089864264,
+      "longitude": -118.52435855536207,
+      "speed": 3.1,
+      "degree": 60
+    },
+    {
+      "latitude": 34.1303456977202,
+      "longitude": -118.54600850233363,
+      "speed": 3.7,
+      "degree": 68
+    },
+    {
+      "latitude": 34.17147821985838,
+      "longitude": -118.71952473838586,
+      "speed": 1.9,
+      "degree": 78
+    },
+    {
+      "latitude": 33.860324486706126,
+      "longitude": -118.96527691178123,
+      "speed": 2.7,
+      "degree": 90
+    },
+    {
+      "latitude": 33.98723387816329,
+      "longitude": -118.76001542900688,
+      "speed": 4.0,
+      "degree": 82
+    },
+    {
+      "latitude": 33.851657201854785,
+      "longitude": -118.65911488245978,
+      "speed": 3.2,
+      "degree": 74
+    },
+    {
+      "latitude": 33.56247600264546,
+      "longitude": -118.78211689715152,
+      "speed": 2.8,
+      "degree": 77
+    },
+    {
+      "latitude": 33.668418738288224,
+      "longitude": -118.99565536458397,
+      "speed": 2.8,
+      "degree": 91
+    },
+    {
+      "latitude": 34.14268236016102,
+      "longitude": -118.59997255607733,
+      "speed": 2.9,
+      "degree": 72
+    },
+    {
+      "latitude": 34.34990550545149,
+      "longitude": -118.11829450318704,
+      "speed": 3.4,
+      "degree": 39
+    },
+    {
+      "latitude": 33.96208963093202,
+      "longitude": -118.63120087775911,
+      "speed": 3.5,
+      "degree": 73
+    },
+    {
+      "latitude": 33.5276096152347,
+      "longitude": -118.36690245907987,
+      "speed": 2.6,
+      "degree": 41
+    },
+    {
+      "latitude": 34.32688728280545,
+      "longitude": -118.86609373950718,
+      "speed": 4.1,
+      "degree": 78
+    },
+    {
+      "latitude": 34.43141071668297,
+      "longitude": -118.69289925147197,
+      "speed": 4.1,
+      "degree": 69
+    },
+    {
+      "latitude": 34.185418817067706,
+      "longitude": -118.07045990815567,
+      "speed": 3.3,
+      "degree": 36
+    },
+    {
+      "latitude": 33.960726328357325,
+      "longitude": -118.75866428905476,
+      "speed": 4.2,
+      "degree": 81
+    },
+    {
+      "latitude": 33.84032447384873,
+      "longitude": -118.80772884693043,
+      "speed": 4.3,
+      "degree": 84
+    },
+    {
+      "latitude": 34.185260300710866,
+      "longitude": -118.21420354890903,
+      "speed": 4.9,
+      "degree": 45
+    },
+    {
+      "latitude": 34.26173509632923,
+      "longitude": -118.86330455530147,
+      "speed": 3.6,
+      "degree": 81
+    },
+    {
+      "latitude": 34.42257268249211,
+      "longitude": -118.19672674918536,
+      "speed": 4.6,
+      "degree": 43
+    },
+    {
+      "latitude": 33.81639573622907,
+      "longitude": -118.52212935492251,
+      "speed": 2.8,
+      "degree": 63
+    },
+    {
+      "latitude": 34.10815288512031,
+      "longitude": -118.362491002758,
+      "speed": 3.2,
+      "degree": 54
+    },
+    {
+      "latitude": 34.084386399278955,
+      "longitude": -118.02325982468909,
+      "speed": 4.2,
+      "degree": 33
+    },
+    {
+      "latitude": 34.056065643782475,
+      "longitude": -118.5560885535923,
+      "speed": 3.1,
+      "degree": 68
+    },
+    {
+      "latitude": 33.61428048793243,
+      "longitude": -118.77002671023085,
+      "speed": 4.6,
+      "degree": 78
+    },
+    {
+      "latitude": 34.30601037655814,
+      "longitude": -118.94573130506673,
+      "speed": 4.0,
+      "degree": 80
+    },
+    {
+      "latitude": 34.313902937977836,
+      "longitude": -118.11890812731608,
+      "speed": 1.5,
+      "degree": 39
+    },
+    {
+      "latitude": 34.197427923041474,
+      "longitude": -118.91339463467929,
+      "speed": 4.3,
+      "degree": 84
+    },
+    {
+      "latitude": 33.86088984311501,
+      "longitude": -118.50923008099188,
+      "speed": 3.1,
+      "degree": 63
+    },
+    {
+      "latitude": 33.55015628971883,
+      "longitude": -118.97041202405737,
+      "speed": 4.1,
+      "degree": 88
+    },
+    {
+      "latitude": 34.33576518797302,
+      "longitude": -118.01626606159414,
+      "speed": 3.2,
+      "degree": 34
+    },
+    {
+      "latitude": 33.81386982322175,
+      "longitude": -118.74793587001582,
+      "speed": 1.6,
+      "degree": 80
+    },
+    {
+      "latitude": 33.78762780320314,
+      "longitude": -118.46648713086762,
+      "speed": 1.5,
+      "degree": 58
+    },
+    {
+      "latitude": 33.66578351050195,
+      "longitude": -118.52279206414278,
+      "speed": 4.0,
+      "degree": 59
+    },
+    {
+      "latitude": 33.974914575286064,
+      "longitude": -118.38130544574697,
+      "speed": 3.3,
+      "degree": 54
+    },
+    {
+      "latitude": 33.59868768827402,
+      "longitude": -118.2314405898854,
+      "speed": 5.1,
+      "degree": 34
+    },
+    {
+      "latitude": 34.04908774221399,
+      "longitude": -118.46684890550391,
+      "speed": 3.0,
+      "degree": 61
+    },
+    {
+      "latitude": 33.583621293460794,
+      "longitude": -118.96829584795154,
+      "speed": 5.1,
+      "degree": 89
+    },
+    {
+      "latitude": 33.821949460763555,
+      "longitude": -118.45083595221134,
+      "speed": 5.1,
+      "degree": 57
+    },
+    {
+      "latitude": 34.48989985541601,
+      "longitude": -118.94250064142855,
+      "speed": 3.5,
+      "degree": 67
+    },
+    {
+      "latitude": 34.235754727497515,
+      "longitude": -118.4033697319231,
+      "speed": 2.5,
+      "degree": 58
+    },
+    {
+      "latitude": 34.01886968836459,
+      "longitude": -118.53590016704212,
+      "speed": 4.5,
+      "degree": 66
+    },
+    {
+      "latitude": 33.791364070578524,
+      "longitude": -118.1813821060542,
+      "speed": 3.7,
+      "degree": 36
+    },
+    {
+      "latitude": 34.469131744226765,
+      "longitude": -118.77278938921309,
+      "speed": 3.4,
+      "degree": 69
+    },
+    {
+      "latitude": 33.76009573214162,
+      "longitude": -118.48533418292604,
+      "speed": 2.7,
+      "degree": 59
+    },
+    {
+      "latitude": 34.27150911269242,
+      "longitude": -118.7922584999851,
+      "speed": 4.7,
+      "degree": 79
+    },
+    {
+      "latitude": 33.60376572948182,
+      "longitude": -118.93477674808494,
+      "speed": 2.5,
+      "degree": 88
+    },
+    {
+      "latitude": 33.84151494169845,
+      "longitude": -118.03293120461129,
+      "speed": 1.8,
+      "degree": 29
+    },
+    {
+      "latitude": 34.3678477937998,
+      "longitude": -118.46776497278249,
+      "speed": 3.7,
+      "degree": 60
+    },
+    {
+      "latitude": 34.0237718582782,
+      "longitude": -118.44024873441388,
+      "speed": 3.3,
+      "degree": 59
+    },
+    {
+      "latitude": 34.42294295505891,
+      "longitude": -118.85425578165307,
+      "speed": 3.8,
+      "degree": 72
+    },
+    {
+      "latitude": 34.44228296539743,
+      "longitude": -118.56370034516446,
+      "speed": 5.9,
+      "degree": 63
+    },
+    {
+      "latitude": 33.58210729173209,
+      "longitude": -118.79190933196712,
+      "speed": 2.3,
+      "degree": 78
+    },
+    {
+      "latitude": 34.004135986181105,
+      "longitude": -118.85848776851984,
+      "speed": 4.0,
+      "degree": 86
+    },
+    {
+      "latitude": 33.798660407144226,
+      "longitude": -118.60275447545719,
+      "speed": 3.3,
+      "degree": 69
+    },
+    {
+      "latitude": 34.30785544883212,
+      "longitude": -118.61924874890092,
+      "speed": 2.1,
+      "degree": 71
+    },
+    {
+      "latitude": 34.475316123434425,
+      "longitude": -118.27628767980491,
+      "speed": 3.6,
+      "degree": 47
+    },
+    {
+      "latitude": 33.78923123864869,
+      "longitude": -118.02522868417006,
+      "speed": 1.2,
+      "degree": 27
+    },
+    {
+      "latitude": 33.702701476741126,
+      "longitude": -118.07672283244557,
+      "speed": 3.8,
+      "degree": 28
+    },
+    {
+      "latitude": 33.99886983918345,
+      "longitude": -118.82079862710397,
+      "speed": 3.1,
+      "degree": 84
+    },
+    {
+      "latitude": 34.40110004921109,
+      "longitude": -118.89572243727369,
+      "speed": 5.0,
+      "degree": 74
+    },
+    {
+      "latitude": 33.52282378400591,
+      "longitude": -118.01723713166777,
+      "speed": 3.1,
+      "degree": 19
+    },
+    {
+      "latitude": 34.2589738370896,
+      "longitude": -118.77627223049058,
+      "speed": 3.3,
+      "degree": 79
+    },
+    {
+      "latitude": 33.86863364253851,
+      "longitude": -118.65459388247848,
+      "speed": 3.8,
+      "degree": 74
+    },
+    {
+      "latitude": 34.151489338579275,
+      "longitude": -118.61404140962452,
+      "speed": 3.3,
+      "degree": 72
+    },
+    {
+      "latitude": 33.68565721102818,
+      "longitude": -118.14089100430014,
+      "speed": 1.7,
+      "degree": 31
+    },
+    {
+      "latitude": 33.650861508832826,
+      "longitude": -118.45074873793796,
+      "speed": 1.5,
+      "degree": 52
+    },
+    {
+      "latitude": 34.318074389201335,
+      "longitude": -118.5306814615269,
+      "speed": 5.2,
+      "degree": 65
+    },
+    {
+      "latitude": 33.676969181923496,
+      "longitude": -118.43145115984959,
+      "speed": 2.6,
+      "degree": 52
+    },
+    {
+      "latitude": 34.26237362304363,
+      "longitude": -118.98297007508906,
+      "speed": 3.4,
+      "degree": 82
+    },
+    {
+      "latitude": 33.965217461755124,
+      "longitude": -118.75433566227484,
+      "speed": 5.0,
+      "degree": 81
+    },
+    {
+      "latitude": 33.7181451497895,
+      "longitude": -118.72413499115669,
+      "speed": 2.7,
+      "degree": 77
+    },
+    {
+      "latitude": 34.153498263974,
+      "longitude": -118.28270827646125,
+      "speed": 4.4,
+      "degree": 49
+    },
+    {
+      "latitude": 34.41227792672712,
+      "longitude": -118.62246126506216,
+      "speed": 3.4,
+      "degree": 67
+    },
+    {
+      "latitude": 33.63729666448745,
+      "longitude": -118.13372413531127,
+      "speed": 3.1,
+      "degree": 29
+    },
+    {
+      "latitude": 33.82409186693274,
+      "longitude": -118.12606261293409,
+      "speed": 3.8,
+      "degree": 34
+    },
+    {
+      "latitude": 33.780896989725186,
+      "longitude": -118.72250087704049,
+      "speed": 3.2,
+      "degree": 78
+    },
+    {
+      "latitude": 34.307868424713014,
+      "longitude": -118.06165924603295,
+      "speed": 2.9,
+      "degree": 36
+    },
+    {
+      "latitude": 34.35027142572743,
+      "longitude": -118.48555172068627,
+      "speed": 3.8,
+      "degree": 62
+    },
+    {
+      "latitude": 34.24216244007523,
+      "longitude": -118.42811633656616,
+      "speed": 4.2,
+      "degree": 59
+    },
+    {
+      "latitude": 33.69361629979062,
+      "longitude": -118.53207990054813,
+      "speed": 2.0,
+      "degree": 61
+    },
+    {
+      "latitude": 33.968142630908595,
+      "longitude": -118.57274003928426,
+      "speed": 2.7,
+      "degree": 69
+    },
+    {
+      "latitude": 34.41345506330548,
+      "longitude": -118.2267769589534,
+      "speed": 3.2,
+      "degree": 45
+    },
+    {
+      "latitude": 34.074663278758244,
+      "longitude": -118.26005076673344,
+      "speed": 5.1,
+      "degree": 46
+    }
+  ]
+}

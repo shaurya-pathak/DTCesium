@@ -5,11 +5,16 @@ Cesium.GoogleMaps.defaultApiKey = "AIzaSyA0SIcbfBXj0RYV7t7L5PITeNlHPd9h4DA";
 
 
 const viewer = new Cesium.Viewer("cesiumContainer", {
+    baseLayer: Cesium.ImageryLayer.fromProviderAsync(
+        new Cesium.OpenStreetMapImageryProvider({
+            url: 'https://a.tile.openstreetmap.org/'
+        })
+    ),
     timeline: false,
     animation: false,
-    sceneModePicker: false,
-    baseLayerPicker: false,
-  });
+    sceneModePicker: false
+});
+
 
   addPhotorealisticTiles();
 
@@ -19,6 +24,181 @@ var height_multiplier = 70;
 var threeDTiles = true;
 var cmap_pollution = true;
 var isLoopActive = false;
+
+
+// Function to load CSV data
+function loadCSVData(csvFilePath, callback) {
+    Papa.parse(csvFilePath, {
+        download: true,
+        header: true,
+        complete: function(results) {
+            console.log("CSV Data Loaded:", results.data);  // Log the parsed CSV data
+            callback(results.data);
+        },
+        error: function(error) {
+            console.error("Error loading CSV:", error);  // Log any errors during CSV loading
+        }
+    });
+}
+
+
+
+// Function to style GeoJSON data based on CSV values
+function styleGeoJSONData(geojsonDataSource, csvData) {
+    console.time("Styling GeoJSON");  // Start timer for styling GeoJSON
+    console.log("CSV Data for styling:", csvData);
+
+    const dataMap = new Map(csvData.map(item => [item.Census_Tract, parseFloat(item.Value)]).filter(item => !isNaN(item[1])));
+    console.log("Data Map created:", dataMap);
+
+    const entities = geojsonDataSource.entities.values;
+    console.log("Total entities to style:", entities.length);
+
+    // Calculate the min and max values from the CSV data
+    const values = Array.from(dataMap.values());
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    updateLabels([minValue, maxValue])
+    console.log("Min Value:", minValue, "Max Value:", maxValue); // Debug output
+
+    // Define the start and end colors
+    const startColor = [252, 251, 222]; // White
+    const endColor = [41, 74, 119]; // Custom Blue
+
+    // Define the start and end colors in 'rgb(r, g, b)' format strings
+    const startColorStr = 'rgb(252, 251, 222)'; // White
+    const endColorStr = 'rgb(41, 74, 119)'; // Custom Blue
+
+    // Call the createGradient function with these colors as the first element in an array
+    createGradient([startColorStr, endColorStr]);
+
+    // Function to interpolate colors
+    function interpolateColors(startColor, endColor, steps) {
+        let colorArray = [];
+        for (let i = 0; i <= steps; i++) {
+            let r = startColor[0] + (endColor[0] - startColor[0]) * i / steps;
+            let g = startColor[1] + (endColor[1] - startColor[1]) * i / steps;
+            let b = startColor[2] + (endColor[2] - startColor[2]) * i / steps;
+            colorArray.push([Math.round(r), Math.round(g), Math.round(b)]);
+        }
+        return colorArray;
+    }
+
+    // Generate 10 equidistant colors
+    const colors = interpolateColors(startColor, endColor, 10);
+
+    // Function to assign a color based on value
+    function getColorForValue(value) {
+        // console.log(value, minValue, maxValue)
+        const ratio = (value - minValue) / (maxValue - minValue);
+        // console.log("Ratio: ", ratio);
+        const bin = Math.floor(ratio * 10);
+        const [r, g, b] = colors[bin];
+        // console.log(`Value: ${value}, Bin: ${bin}, Color: rgb(${r}, ${g}, ${b})`);
+        return new Cesium.Color(r/255, g/255, b/255, 0.7); // Returns the color as a CSS-style string
+
+    }
+
+    entities.forEach(entity => {
+        const censusTractProperty = entity.properties['GEOID'];
+        if (censusTractProperty) {
+            const value = censusTractProperty.getValue();
+            const csvItem = dataMap.get(value.substring(1));
+            if (csvItem !== undefined) {
+                const metricValue = csvItem; // Directly use the already parsed float value
+                const color = getColorForValue(metricValue);
+                entity.polygon.material = new Cesium.ColorMaterialProperty(color);
+                entity.polygon.outline = false;
+            } else {
+                entity.polygon.material = new Cesium.ColorMaterialProperty(Cesium.Color.TRANSPARENT);
+                entity.polygon.outline = false;
+            }
+        } else {
+            entity.polygon.material = new Cesium.ColorMaterialProperty(Cesium.Color.TRANSPARENT);
+            entity.polygon.outline = false;
+        }
+    });
+    console.timeEnd("Styling GeoJSON");  // End timer for styling GeoJSON
+}
+
+
+
+function loadGeoJsonWithCsv(csvFilePath) {
+    // Load GeoJSON data
+    // Clear previous entities but not all entities
+    viewer.dataSources.removeAll();
+    let entitiesToRemove = viewer.entities.values;
+    for (let entity of entitiesToRemove) {
+        viewer.entities.remove(entity);
+    }
+
+    entitiesToRemove = viewer.entities.values.filter(entity => entity.cylinder);
+    for (let entity of entitiesToRemove) {
+        viewer.entities.remove(entity);
+    }
+    
+    console.time("Load GeoJSON");  // Start timer for loading GeoJSON
+    const geojsonUrl = 'Data/tract_data.json';
+    Cesium.GeoJsonDataSource.load(geojsonUrl).then(function (dataSource) {
+        console.timeEnd("Load GeoJSON");  // End timer and log the time taken to load GeoJSON
+        console.log("GeoJSON data loaded successfully");
+        viewer.dataSources.add(dataSource);
+        // viewer.zoomTo(dataSource);
+
+        // Load CSV data and style GeoJSON
+        console.time("Load and Style CSV");  // Start timer for loading and styling CSV
+        loadCSVData(csvFilePath, function(csvData) {
+            styleGeoJSONData(dataSource, csvData);
+            console.timeEnd("Load and Style CSV");  // End timer and log the time taken to load and style CSV
+        });
+    }).catch(error => {
+        console.error("Failed to load GeoJSON data:", error);
+    });
+}
+
+
+function displayEpaSitesData() {
+    // const threeDTiles = false; // Add this line if it's not defined elsewhere
+    fetch('Data/processed_epa_sites.csv')
+        .then(response => response.text())
+        .then(csv => {
+            const data = Papa.parse(csv, { header: true }).data;
+            console.log('EPA sites data:', data);
+            data.forEach(row => {
+                const latitude = parseFloat(row['12. LATITUDE']);
+                const longitude = parseFloat(row['13. LONGITUDE']);
+                const productionWaste = parseFloat(row['116. PRODUCTION WSTE (8.1-8.7)']);
+
+                if (isNaN(latitude) || isNaN(longitude) || isNaN(productionWaste) || productionWaste <= 0) {
+                    console.log('Invalid data or not in selected industries:', row);
+                    return;
+                }
+
+                const logProductionWaste = Math.log(productionWaste);
+                const minLogWaste = 0;
+                const maxLogWaste = 10;
+                const normalizedLogWaste = (logProductionWaste - minLogWaste) / (maxLogWaste - minLogWaste);
+                let color = interpolateColor(normalizedLogWaste);
+                color = colorStringToCesiumColor(color);
+                color = new Cesium.Color(color.red, color.green, color.blue, 1.0);
+
+                // Conditionally set height based on 3D tiles usage
+                const heightAdjustment = threeDTiles ? 200 : 0;
+                const constantRadius = 500.0;
+
+                viewer.entities.add({
+                    position: Cesium.Cartesian3.fromDegrees(longitude, latitude, heightAdjustment),
+                    ellipsoid: {
+                        radii: new Cesium.Cartesian3(constantRadius, constantRadius, constantRadius),
+                        material: color,
+                    },
+                    description: `Production Waste: ${productionWaste}, Site Name: ${row['4. FACILITY NAME']}`
+                });
+            });
+        });
+}
+
+
 
 
 
@@ -105,7 +285,7 @@ async function addPhotorealisticTiles() {
     // Assuming this method is correct for adding the tiles
     const tileset = await Cesium.createGooglePhotorealistic3DTileset();
     viewer.scene.primitives.add(tileset);
-    // Save the reference to the added tileset for later removal
+    // // Save the reference to the added tileset for later removal
     photorealisticTileset = tileset;
     viewer.scene.globe.show = false;
     
@@ -125,59 +305,6 @@ function deletePhotorealisticTiles() {
     console.log("No Photorealistic 3D Tiles to remove.");
   }
 }
-
-// Call the function to add the Photorealistic 3D Tiles
-// addPhotorealisticTiles();
-
-// When needed, call the function to delete the Photorealistic 3D Tiles
-// deletePhotorealisticTiles();
-
-
-
-/* Initialize the viewer clock:
-  Assume the radar samples are 30 seconds apart, and calculate the entire flight duration based on that assumption.
-  Get the start and stop date times of the flight, where the start is the known flight departure time (converted from PST 
-    to UTC) and the stop is the start plus the calculated duration. (Note that Cesium uses Julian dates. See 
-    https://simple.wikipedia.org/wiki/Julian_day.)
-  Initialize the viewer's clock by setting its start and stop to the flight start and stop times we just calculated. 
-  Also, set the viewer's current time to the start time and take the user to that time. 
-*/
-// const timeStepInSeconds = 30;
-// const totalSeconds = timeStepInSeconds * (flightData.length - 1);
-// const start = Cesium.JulianDate.fromIso8601("2020-03-09T23:10:00Z");
-// const stop = Cesium.JulianDate.addSeconds(start, totalSeconds, new Cesium.JulianDate());
-// viewer.clock.startTime = start.clone();
-// viewer.clock.stopTime = stop.clone();
-// viewer.clock.currentTime = start.clone();
-// // viewer.timeline.zoomTo(start, stop);
-// // Speed up the playback speed 50x.
-// viewer.clock.multiplier = 50;
-// // Start playing the scene.
-// viewer.clock.shouldAnimate = true;
-
-// The SampledPositionedProperty stores the position and timestamp for each sample along the radar sample series.
-// const positionProperty = new Cesium.SampledPositionProperty();
-
-// for (let i = 0; i < flightData.length; i++) {
-//   const dataPoint = flightData[i];
-
-//   // Declare the time for this individual sample and store it in a new JulianDate instance.
-//   const time = Cesium.JulianDate.addSeconds(start, i * timeStepInSeconds, new Cesium.JulianDate());
-//   const position = Cesium.Cartesian3.fromDegrees(dataPoint.longitude, dataPoint.latitude, dataPoint.height);
-//   // Store the position along with its timestamp.
-//   // Here we add the positions all upfront, but these can be added at run-time as samples are received from a server.
-//   positionProperty.addSample(time, position);
-
-//   viewer.entities.add({
-//     description: `Location: (${dataPoint.longitude}, ${dataPoint.latitude}, ${dataPoint.height})`,
-//     position: position,
-//     point: { pixelSize: 10, color: Cesium.Color.RED },
-//   });
-// }
-
-// STEP 4 CODE (green circle entity)
-// Create an entity to both visualize the entire radar sample series with a line and add a point that moves along the samples.
-
 async function getDroneData()   {
   console.log("creating drone");
   const resource = await Cesium.IonResource.fromAssetId(2295748);
@@ -192,23 +319,10 @@ async function getDroneData()   {
     path: new Cesium.PathGraphics({ width: 300 / scale_factor }),  // Adjusting the path width to be consistent with the bigger model
 });
 
-//   viewer.trackedEntity = airplaneEntity;
 }
 
 getDroneData();
 
-// Make the camera track this moving entity.
-
-// async function printUniqueAircraftTypes(response) {
-//     const data = await response.json();
-//     console.log('Data fetched successfully:', data);
-    
-//     const aircraftTypes = data.ac.map(ac => ac.type); // Extract the 'type' from each aircraft
-//     const uniqueAircraftTypes = [...new Set(aircraftTypes)]; // Remove duplicates
-    
-//     console.log('Unique Aircraft Types:', uniqueAircraftTypes);
-//     return uniqueAircraftTypes; // Optional, in case you need the list elsewhere
-// }
 
 async function fetchPlaneData() {
     console.log('Fetching data...');
@@ -220,7 +334,6 @@ async function fetchPlaneData() {
     
     try {
         const response = await fetch(url, { headers });
-        // await printUniqueAircraftTypes(response);
         const data = await response.json();
         console.log('Data fetched successfully:', data);
         return data.ac;
@@ -486,6 +599,31 @@ function normalizeData(data, time_series=false) {
     });
 }
 
+document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+
+// let tempDataMap = {};
+
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = e.target.result;
+        try {
+          const jsonData = JSON.parse(content);
+        //   const key = "Custom Data";
+        //   dataMap[key] = [jsonData, {from: 'rgb(0, 255, 0)', to: 'rgb(255, 0, 0)'}, 'Custom uploaded data', ''];
+        //   updatePollutantSelect();
+          displayData(jsonData, false);
+        } catch (error) {
+          console.error('Invalid JSON file:', error);
+          alert('Invalid JSON file. Please upload a valid JSON file.');
+        }
+      };
+      reader.readAsText(file);
+    }
+  }
+
 function interpolateColor(height) {
     // Ensure height is between 0 and 1
     // console.log('begin interpolate color')
@@ -527,102 +665,151 @@ function disableLoadingSpinner() {
     spinner.style.display = 'none'; // Use 'none' to hide the spinner
 }
 
+function displayWindData(windData) {
+    // Clear previous entities
+    viewer.entities.removeAll();
+
+    const maxSpeed = Math.max(...windData.map(data => data.speed));
+    const minSpeed = Math.min(...windData.map(data => data.speed));
+
+    updateLabels([minSpeed, maxSpeed]);
+
+    windData.forEach(dataPoint => {
+        const position = Cesium.Cartesian3.fromDegrees(dataPoint.longitude, dataPoint.latitude, 500);
+        const endPoint = Cesium.Cartesian3.fromDegrees(
+            dataPoint.longitude + 0.01 * Math.cos(Cesium.Math.toRadians(dataPoint.degree)),
+            dataPoint.latitude + 0.01 * Math.sin(Cesium.Math.toRadians(dataPoint.degree)),
+            500
+        );
+
+        // Normalize wind speed to a value between 0 and 1
+        const normalizedSpeed = (dataPoint.speed - minSpeed) / (maxSpeed - minSpeed);
+
+        // Get the color based on the normalized wind speed
+        let color = interpolateColor(normalizedSpeed);
+        color = colorStringToCesiumColor(color);
+
+        // Add the polyline representing the wind direction with the interpolated color
+        viewer.entities.add({
+            polyline: {
+                positions: [position, endPoint],
+                width: 60,
+                material: new Cesium.PolylineArrowMaterialProperty(color)
+            }
+        });
+    });
+}
+
+function interpolateColor(value) {
+    const startColor = 'rgb(0, 255, 0)'; // Blue for low values
+    const endColor = 'rgb(255, 0, 0)'; // Red for high values
+
+    // Parse the RGB values from the strings
+    const fromColorComponents = startColor.match(/\d+/g).map(Number);
+    const toColorComponents = endColor.match(/\d+/g).map(Number);
+
+    // Interpolate between startColor and endColor for each RGB component
+    let red = fromColorComponents[0] + (toColorComponents[0] - fromColorComponents[0]) * value;
+    let green = fromColorComponents[1] + (toColorComponents[1] - fromColorComponents[1]) * value;
+    let blue = fromColorComponents[2] + (toColorComponents[2] - fromColorComponents[2]) * value;
+
+    // Return the interpolated color in 'rgb()' format
+    return `rgb(${Math.round(red)}, ${Math.round(green)}, ${Math.round(blue)})`;
+}
+
+function colorStringToCesiumColor(rgbString) {
+    const parts = rgbString.match(/\d+/g).map(Number);
+    return new Cesium.Color(parts[0] / 255, parts[1] / 255, parts[2] / 255, 1.0);
+}
 
 
-function displayData(transformedData, labels = false, height_divisor = 1, time_series = false) {
 
+
+
+function displayData(transformedData, labels = false, height_divisor = 1, time_series = false, height_cap = false) {
+    viewer.dataSources.removeAll();
     enableLoadingSpinner();
     setTimeout(disableLoadingSpinner, 5000);
+    
     // Normalize data before using it
     let preNormalizedData = transformedData;
     transformedData = normalizeData(transformedData, time_series=time_series);
-    // console.log('Normalized data:', transformedData);
 
     // Clear previous entities but not all entities
     let entitiesToRemove = viewer.entities.values;
-    // console.log('Removing', entitiesToRemove.length, 'ellipsoids/labels');
     for (let entity of entitiesToRemove) {
         viewer.entities.remove(entity);
     }
 
     entitiesToRemove = viewer.entities.values.filter(entity => entity.cylinder);
-    // console.log('Removing', entitiesToRemove.length, 'cylinders');
     for (let entity of entitiesToRemove) {
         viewer.entities.remove(entity);
     }
-    var finalPosition = viewer.camera.positionWC;
     
-    // Convert the position to cartographic coordinates (radians)
+    var finalPosition = viewer.camera.positionWC;
     var cartographicPosition = Cesium.Cartographic.fromCartesian(finalPosition);
     var pos_height = cartographicPosition.height;
-    var opacity = 1.0
-    if (pos_height < 10000) {
-        opacity = 0.5;
-    }
-    height_multiplier = Math.min(200, pos_height / 1000);
-    var adder = 3;
-    if (time_series)  {
-        adder = 3;
-    }
+    var opacity = pos_height < 10000 ? 0.5 : 1.0;
+    var height_multiplier = Math.min(200, pos_height / 1000);
+    var adder = time_series ? 3 : 3;
+
     for (let i = 0; i < transformedData.length; i += adder) {
         const [latitude, longitude, rawHeight] = [transformedData[i], transformedData[i + 1], transformedData[i + 2]];
-        const height = rawHeight / height_divisor;
+        var height = rawHeight / height_divisor;
+
         if (latitude >= 33.3 && latitude <= 33.6 && longitude >= -118.55 && longitude <= -118.25) {
             continue; // Skip the rest of the loop and move to the next iteration
         }
-    
 
         if (height === 0) {
-            //console.log(`Skipping data point ${i/3} due to zero height.`);
             continue;
         }
 
-        let color;
-        color = interpolateColor(height);
+        let color = interpolateColor(height);
         color = colorStringToCesiumColor(color);
-        color = new Cesium.Color(color.red, color.green, color.blue, opacity);
-        // console.log('Color:', color)
+        color = new Cesium.Color(color.red, color.green, color.blue, height_cap ? 0.2 : opacity);
 
         if (labels) {
             viewer.entities.add({
-                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height * 15000 + 100), // +100 to display label just above the cylinder
+                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, height * 15000 + 100),
                 label: {
-                    text: preNormalizedData[i+2].toFixed(2), // display the height value rounded to 2 decimal places
+                    text: preNormalizedData[i + 2].toFixed(2),
                     font: '14pt sans-serif',
                     horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
                     verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                    pixelOffset: new Cesium.Cartesian2(0, -10) // Offset to place it just above the cylinder
+                    pixelOffset: new Cesium.Cartesian2(0, -10)
                 }
             });
-            // console.log(`Label added for data point ${i/3}`);
         }
 
-        
-        
-        // Define a minimum height for the cylinder in meters
-        const minHeight = 500; // Example: 1000 meters
+        if (height_cap) {
+            // Display as 2D markers
+            viewer.entities.add({
+                position: Cesium.Cartesian3.fromDegrees(longitude, latitude),
+                point: {
+                    pixelSize: 10,
+                    color: color,
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+                }
+            });
+        } else {
+            const minHeight = 500;
+            let scaledHeight = height * 100 * (pos_height / 1000);
+            var finalHeight = Math.max(scaledHeight, minHeight);
 
-        // Calculate the scaled height
-        let scaledHeight = height * 100 * (pos_height / 1000); // Your original scaling formula
-
-        // Ensure the height does not drop below the minimum
-        let finalHeight = Math.max(scaledHeight, minHeight);
-
-        // Add the entity with the adjusted height
-        viewer.entities.add({
-            position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
-            cylinder: {
-                length: finalHeight,  // Use the maximum of scaled height or minimum height
-                topRadius: 500,       // Set top radius of the cylinder
-                bottomRadius: 500,    // Set bottom radius of the cylinder
-                material: color       // Set material/color of the cylinder
-            }
-        });
-
-        // updateCylindersToHeight();
-        // console.log(`Cylinder added for data point ${i/3}`);
+            viewer.entities.add({
+                position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 0),
+                cylinder: {
+                    length: finalHeight,
+                    topRadius: 500,
+                    bottomRadius: 500,
+                    material: color
+                }
+            });
+        }
     }
 }
+
 
 function normalizeDataAtHeight(data) {
     // Extract only every third value to normalize
@@ -661,6 +848,26 @@ document.getElementById('3dInCheckbox').addEventListener('change', function() {
             // Your code here to execute if the selected value is "Time Series Data"
             displayTimeSeriesData();
         }
+        else {
+            try {
+                if (!threeDTiles) {
+                    try {
+                        loadGeoJsonWithCsv(selectedData[4]);
+                    } catch (e) {
+                        console.error("Failed to load CSV data:", e);
+                        displayData(selectedData[0]); // Function for other types of data
+                        document.querySelector('.time-control').style.display = 'none'; // Hide the time control for non-time series data
+                    }
+                }
+                else    {
+                    displayData(selectedData[0]); // Function for other types of data
+                    document.querySelector('.time-control').style.display = 'none'; // Hide the time control for non-time series data
+                }
+            }
+            catch   {
+                console.log("no data selected");
+            }
+        }
         deletePhotorealisticTiles();
 
     }
@@ -675,7 +882,7 @@ document.getElementById('3dInCheckbox').addEventListener('change', function() {
     }
     if(this.checked) {
         
-    
+        displayData(selectedData[0], false, 1, false, false)
         showNotification('3d tiles are on, time series data will take significantly longer to load');
       } else {
         showNotification('2d tiles will be shown.');
@@ -770,64 +977,79 @@ const statColorMap = { 'from': 'rgb(100, 100, 0)', 'to': 'rgb(200, 0, 200)' };
 
 
 const fileMappings = {
-    'Data/no_data.json': ['No Data', pollutantColorMap, 'No specific definition provided.', ''],
-    'Data/time-series-data/': ['Time Series Data', pollutantColorMap, 'PM2.5 Predictions for the next 24 hours', 'μg/m³'],
-    'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap, 'CalEnviroScreen Score, Pollution Score multiplied by Population Characteristics Score', ''],
-    'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap, 'Percentile of the CalEnviroScreen score', ''],
-    'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap, 'Percentile of the CalEnviroScreen score, grouped by 5% increments', ''],
-    'Data/Ozone.json': ['Ozone', pollutantColorMap, 'Amount of daily maximum 8 hour Ozone concentration', 'ppm'],
-    'Data/Ozone_Pctl.json': ['Ozone Pctl', pollutantColorMap, 'Ozone percentile', ''],
-    'Data/PM2.5.json': ['PM2.5', pollutantColorMap, 'Annual mean PM2.5 concentrations', 'μg/m³'],
-    'Data/PM2.5_Pctl.json': ['PM2.5 Pctl', pollutantColorMap, 'PM2.5 percentile', ''],
-    'Data/Diesel_PM.json': ['Diesel PM', pollutantColorMap, 'Diesel PM emissions from on-road and non-road sources', 'μg/m³'],
-    'Data/Diesel_PM_Pctl.json': ['Diesel PM Pctl', pollutantColorMap, 'Diesel PM percentile', ''],
-    'Data/Drinking_Water.json': ['Drinking Water', pollutantColorMap, 'Drinking water contaminant index for selected contaminants', ''],
-    'Data/Drinking_Water_Pctl.json': ['Drinking Water Pctl', pollutantColorMap, 'Drinking water percentile', ''],
-    'Data/Lead.json': ['Lead', pollutantColorMap, 'Potential risk for lead exposure in children living in low-income communities with older housing', ''],
-    'Data/Lead_Pctl.json': ['Lead Pctl', pollutantColorMap, 'Children\'s lead risk from housing percentile', ''],
-    'Data/Pesticides.json': ['Pesticides', pollutantColorMap, 'Total pounds of selected active pesticide ingredients used in production-agriculture per square mile', 'lbs/mi²'],
-    'Data/Pesticides_Pctl.json': ['Pesticides Pctl', pollutantColorMap, 'Pesticides percentile', ''],
-    'Data/Tox._Release.json': ['Tox. Release', pollutantColorMap, 'Toxicity-weighted concentrations of modeled chemical releases to air', 'TEQ'],
-    'Data/Tox._Release_Pctl.json': ['Tox. Release Pctl', pollutantColorMap, 'Toxic release percentile', ''],
-    'Data/CES_Traffic.json': ['Traffic', pollutantColorMap, 'Traffic density in vehicle-kilometers per hour per road length, within 150 meters of the census tract boundary', 'veh-km/hr'],
-    'Data/CES_Traffic_Pctl.json': ['Traffic Pctl', pollutantColorMap, 'Traffic percentile', ''],
-    'Data/Cleanup_Sites.json': ['Cleanup Sites', pollutantColorMap, 'Sum of weighted EnviroStor cleanup sites within buffered distances to populated blocks of census tracts', ''],
-    'Data/Cleanup_Sites_Pctl.json': ['Cleanup Sites Pctl', pollutantColorMap, 'Cleanup sites percentile', ''],
-    'Data/Groundwater_Threats.json': ['Groundwater Threats', pollutantColorMap, 'Sum of weighted GeoTracker leaking underground storage tank sites within buffered distances to populated blocks of census tracts', ''],
-    'Data/Groundwater_Threats_Pctl.json': ['Groundwater Threats Pctl', pollutantColorMap, 'Groundwater threats percentile', ''],
-    'Data/Haz._Waste.json': ['Haz. Waste', pollutantColorMap, 'Sum of weighted hazardous waste facilities and large quantity generators within buffered distances to populated blocks of census tracts', ''],
-    'Data/Haz._Waste_Pctl.json': ['Haz. Waste Pctl', pollutantColorMap, 'Hazardous waste percentile', ''],
-    'Data/Imp._Water_Bodies.json': ['Imp. Water Bodies', pollutantColorMap, 'Sum of number of pollutants across all impaired water bodies within buffered distances to populated blocks of census tracts', ''],
-    'Data/Imp._Water_Bodies_Pctl.json': ['Imp. Water Bodies Pctl', pollutantColorMap, 'Impaired water bodies percentile', ''],
-    'Data/Solid_Waste.json': ['Solid Waste', pollutantColorMap, 'Sum of weighted solid waste sites and facilities within buffered distances to populated blocks of census tracts', ''],
-    'Data/Solid_Waste_Pctl.json': ['Solid Waste Pctl', pollutantColorMap, 'Solid waste percentile', ''],
-    'Data/Pollution_Burden.json': ['Pollution Burden', pollutantColorMap, 'Average of percentiles from the Pollution Burden indicators', ''],
-    'Data/Pollution_Burden_Score.json': ['Pollution Burden Score', pollutantColorMap, 'Pollution Burden variable scaled with a range of 0-10', ''],
-    'Data/Pollution_Burden_Pctl.json': ['Pollution Burden Pctl', pollutantColorMap, 'Pollution burden percentile', ''],
-    'Data/Asthma.json': ['Asthma', socioeconomicColorMap, 'Age-adjusted rate of emergency department visits for asthma', ''],
-    'Data/Asthma_Pctl.json': ['Asthma Pctl', socioeconomicColorMap, 'Asthma percentile', ''],
-    'Data/Low_Birth_Weight.json': ['Low Birth Weight', socioeconomicColorMap, 'Percent low birth weight', ''],
-    'Data/Low_Birth_Weight_Pctl.json': ['Low Birth Weight Pctl', socioeconomicColorMap, 'Low birth weight percentile', ''],
-    'Data/Cardiovascular_Disease.json': ['Cardiovascular Disease', socioeconomicColorMap, 'Age-adjusted rate of emergency department visits for heart attacks per 10,000', ''],
-    'Data/Cardiovascular_Disease_Pctl.json': ['Cardiovascular Disease Pctl', socioeconomicColorMap, 'Cardiovascular disease percentile', ''],
-    'Data/Education.json': ['Education', socioeconomicColorMap, 'Percent of population over 25 with less than a high school education', ''],
-    'Data/Education_Pctl.json': ['Education Pctl', socioeconomicColorMap, 'Education percentile', ''],
-    'Data/Linguistic_Isolation.json': ['Linguistic Isolation', socioeconomicColorMap, 'Percent limited English speaking households', ''],
-    'Data/Linguistic_Isolation_Pctl.json': ['Linguistic Isolation Pctl', socioeconomicColorMap, 'Linguistic isolation percentile', ''],
-    'Data/Poverty.json': ['Poverty', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level', ''],
-    'Data/Poverty_Pctl.json': ['Poverty Pctl', socioeconomicColorMap, 'Poverty percentile', ''],
-    'Data/Unemployment.json': ['Unemployment', socioeconomicColorMap, 'Percent of the population over the age of 16 that is unemployed and eligible for the labor force', ''],
-    'Data/Unemployment_Pctl.json': ['Unemployment Pctl', socioeconomicColorMap, 'Unemployment percentile', ''],
-    'Data/Housing_Burden.json': ['Housing Burden', socioeconomicColorMap, 'Percent housing-burdened low-income households', ''],
-    'Data/Housing_Burden_Pctl.json': ['Housing Burden Pctl', socioeconomicColorMap, 'Housing burden percentile', ''],
-    'Data/Pop._Char._.json': ['Pop. Char. ', socioeconomicColorMap, 'Average of percentiles from the Population Characteristics indicators', ''],
-    'Data/Pop._Char._Score.json': ['Pop. Char. Score', socioeconomicColorMap, 'Population Characteristics variable scaled with a range of 0-10', ''],
-    'Data/Pop._Char._Pctl.json': ['Pop. Char. Pctl', socioeconomicColorMap, 'Population characteristics percentile', ''],
-    'Data/pm25_predictions.json': ['pm25_predictions', pollutantColorMap, 'Predicted PM2.5 using PWWB Machine Learning Models.', ''],
-    'Data/traffic.json': ['traffic_counts', pollutantColorMap, 'Traffic density or counts', ''],
-    'Data/poverty.json': ['poverty_data', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level', ''],
-    'Data/income.json': ['Income', socioeconomicColorMap, 'No specific definition provided.', ''],
+    'Data/no_data.json': ['No Data', pollutantColorMap, 'No specific definition provided.', '', 'Data/csv-data/no_data.csv'],
+    // 'Data/black_carbon.json': ['Black Carbon', pollutantColorMap, 'Black Carbon Data from South Coast AQMD.', '', 'Data/csv-data/black_carbon.csv'],
+    // 'Data/ultra_fine_particles.json': ['Ultrafine Particles', pollutantColorMap, 'Ultrafine Particles Data from South Coast AQMD.', '', 'Data/csv-data/ultra_fine_particles.csv'],
+    'Data/wind_data_1.json': ['Wind Data', pollutantColorMap, 'Wind speed and direction data', 'm/s', 'Data/csv-data/wind_data_1.csv'],
+    'Data/time-series-data/': ['Time Series Data', pollutantColorMap, 'PM2.5 Predictions for the next 24 hours', 'μg/m³', 'Data/csv-data/time_series_data.csv'],
+    'Data/CES_4.0_Score.json': ['CES 4.0 Score', statColorMap, 'CalEnviroScreen Score, Pollution Score multiplied by Population Characteristics Score', '', 'Data/csv-data/CES_4.0_Score.csv'],
+    'Data/CES_4.0_Percentile.json': ['CES 4.0 Percentile', statColorMap, 'Percentile of the CalEnviroScreen score', '', 'Data/csv-data/CES_4.0_Percentile.csv'],
+    'Data/CES_4.0_Percentile_Range.json': ['CES 4.0 Percentile Range', statColorMap, 'Percentile of the CalEnviroScreen score, grouped by 5% increments', '', 'Data/csv-data/CES_4.0_Percentile_Range.csv'],
+    'Data/Ozone.json': ['Ozone', pollutantColorMap, 'Amount of daily maximum 8 hour Ozone concentration', 'ppm', 'Data/csv-data/Ozone.csv'],
+    'Data/Ozone_Pctl.json': ['Ozone Pctl', pollutantColorMap, 'Ozone percentile', '', 'Data/csv-data/Ozone_Pctl.csv'],
+    'Data/PM2.5.json': ['PM2.5', pollutantColorMap, 'Annual mean PM2.5 concentrations', 'μg/m³', 'Data/csv-data/PM2.5.csv'],
+    'Data/PM2.5_Pctl.json': ['PM2.5 Pctl', pollutantColorMap, 'PM2.5 percentile', '', 'Data/csv-data/PM2.5_Pctl.csv'],
+    'Data/Diesel_PM.json': ['Diesel PM', pollutantColorMap, 'Diesel PM emissions from on-road and non-road sources', 'μg/m³', 'Data/csv-data/Diesel_PM.csv'],
+    'Data/Diesel_PM_Pctl.json': ['Diesel PM Pctl', pollutantColorMap, 'Diesel PM percentile', '', 'Data/csv-data/Diesel_PM_Pctl.csv'],
+    'Data/Drinking_Water.json': ['Drinking Water', pollutantColorMap, 'Drinking water contaminant index for selected contaminants', '', 'Data/csv-data/Drinking_Water.csv'],
+    'Data/Drinking_Water_Pctl.json': ['Drinking Water Pctl', pollutantColorMap, 'Drinking water percentile', '', 'Data/csv-data/Drinking_Water_Pctl.csv'],
+    'Data/Lead.json': ['Lead', pollutantColorMap, 'Potential risk for lead exposure in children living in low-income communities with older housing', '', 'Data/csv-data/Lead.csv'],
+    'Data/Lead_Pctl.json': ['Lead Pctl', pollutantColorMap, 'Children\'s lead risk from housing percentile', '', 'Data/csv-data/Lead_Pctl.csv'],
+    'Data/Pesticides.json': ['Pesticides', pollutantColorMap, 'Total pounds of selected active pesticide ingredients used in production-agriculture per square mile', 'lbs/mi²', 'Data/csv-data/Pesticides.csv'],
+    'Data/Pesticides_Pctl.json': ['Pesticides Pctl', pollutantColorMap, 'Pesticides percentile', '', 'Data/csv-data/Pesticides_Pctl.csv'],
+    'Data/Tox._Release.json': ['Tox. Release', pollutantColorMap, 'Toxicity-weighted concentrations of modeled chemical releases to air', 'TEQ', 'Data/csv-data/Tox_Release.csv'],
+    'Data/Tox._Release_Pctl.json': ['Tox. Release Pctl', pollutantColorMap, 'Toxic release percentile', '', 'Data/csv-data/Tox_Release_Pctl.csv'],
+    'Data/CES_Traffic.json': ['Traffic', pollutantColorMap, 'Traffic density in vehicle-kilometers per hour per road length, within 150 meters of the census tract boundary', 'veh-km/hr', 'Data/csv-data/CES_Traffic.csv'],
+    'Data/CES_Traffic_Pctl.json': ['Traffic Pctl', pollutantColorMap, 'Traffic percentile', '', 'Data/csv-data/CES_Traffic_Pctl.csv'],
+    'Data/Cleanup_Sites.json': ['Cleanup Sites', pollutantColorMap, 'Sum of weighted EnviroStor cleanup sites within buffered distances to populated blocks of census tracts', '', 'Data/csv-data/Cleanup_Sites.csv'],
+    'Data/Cleanup_Sites_Pctl.json': ['Cleanup Sites Pctl', pollutantColorMap, 'Cleanup sites percentile', '', 'Data/csv-data/Cleanup_Sites_Pctl.csv'],
+    'Data/Groundwater_Threats.json': ['Groundwater Threats', pollutantColorMap, 'Sum of weighted GeoTracker leaking underground storage tank sites within buffered distances to populated blocks of census tracts', '', 'Data/csv-data/Groundwater_Threats.csv'],
+    'Data/Groundwater_Threats_Pctl.json': ['Groundwater Threats Pctl', pollutantColorMap, 'Groundwater threats percentile', '', 'Data/csv-data/Groundwater_Threats_Pctl.csv'],
+    'Data/Haz._Waste.json': ['Haz. Waste', pollutantColorMap, 'Sum of weighted hazardous waste facilities and large quantity generators within buffered distances to populated blocks of census tracts', '', 'Data/csv-data/Haz_Waste.csv'],
+    'Data/Haz._Waste_Pctl.json': ['Haz. Waste Pctl', pollutantColorMap, 'Hazardous waste percentile', '', 'Data/csv-data/Haz_Waste_Pctl.csv'],
+    'Data/Imp._Water_Bodies.json': ['Imp. Water Bodies', pollutantColorMap, 'Sum of number of pollutants across all impaired water bodies within buffered distances to populated blocks of census tracts', '', 'Data/csv-data/Imp_Water_Bodies.csv'],
+    'Data/Imp._Water_Bodies_Pctl.json': ['Imp. Water Bodies Pctl', pollutantColorMap, 'Impaired water bodies percentile', '', 'Data/csv-data/Imp_Water_Bodies_Pctl.csv'],
+    'Data/Solid_Waste.json': ['Solid Waste', pollutantColorMap, 'Sum of weighted solid waste sites and facilities within buffered distances to populated blocks of census tracts', '', 'Data/csv-data/Solid_Waste.csv'],
+    'Data/Solid_Waste_Pctl.json': ['Solid Waste Pctl', pollutantColorMap, 'Solid waste percentile', '', 'Data/csv-data/Solid_Waste_Pctl.csv'],
+    'Data/SouthCoastAQMDBlackCarbon.json': ['Long Beach Black Carbon', pollutantColorMap, 'Average Black Carbon in Long Beach', '', 'Data/csv-data/SouthCoastAQMDBlackCarbon.csv'],
+    'Data/Pollution_Burden.json': ['Pollution Burden', pollutantColorMap, 'Average of percentiles from the Pollution Burden indicators', '', 'Data/csv-data/Pollution_Burden.csv'],
+    'Data/Pollution_Burden_Score.json': ['Pollution Burden Score', pollutantColorMap, 'Pollution Burden variable scaled with a range of 0-10', '', 'Data/csv-data/Pollution_Burden_Score.csv'],
+    'Data/Pollution_Burden_Pctl.json': ['Pollution Burden Pctl', pollutantColorMap, 'Pollution burden percentile', '', 'Data/csv-data/Pollution_Burden_Pctl.csv'],
+    'Data/Asthma.json': ['Asthma', socioeconomicColorMap, 'Age-adjusted rate of emergency department visits for asthma', '', 'Data/csv-data/Asthma.csv'],
+    'Data/Asthma_Pctl.json': ['Asthma Pctl', socioeconomicColorMap, 'Asthma percentile', '', 'Data/csv-data/Asthma_Pctl.csv'],
+    'Data/Low_Birth_Weight.json': ['Low Birth Weight', socioeconomicColorMap, 'Percent low birth weight', '', 'Data/csv-data/Low_Birth_Weight.csv'],
+    'Data/Low_Birth_Weight_Pctl.json': ['Low Birth Weight Pctl', socioeconomicColorMap, 'Low birth weight percentile', '', 'Data/csv-data/Low_Birth_Weight_Pctl.csv'],
+    'Data/Cardiovascular_Disease.json': ['Cardiovascular Disease', socioeconomicColorMap, 'Age-adjusted rate of emergency department visits for heart attacks per 10,000', '', 'Data/csv-data/Cardiovascular_Disease.csv'],
+    'Data/Cardiovascular_Disease_Pctl.json': ['Cardiovascular Disease Pctl', socioeconomicColorMap, 'Cardiovascular disease percentile', '', 'Data/csv-data/Cardiovascular_Disease_Pctl.csv'],
+    'Data/Education.json': ['Education', socioeconomicColorMap, 'Percent of population over 25 with less than a high school education', '', 'Data/csv-data/Education.csv'],
+    'Data/Education_Pctl.json': ['Education Pctl', socioeconomicColorMap, 'Education percentile', '', 'Data/csv-data/Education_Pctl.csv'],
+    'Data/Linguistic_Isolation.json': ['Linguistic Isolation', socioeconomicColorMap, 'Percent limited English speaking households', '', 'Data/csv-data/Linguistic_Isolation.csv'],
+    'Data/Linguistic_Isolation_Pctl.json': ['Linguistic Isolation Pctl', socioeconomicColorMap, 'Linguistic isolation percentile', '', 'Data/csv-data/Linguistic_Isolation_Pctl.csv'],
+    'Data/Poverty.json': ['Poverty', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level', '', 'Data/csv-data/Poverty.csv'],
+    'Data/Poverty_Pctl.json': ['Poverty Pctl', socioeconomicColorMap, 'Poverty percentile', '', 'Data/csv-data/Poverty_Pctl.csv'],
+    'Data/Unemployment.json': ['Unemployment', socioeconomicColorMap, 'Percent of the population over the age of 16 that is unemployed and eligible for the labor force', '', 'Data/csv-data/Unemployment.csv'],
+    'Data/Unemployment_Pctl.json': ['Unemployment Pctl', socioeconomicColorMap, 'Unemployment percentile', '', 'Data/csv-data/Unemployment_Pctl.csv'],
+    'Data/Housing_Burden.json': ['Housing Burden', socioeconomicColorMap, 'Percent housing-burdened low-income households', '', 'Data/csv-data/Housing_Burden.csv'],
+    'Data/Housing_Burden_Pctl.json': ['Housing Burden Pctl', socioeconomicColorMap, 'Housing burden percentile', '', 'Data/csv-data/Housing_Burden_Pctl.csv'],
+    'Data/Pop._Char._.json': ['Pop. Char. ', socioeconomicColorMap, 'Average of percentiles from the Population Characteristics indicators', '', 'Data/csv-data/Pop._Char.csv'],
+    'Data/Pop._Char._Score.json': ['Pop. Char. Score', socioeconomicColorMap, 'Population Characteristics variable scaled with a range of 0-10', '', 'Data/csv-data/Pop._Char._Score.csv'],
+    'Data/Pop._Char._Pctl.json': ['Pop. Char. Pctl', socioeconomicColorMap, 'Population characteristics percentile', '', 'Data/csv-data/Pop._Char._Pctl.csv'],
+    'Data/pm25_predictions.json': ['pm25_predictions', pollutantColorMap, 'Predicted PM2.5 using PWWB Machine Learning Models.', '', 'Data/csv-data/pm25_predictions.csv'],
+    'Data/traffic.json': ['traffic_counts', pollutantColorMap, 'Traffic density or counts', '', 'Data/csv-data/traffic.csv'],
+    'Data/poverty.json': ['poverty_data', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level', '', 'Data/csv-data/poverty.csv'],
+    'Data/income.json': ['Income', socioeconomicColorMap, 'No specific definition provided.', '', 'Data/csv-data/income.csv'],
+    'Data/processed_epa_sites.csv': ['EPA Sites', pollutantColorMap, 'No specific definition provided.', '', 'Data/csv-data/processed_epa_sites.csv'],
+    'Data/13-Butadine.json': ['13-Butadine', pollutantColorMap, 'Specific data description for 13-Butadine.', '', 'Data/csv-data/13-Butadine.csv'],
+    'Data/acrolein.json': ['Acrolein', pollutantColorMap, 'Specific data description for Acrolein.', '', 'Data/csv-data/acrolein.csv'],
+    'Data/benzene.json': ['Benzene', pollutantColorMap, 'Specific data description for Benzene.', '', 'Data/csv-data/benzene.csv'],
+    'Data/blackcarbon.json': ['Black Carbon 1', pollutantColorMap, 'Specific data description for Black Carbon 1.', '', 'Data/csv-data/black_carbon-1.csv'],
+    'Data/Ethylbenzene.json': ['Ethylbenzene', pollutantColorMap, 'Specific data description for Ethylbenzene.', '', 'Data/csv-data/Ethylbenzene.csv'],
+    'Data/mp_Xylenes.json': ['mp-Xylenes', pollutantColorMap, 'Specific data description for mp-Xylenes.', '', 'Data/csv-data/mp-Xylenes.csv'],
+    'Data/o-Xylene.json': ['o-Xylene', pollutantColorMap, 'Specific data description for o-Xylene.', '', 'Data/csv-data/o-Xylene.csv'],
+    'Data/toluene.json': ['Toluene', pollutantColorMap, 'Specific data description for Toluene.', '', 'Data/csv-data/toluene.csv'],
+    'Data/ultrafineparticles.json': ['Ultra Fine Particles 1', pollutantColorMap, 'Specific data description for Ultra Fine Particles 1.', '', 'Data/csv-data/ultra_fine_particles-1.csv']
 };
+
 
 // document.addEventListener('DOMContentLoaded', function() {
 //     var infoButton = document.querySelector('.info-button');
@@ -847,37 +1069,35 @@ const fileMappings = {
             // Define your fileList array with the specific file names
             // Populate fileList with 'new_0.json' through 'new_24.json'
             var fileList = [];
-            for (let i = 0; i <= 23; i++) {
-                fileList.push(`retest_${i}.json`);
-            }
+            // for (let i = 0; i <= 23; i++) {
+            //     fileList.push(`retest_${i}.json`);
+            // }
 
             // Declare and populate allTimeSeriesData as an empty array (if needed, based on your context)
             let allTimeSeriesData = [];
 
             // Populate twoDFileList with '0.png' through '24.png'
             var twoDFileList = [];
-            for (let i = 0; i <= 23; i++) {
-                twoDFileList.push(`${i}.png`);
-            }
+            // for (let i = 0; i <= 23; i++) {
+            //     twoDFileList.push(`${i}.png`);
+            // }
 
             // Display the populated arrays (you can remove this part if not needed for debugging)
             console.log("File List:", fileList);
             console.log("2D File List:", twoDFileList);
-
 
             let imageUrls = [];
 
             // Base URL
             const baseUrl = 'https://sagemaker-us-east-2-958520404663.s3.us-east-2.amazonaws.com/sagemaker/predictions/';
 
-            // Loop through the twodFileList and construct each URL
+            // Loop through the twoDFileList and construct each URL
             for (const fileName of twoDFileList) {
                 const fullUrl = `${baseUrl}${fileName}`; // Construct the full URL
                 imageUrls.push(fullUrl); // Add the URL to the array
             }
 
             console.log(imageUrls);
-
 
             // Loop through the fileList and fetch each file
             for (const fileName of fileList) {
@@ -893,11 +1113,39 @@ const fileMappings = {
             console.log('Time series data:', allTimeSeriesData);
             dataMap[key] = [allTimeSeriesData, value[1], value[2], value[3], imageUrls]; // Assuming 'key' and 'value' are defined earlier in your code
 
+        } else if (key === 'Wind Data') {
+            try {
+                console.log('Fetching wind data...');
+                const response = await fetch(file);
+                const windData = await response.csv();
+                dataMap[key] = [windData, value[1], value[2], value[3]]; // Store wind data with its color map
+                console.log('Wind data:', windData);
+                
+                // Display wind data using the provided function
+                // displayWindData(windData.windData);
+            } catch (error) {
+                console.error(`Error fetching wind data from ${file}:`, error);
+            }
+            
         }
+        else if (key === 'EPA Sites')   {
+            try {
+                console.log('Fetching EPA Sites data...');
+                // const response = await fetch(file);
+                // const epaSites = await response.csv();
+                // dataMap[key] = [epaSites, value[1], value[2], value[3]]; // Store wind data with its color map
+                // console.log('EPA Sites data:', epaSites);
+                
+                // Display wind data using the provided function
+                // displayWindData(windData.windData);
+            } catch (error) {
+                console.error(`Error fetching EPA Sites data from ${file}:`, error);
+            }        
+        } 
         else {
             // Handling for all other data types
             const response = await fetch(file);
-            dataMap[key] = [await response.json(), value[1], value[2], value[3]]; // Store data along with its color map
+            dataMap[key] = [await response.json(), value[1], value[2], value[3], value[4]]; // Store data along with its color map
         }
     }
 
@@ -911,8 +1159,7 @@ const fileMappings = {
     console.error("Error fetching data:", error);
 });
 console.log("DATA MAP", dataMap);
-// Event listener for select element
-
+var selectedData;
 
 document.getElementById('pollutantSelect').addEventListener('change', (event) => {
     console.log('Selected value:', event.target.value);
@@ -928,6 +1175,8 @@ document.getElementById('pollutantSelect').addEventListener('change', (event) =>
         viewer.entities.remove(entity);
         i--;
     }
+
+    
     
     console.log("Removed all imagery layers from viewer");
     if (event.target.value == 'Live Air Traffic'){
@@ -941,7 +1190,7 @@ document.getElementById('pollutantSelect').addEventListener('change', (event) =>
     else {
         isLoopActive = false;
     }
-    const selectedData = dataMap[event.target.value];
+    selectedData = dataMap[event.target.value];
 
 
     if (selectedData) {
@@ -954,19 +1203,38 @@ document.getElementById('pollutantSelect').addEventListener('change', (event) =>
         console.log('Updating color map');
         createGradient([colorMap.from, colorMap.to]);
         console.log('Displaying data');
-
-        if (event.target.value === 'Time Series Data') {
+        if (event.target.value === 'Wind Data') {
+            displayWindData(selectedData[0].windData);
+        }
+        else if (event.target.value === 'Time Series Data') {
             timeSeriesData = selectedData[0];
             twoDtimeSeriesData = selectedData[4];
             displayTimeSeriesData(); // Function to display time series data
             document.querySelector('.time-control').style.display = 'block'; // Show the time control for time series data
         } else {
-            displayData(selectedData[0], labels = false); // Function for other types of data
-            document.querySelector('.time-control').style.display = 'none'; // Hide the time control for non-time series data
+            if (!threeDTiles) {
+                try {
+                    loadGeoJsonWithCsv(selectedData[4]);
+                } catch (e) {
+                    console.error("Failed to load CSV data:", e);
+                    displayData(selectedData[0]); // Function for other types of data
+                    document.querySelector('.time-control').style.display = 'none'; // Hide the time control for non-time series data
+                }
+            }
+            else    {
+                displayData(selectedData[0]); // Function for other types of data
+                document.querySelector('.time-control').style.display = 'none'; // Hide the time control for non-time series data
+            }
         }
         
+        
     } else {
-        console.error('No data found for selected key:', event.target.value);
+        if (event.target.value === 'EPA Sites') {
+            displayEpaSitesData();
+        }
+        else {
+            console.error('No data found for selected key:', event.target.value);
+        }
     }
 });
 
@@ -1056,7 +1324,7 @@ async function displayTimeSeriesData() {
         return;
     }
     showNotification('3d tiles are on, time series data will take significantly longer to load');
-    displayData(timeSeriesData[timeStepCount], labels = false, height_divisor = 1, time_series = true);
+    // displayData(timeSeriesData[timeStepCount], labels = false, height_divisor = 1, time_series = true);
 }
 
 function display2DData(imageUrl) {
@@ -1237,8 +1505,8 @@ function updateCylindersToHeight() {
             // Update the cylinder's height (length)
             entity.cylinder.length = (entity.cylinder.length / height_multiplier) * (height / 1000);
             
-            if (height < 10000) {
-                var newOpacity = 0.5; // Opacity ranges from 0 (completely transparent) to 1 (completely opaque)
+            if (height < 10000 || threeDTiles == false) {
+                var newOpacity = 0.2; // Opacity ranges from 0 (completely transparent) to 1 (completely opaque)
                 var currentColor = entity.cylinder.material.color.getValue(); // Get the current color of the cylinder
                 var newColor = new Cesium.Color(currentColor.red, currentColor.green, currentColor.blue, newOpacity);
                 
