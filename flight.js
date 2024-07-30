@@ -1036,7 +1036,6 @@ const fileMappings = {
     'Data/Pop._Char._Pctl.json': ['Pop. Char. Pctl', socioeconomicColorMap, 'Population characteristics percentile', '', 'Data/csv-data/Pop._Char._Pctl.csv'],
     'Data/pm25_predictions.json': ['pm25_predictions', pollutantColorMap, 'Predicted PM2.5 using PWWB Machine Learning Models.', '', 'Data/csv-data/pm25_predictions.csv'],
     'Data/traffic.json': ['traffic_counts', pollutantColorMap, 'Traffic density or counts', '', 'Data/csv-data/traffic.csv'],
-    'Data/poverty.json': ['poverty_data', socioeconomicColorMap, 'Percent of population living below two times the federal poverty level', '', 'Data/csv-data/poverty.csv'],
     'Data/income.json': ['Income', socioeconomicColorMap, 'No specific definition provided.', '', 'Data/csv-data/income.csv'],
     'Data/processed_epa_sites.csv': ['EPA Sites', pollutantColorMap, 'No specific definition provided.', '', 'Data/csv-data/processed_epa_sites.csv'],
     'Data/13-Butadine.json': ['13-Butadine', pollutantColorMap, 'Specific data description for 13-Butadine.', '', 'Data/csv-data/13-Butadine.csv'],
