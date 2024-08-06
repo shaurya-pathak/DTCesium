@@ -95,7 +95,7 @@ function styleGeoJSONData(geojsonDataSource, csvData) {
         const bin = Math.floor(ratio * 10);
         const [r, g, b] = colors[bin];
         // console.log(`Value: ${value}, Bin: ${bin}, Color: rgb(${r}, ${g}, ${b})`);
-        return new Cesium.Color(r/255, g/255, b/255, 0.7); // Returns the color as a CSS-style string
+        return new Cesium.Color(r/255, g/255, b/255, Math.max(0.35,ratio)) // Returns the color as a CSS-style string
 
     }
 
@@ -1047,7 +1047,15 @@ const fileMappings = {
     'Data/mp_Xylenes.json': ['mp-Xylenes', pollutantColorMap, 'Specific data description for mp-Xylenes.', '', 'Data/csv-data/mp-Xylenes.csv'],
     'Data/o-Xylene.json': ['o-Xylene', pollutantColorMap, 'Specific data description for o-Xylene.', '', 'Data/csv-data/o-Xylene.csv'],
     'Data/toluene.json': ['Toluene', pollutantColorMap, 'Specific data description for Toluene.', '', 'Data/csv-data/toluene.csv'],
-    'Data/ultrafineparticles.json': ['Ultra Fine Particles 1', pollutantColorMap, 'Specific data description for Ultra Fine Particles 1.', '', 'Data/csv-data/ultrafineparticles.csv']
+    'Data/ultrafineparticles.json': ['Ultra Fine Particles 1', pollutantColorMap, 'Specific data description for Ultra Fine Particles 1.', '', 'Data/csv-data/ultrafineparticles.csv'],
+    'Data/13-butadiene-pred.json': ['13-Butadine Prediction', pollutantColorMap, 'Specific data description for 13-Butadine.', '', 'Data/csv-data/13-Butadine.csv'],
+    'Data/acrolein-pred.json': ['Acrolein Prediction', pollutantColorMap, 'Specific data description for Acrolein.', '', 'Data/csv-data/acrolein.csv'],
+    'Data/benzene-pred.json': ['Benzene Prediction', pollutantColorMap, 'Specific data description for Benzene.', '', 'Data/csv-data/benzene.csv'],
+    'Data/bc-pred.json': ['Black Carbon 1 Prediction', pollutantColorMap, 'Specific data description for Black Carbon 1.', '', 'Data/csv-data/blackcarbon.csv'],
+    'Data/ethylbenzene-pred.json': ['Ethylbenzene Prediction', pollutantColorMap, 'Specific data description for Ethylbenzene.', '', 'Data/csv-data/Ethylbenzene.csv'],
+    'Data/toluene-pred.json': ['Toluene Prediction', pollutantColorMap, 'Specific data description for Toluene.', '', 'Data/csv-data/toluene.csv'],
+    'Data/ufp-pred.json': ['Ultra Fine Particles 1 Prediction', pollutantColorMap, 'Specific data description for Ultra Fine Particles 1.', '', 'Data/csv-data/ultrafineparticles.csv'],
+
 };
 
 
