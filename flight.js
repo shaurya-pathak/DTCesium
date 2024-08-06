@@ -95,7 +95,7 @@ function styleGeoJSONData(geojsonDataSource, csvData) {
         const bin = Math.floor(ratio * 10);
         const [r, g, b] = colors[bin];
         // console.log(`Value: ${value}, Bin: ${bin}, Color: rgb(${r}, ${g}, ${b})`);
-        return new Cesium.Color(r/255, g/255, b/255, Math.max(0.35,ratio)) // Returns the color as a CSS-style string
+        return new Cesium.Color(r/255, g/255, b/255, Math.max(0.1,ratio)) // Returns the color as a CSS-style string
 
     }
 
