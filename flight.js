@@ -846,6 +846,7 @@ document.getElementById('3dInCheckbox').addEventListener('change', function() {
         threeDTiles = false;
         if (document.getElementById('pollutantSelect').value === "Time Series Data") {
             // Your code here to execute if the selected value is "Time Series Data"
+            console.log("displaying time series data");
             displayTimeSeriesData();
         }
         else {
@@ -1041,12 +1042,12 @@ const fileMappings = {
     'Data/13-Butadine.json': ['13-Butadine', pollutantColorMap, 'Specific data description for 13-Butadine.', '', 'Data/csv-data/13-Butadine.csv'],
     'Data/acrolein.json': ['Acrolein', pollutantColorMap, 'Specific data description for Acrolein.', '', 'Data/csv-data/acrolein.csv'],
     'Data/benzene.json': ['Benzene', pollutantColorMap, 'Specific data description for Benzene.', '', 'Data/csv-data/benzene.csv'],
-    'Data/blackcarbon.json': ['Black Carbon 1', pollutantColorMap, 'Specific data description for Black Carbon 1.', '', 'Data/csv-data/black_carbon-1.csv'],
+    'Data/blackcarbon.json': ['Black Carbon 1', pollutantColorMap, 'Specific data description for Black Carbon 1.', '', 'Data/csv-data/blackcarbon.csv'],
     'Data/Ethylbenzene.json': ['Ethylbenzene', pollutantColorMap, 'Specific data description for Ethylbenzene.', '', 'Data/csv-data/Ethylbenzene.csv'],
     'Data/mp_Xylenes.json': ['mp-Xylenes', pollutantColorMap, 'Specific data description for mp-Xylenes.', '', 'Data/csv-data/mp-Xylenes.csv'],
     'Data/o-Xylene.json': ['o-Xylene', pollutantColorMap, 'Specific data description for o-Xylene.', '', 'Data/csv-data/o-Xylene.csv'],
     'Data/toluene.json': ['Toluene', pollutantColorMap, 'Specific data description for Toluene.', '', 'Data/csv-data/toluene.csv'],
-    'Data/ultrafineparticles.json': ['Ultra Fine Particles 1', pollutantColorMap, 'Specific data description for Ultra Fine Particles 1.', '', 'Data/csv-data/ultra_fine_particles-1.csv']
+    'Data/ultrafineparticles.json': ['Ultra Fine Particles 1', pollutantColorMap, 'Specific data description for Ultra Fine Particles 1.', '', 'Data/csv-data/ultrafineparticles.csv']
 };
 
 
@@ -1068,18 +1069,18 @@ const fileMappings = {
             // Define your fileList array with the specific file names
             // Populate fileList with 'new_0.json' through 'new_24.json'
             var fileList = [];
-            // for (let i = 0; i <= 23; i++) {
-            //     fileList.push(`retest_${i}.json`);
-            // }
+            for (let i = 0; i <= 23; i++) {
+                fileList.push(`retest_${i}.json`);
+            }
 
             // Declare and populate allTimeSeriesData as an empty array (if needed, based on your context)
             let allTimeSeriesData = [];
 
             // Populate twoDFileList with '0.png' through '24.png'
             var twoDFileList = [];
-            // for (let i = 0; i <= 23; i++) {
-            //     twoDFileList.push(`${i}.png`);
-            // }
+            for (let i = 0; i <= 23; i++) {
+                twoDFileList.push(`${i}.png`);
+            }
 
             // Display the populated arrays (you can remove this part if not needed for debugging)
             console.log("File List:", fileList);
@@ -1202,6 +1203,7 @@ document.getElementById('pollutantSelect').addEventListener('change', (event) =>
         console.log('Updating color map');
         createGradient([colorMap.from, colorMap.to]);
         console.log('Displaying data');
+        console.log(event.target.value);
         if (event.target.value === 'Wind Data') {
             displayWindData(selectedData[0].windData);
         }
@@ -1323,7 +1325,7 @@ async function displayTimeSeriesData() {
         return;
     }
     showNotification('3d tiles are on, time series data will take significantly longer to load');
-    // displayData(timeSeriesData[timeStepCount], labels = false, height_divisor = 1, time_series = true);
+    displayData(timeSeriesData[timeStepCount], labels = false, height_divisor = 1, time_series = true);
 }
 
 function display2DData(imageUrl) {
